@@ -1,0 +1,40 @@
+{
+  "name": "tropometrics-leiden-weather",
+  "version": "1.0.0",
+  "description": "Static weather dashboard for Leiden, Netherlands using Open-Meteo API",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "serve": "python -m http.server 8000",
+    "test": "echo \"✅ No tests specified for static site\" && exit 0",
+    "validate": "html5validator --root . --also-check-css",
+    "deploy": "echo \"Deployment handled by GitHub Actions\"",
+    "dev": "python -m http.server 8000"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TomTheLEGEND23/HHS-TropoMetrics.git"
+  },
+  "keywords": [
+    "weather",
+    "api",
+    "leiden",
+    "netherlands",
+    "open-meteo",
+    "static-site",
+    "github-pages",
+    "tropometrics"
+  ],
+  "author": "HHS TropoMetrics Team",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/TomTheLEGEND23/HHS-TropoMetrics/issues"
+  },
+  "homepage": "https://TomTheLEGEND23.github.io/HHS-TropoMetrics",
+  "devDependencies": {
+    "html5validator": "^0.4.2"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

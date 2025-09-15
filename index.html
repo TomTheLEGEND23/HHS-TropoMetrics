@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<!--
+TropoMetrics - Leiden Weather Dashboard
+This static HTML page fetches weather data directly from the Open-Meteo API
+No server-side processing required - perfect for GitHub Pages deployment
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TropoMetrics - Leiden Weather Data</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .weather-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .weather-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .weather-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .weather-card h2 {
+            color: #4a5568;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .icon {
+            font-size: 1.8rem;
+        }
+
+        .current-temp {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #2d3748;
+            margin: 10px 0;
+        }
+
+        .weather-detail {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .weather-detail:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .detail-value {
+            color: #2d3748;
+            font-weight: 500;
+        }
+
+        .forecast-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .forecast-title {
+            color: #4a5568;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .forecast-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .forecast-day {
+            text-align: center;
+            padding: 15px;
+            background: #f7fafc;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .forecast-date {
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 10px;
+        }
+
+        .forecast-temps {
+            color: #2d3748;
+        }
+
+        .max-temp {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .min-temp {
+            color: #718096;
+            font-size: 0.9rem;
+        }
+
+        .loading {
+            text-align: center;
+            color: white;
+            font-size: 1.2rem;
+            margin: 50px 0;
+        }
+
+        .error {
+            background: rgba(254, 202, 202, 0.95);
+            color: #c53030;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .last-updated {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .weather-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .current-temp {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌤️ TropoMetrics</h1>
+            <p>Real-time Weather Data for Leiden, Netherlands</p>
+        </div>
+
+        <div id="loading" class="loading">
+            <p>Loading weather data...</p>
+        </div>
+
+        <div id="error" class="error" style="display: none;">
+            <p>Failed to load weather data. Please try again later.</p>
+        </div>
+
+        <div id="weather-content" style="display: none;">
+            <div class="weather-grid">
+                <div class="weather-card">
+                    <h2><span class="icon">🌡️</span>Current Weather</h2>
+                    <div class="current-temp" id="current-temp">--°C</div>
+                    <div class="weather-detail">
+                        <span class="detail-label">Feels like</span>
+                        <span class="detail-value" id="feels-like">--°C</span>
+                    </div>
+                    <div class="weather-detail">
+                        <span class="detail-label">Weather Code</span>
+                        <span class="detail-value" id="weather-code">--</span>
+                    </div>
+                    <div class="weather-detail">
+                        <span class="detail-label">Time</span>
+                        <span class="detail-value" id="current-time">--</span>
+                    </div>
+                </div>
+
+                <div class="weather-card">
+                    <h2><span class="icon">💨</span>Wind & Atmosphere</h2>
+                    <div class="weather-detail">
+                        <span class="detail-label">Wind Speed</span>
+                        <span class="detail-value" id="wind-speed">-- km/h</span>
+                    </div>
+                    <div class="weather-detail">
+                        <span class="detail-label">Wind Direction</span>
+                        <span class="detail-value" id="wind-direction">--°</span>
+                    </div>
+                    <div class="weather-detail">
+                        <span class="detail-label">Humidity</span>
+                        <span class="detail-value" id="humidity">--%</span>
+                    </div>
+                    <div class="weather-detail">
+                        <span class="detail-label">Pressure</span>
+                        <span class="detail-value" id="pressure">-- hPa</span>
+                    </div>
+                </div>
+
+                <div class="weather-card">
+                    <h2><span class="icon">☀️</span>Sun & Visibility</h2>
+                    <div class="weather-detail">
+                        <span class="detail-label">UV Index</span>
+                        <span class="detail-value" id="uv-index">--</span>
+                    </div>
+                    <div class="weather-detail">
+                        <span class="detail-label">Visibility</span>
+                        <span class="detail-value" id="visibility">-- km</span>
+                    </div>
+                    <div class="weather-detail">
+                        <span class="detail-label">Cloud Cover</span>
+                        <span class="detail-value" id="cloud-cover">--%</span>
+                    </div>
+                    <div class="weather-detail">
+                        <span class="detail-label">Precipitation</span>
+                        <span class="detail-value" id="precipitation">-- mm</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="forecast-container">
+                <h2 class="forecast-title"><span class="icon">📅</span>7-Day Forecast</h2>
+                <div class="forecast-grid" id="forecast-grid">
+                    <!-- Forecast data will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <div class="last-updated" id="last-updated">
+            <!-- Last updated time will be shown here -->
+        </div>
+    </div>
+
+    <script>
+        // Leiden, Netherlands coordinates
+        const LATITUDE = 52.1601;
+        const LONGITUDE = 4.4970;
+
+        // Weather code descriptions
+        const weatherCodes = {
+            0: 'Clear sky',
+            1: 'Mainly clear',
+            2: 'Partly cloudy',
+            3: 'Overcast',
+            45: 'Fog',
+            48: 'Depositing rime fog',
+            51: 'Light drizzle',
+            53: 'Moderate drizzle',
+            55: 'Dense drizzle',
+            56: 'Light freezing drizzle',
+            57: 'Dense freezing drizzle',
+            61: 'Slight rain',
+            63: 'Moderate rain',
+            65: 'Heavy rain',
+            66: 'Light freezing rain',
+            67: 'Heavy freezing rain',
+            71: 'Slight snow fall',
+            73: 'Moderate snow fall',
+            75: 'Heavy snow fall',
+            77: 'Snow grains',
+            80: 'Slight rain showers',
+            81: 'Moderate rain showers',
+            82: 'Violent rain showers',
+            85: 'Slight snow showers',
+            86: 'Heavy snow showers',
+            95: 'Thunderstorm',
+            96: 'Thunderstorm with slight hail',
+            99: 'Thunderstorm with heavy hail'
+        };
+
+        async function fetchWeatherData() {
+            try {
+                // Current weather API call
+                const currentWeatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${LATITUDE}&longitude=${LONGITUDE}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,rain,showers,snowfall,weather_code,cloud_cover,pressure_msl,surface_pressure,wind_speed_10m,wind_direction_10m,wind_gusts_10m,uv_index,visibility&timezone=Europe%2FAmsterdam&forecast_days=1`;
+                
+                // 7-day forecast API call
+                const forecastUrl = `https://api.open-meteo.com/v1/forecast?latitude=${LATITUDE}&longitude=${LONGITUDE}&daily=weather_code,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,sunrise,sunset,daylight_duration,sunshine_duration,uv_index_max,precipitation_sum,rain_sum,showers_sum,snowfall_sum,precipitation_hours,precipitation_probability_max,wind_speed_10m_max,wind_gusts_10m_max,wind_direction_10m_dominant&timezone=Europe%2FAmsterdam&forecast_days=7`;
+
+                const [currentResponse, forecastResponse] = await Promise.all([
+                    fetch(currentWeatherUrl),
+                    fetch(forecastUrl)
+                ]);
+
+                if (!currentResponse.ok || !forecastResponse.ok) {
+                    throw new Error('Failed to fetch weather data');
+                }
+
+                const currentData = await currentResponse.json();
+                const forecastData = await forecastResponse.json();
+
+                displayCurrentWeather(currentData);
+                displayForecast(forecastData);
+                
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('weather-content').style.display = 'block';
+                
+                // Update last updated time
+                const now = new Date();
+                document.getElementById('last-updated').textContent = 
+                    `Last updated: ${now.toLocaleString('en-GB', { timeZone: 'Europe/Amsterdam' })} (Amsterdam time)`;
+
+            } catch (error) {
+                console.error('Error fetching weather data:', error);
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error').style.display = 'block';
+            }
+        }
+
+        function displayCurrentWeather(data) {
+            const current = data.current;
+            
+            document.getElementById('current-temp').textContent = `${Math.round(current.temperature_2m)}°C`;
+            document.getElementById('feels-like').textContent = `${Math.round(current.apparent_temperature)}°C`;
+            document.getElementById('weather-code').textContent = weatherCodes[current.weather_code] || 'Unknown';
+            document.getElementById('current-time').textContent = new Date(current.time).toLocaleTimeString('en-GB', {
+                timeZone: 'Europe/Amsterdam',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            document.getElementById('wind-speed').textContent = `${Math.round(current.wind_speed_10m)} km/h`;
+            document.getElementById('wind-direction').textContent = `${current.wind_direction_10m}°`;
+            document.getElementById('humidity').textContent = `${current.relative_humidity_2m}%`;
+            document.getElementById('pressure').textContent = `${Math.round(current.pressure_msl)} hPa`;
+            
+            document.getElementById('uv-index').textContent = current.uv_index || 'N/A';
+            document.getElementById('visibility').textContent = `${(current.visibility / 1000).toFixed(1)} km`;
+            document.getElementById('cloud-cover').textContent = `${current.cloud_cover}%`;
+            document.getElementById('precipitation').textContent = `${current.precipitation} mm`;
+        }
+
+        function displayForecast(data) {
+            const forecastGrid = document.getElementById('forecast-grid');
+            forecastGrid.innerHTML = '';
+            
+            for (let i = 0; i < 7; i++) {
+                const date = new Date(data.daily.time[i]);
+                const dayName = date.toLocaleDateString('en-GB', { weekday: 'short' });
+                const dayDate = date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+                
+                const forecastDay = document.createElement('div');
+                forecastDay.className = 'forecast-day';
+                
+                forecastDay.innerHTML = `
+                    <div class="forecast-date">${dayName}<br>${dayDate}</div>
+                    <div class="forecast-temps">
+                        <div class="max-temp">${Math.round(data.daily.temperature_2m_max[i])}°</div>
+                        <div class="min-temp">${Math.round(data.daily.temperature_2m_min[i])}°</div>
+                    </div>
+                    <div style="font-size: 0.8rem; color: #718096; margin-top: 5px;">
+                        ${weatherCodes[data.daily.weather_code[i]] || 'Unknown'}
+                    </div>
+                `;
+                
+                forecastGrid.appendChild(forecastDay);
+            }
+        }
+
+        // Fetch weather data when page loads
+        document.addEventListener('DOMContentLoaded', fetchWeatherData);
+
+        // Auto-refresh every 10 minutes
+        setInterval(fetchWeatherData, 10 * 60 * 1000);
+    </script>
+</body>
+</html>
