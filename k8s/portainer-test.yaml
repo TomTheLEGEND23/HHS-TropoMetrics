@@ -9,7 +9,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: tropometrics
-  namespace: tropometrics-test
+  namespace: tropometrics
   labels:
     app: tropometrics
     environment: testing
@@ -57,7 +57,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: tropometrics-service
-  namespace: tropometrics-test
+  namespace: tropometrics
   labels:
     environment: testing
 spec:
