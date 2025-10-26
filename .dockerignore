@@ -1,0 +1,16 @@
+# Git files
+.git
+.gitignore
+
+# GitHub workflows
+.github
+
+# Documentation
+README.md
+
+# Kubernetes manifests (not needed in container)
+k8s/
+
+# Docker files (not needed in container)
+docker-compose.yml
+Dockerfile
