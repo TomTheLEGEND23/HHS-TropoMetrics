@@ -10,6 +10,7 @@ README.md
 
 # Kubernetes manifests (not needed in container)
 k8s/
+k3s/
 
 # Docker files (not needed in container)
 docker-compose.yml

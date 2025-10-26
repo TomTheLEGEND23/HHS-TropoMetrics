@@ -85,14 +85,17 @@ Simply open `index.html` in any modern web browser. The weather data will be fet
 ```
 ├── .github/
 │   └── workflows/
-│       └── deploy-kubernetes.yml  # CI/CD pipeline for container builds
+│       └── build-deploy.yml     # CI/CD pipeline for container builds
+├── Website/
+│   ├── index.html               # Main weather dashboard
+│   └── styles.css               # Application styles
 ├── k8s/
-│   └── deployment.yaml           # Kubernetes deployment manifests
+│   └── deployment.yaml          # Kubernetes deployment manifests
+├── .dockerignore                # Docker build exclusions
 ├── .gitignore                   # Git ignore rules
 ├── Dockerfile                   # Container build instructions
 ├── docker-compose.yml           # Portainer stack configuration
-├── index.html                   # Main weather dashboard (static files)
-└── README.md                   # Project documentation
+└── README.md                    # Project documentation
 ```
 
 ## Container Details
