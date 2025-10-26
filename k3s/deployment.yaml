@@ -46,11 +46,29 @@ metadata:
   labels:
     app: tropometrics
 spec:
-  type: NodePort
+  type: ClusterIP
   ports:
   - port: 80
     targetPort: 80
-    nodePort: 30080  # Access via http://YOUR_NODE_IP:30080
     protocol: TCP
   selector:
     app: tropometrics
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tropometrics-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: tropometrics.local  # Change this to your actual domain
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: tropometrics-service
+            port:
+              number: 80
