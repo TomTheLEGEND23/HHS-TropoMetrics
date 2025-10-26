@@ -2,9 +2,9 @@ name: Build and Deploy Container
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, dev, test ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, dev, test ]
 
 env:
   REGISTRY: ghcr.io
@@ -38,6 +38,9 @@ jobs:
           type=ref,event=pr
           type=sha
           type=raw,value=latest,enable={{is_default_branch}}
+          type=raw,value=main,enable=${{ github.ref == 'refs/heads/main' }}
+          type=raw,value=dev,enable=${{ github.ref == 'refs/heads/dev' }}
+          type=raw,value=test,enable=${{ github.ref == 'refs/heads/test' }}
 
     - name: Build and push Docker image
       uses: docker/build-push-action@v5
@@ -47,11 +50,44 @@ jobs:
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
 
+    - name: Set environment info
+      id: env-info
+      run: |
+        BRANCH_NAME=${GITHUB_REF#refs/heads/}
+        case $BRANCH_NAME in
+          main)
+            echo "environment=Production" >> $GITHUB_OUTPUT
+            echo "namespace=tropometrics-prod" >> $GITHUB_OUTPUT
+            echo "port=30080" >> $GITHUB_OUTPUT
+            ;;
+          dev)
+            echo "environment=Development" >> $GITHUB_OUTPUT
+            echo "namespace=tropometrics-dev" >> $GITHUB_OUTPUT
+            echo "port=30081" >> $GITHUB_OUTPUT
+            ;;
+          test)
+            echo "environment=Testing" >> $GITHUB_OUTPUT
+            echo "namespace=tropometrics-test" >> $GITHUB_OUTPUT
+            echo "port=30082" >> $GITHUB_OUTPUT
+            ;;
+          *)
+            echo "environment=Feature" >> $GITHUB_OUTPUT
+            echo "namespace=tropometrics-feature" >> $GITHUB_OUTPUT
+            echo "port=30083" >> $GITHUB_OUTPUT
+            ;;
+        esac
+        echo "branch=$BRANCH_NAME" >> $GITHUB_OUTPUT
+
     - name: Deployment notification
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      if: github.event_name == 'push'
       run: |
         echo "✅ Docker image built and pushed successfully!"
-        echo "🐳 Image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest"
+        echo "🏷️  Branch: ${{ steps.env-info.outputs.branch }}"
+        echo "🌍 Environment: ${{ steps.env-info.outputs.environment }}"
+        echo "🐳 Image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.env-info.outputs.branch }}"
+        echo "📦 Namespace: ${{ steps.env-info.outputs.namespace }}"
         echo "🚀 Portainer will automatically detect changes and redeploy"
-        echo "📍 Access via http://YOUR_SERVER_IP:8080 (Docker Compose)"
-        echo "📍 Or http://YOUR_NODE_IP:30080 (Kubernetes NodePort)"
+        echo "📍 Access via http://YOUR_NODE_IP:${{ steps.env-info.outputs.port }}"
+        echo ""
+        echo "� Deploy Command:"
+        echo "kubectl apply -f k8s/portainer-${{ steps.env-info.outputs.branch }}.yaml"
