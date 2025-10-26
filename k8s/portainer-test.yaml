@@ -1,14 +1,14 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: tropometrics-test
+  name: tropometrics
   labels:
     environment: testing
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: tropometrics
+  name: tropometrics-test
   namespace: tropometrics
   labels:
     app: tropometrics
@@ -18,6 +18,7 @@ spec:
   selector:
     matchLabels:
       app: tropometrics
+      environment: testing
   template:
     metadata:
       labels:
@@ -56,15 +57,17 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: tropometrics-service
+  name: tropometrics-test-service
   namespace: tropometrics
   labels:
+    app: tropometrics
     environment: testing
 spec:
   type: NodePort
   selector:
     app: tropometrics
+    environment: testing
   ports:
   - port: 80
     targetPort: 80
-    nodePort: 30082
+    nodePort: 30081
