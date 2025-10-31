@@ -14,8 +14,8 @@ No server-side processing required - perfect for GitHub Pages deployment
 <body>
     <div class="container">
         <div class="header">
-            <h1>🌤️ TropoMetrics</h1>
-            <p>Real-time Weather Data Worldwide!!!</p>
+            <h1> TropoMetrics</h1>
+            <p>De weerdienst voor de agrarische sector!!</p>
         </div>
 
         <div class="search-container">
@@ -27,81 +27,66 @@ No server-side processing required - perfect for GitHub Pages deployment
             <button id="searchBtn" class="search-btn">Search</button>
         </div>
 
-        <div id="currentLocation" class="current-location" style="display: none;">
+        <!-- <div id="currentLocation" class="current-location" style="display: none;">
             <span class="location-icon">📍</span>
             <span id="locationName">Leiden, Netherlands</span>
         </div>
 
-        <div id="loading" class="loading">
+         <div id="loading" class="loading">
             <p>Loading weather data...</p>
         </div>
 
         <div id="error" class="error" style="display: none;">
             <p>Failed to load weather data. Please try again later.</p>
-        </div>
+        </div> -->
 
-        <div id="weather-content" style="display: none;">
+        <div id="weather-content">
             <div class="weather-grid">
                 <div class="weather-card">
-                    <h2><span class="icon">🌡️</span>Current Weather</h2>
+                    <h2><span class=/span>Temperatuur</h2>
                     <div class="current-temp" id="current-temp">--°C</div>
                     <div class="weather-detail">
-                        <span class="detail-label">Feels like</span>
+                        <span class="detail-label">Min. Temp</span>
                         <span class="detail-value" id="feels-like">--°C</span>
                     </div>
                     <div class="weather-detail">
-                        <span class="detail-label">Weather Code</span>
+                        <span class="detail-label">Max. Temp</span>
                         <span class="detail-value" id="weather-code">--</span>
                     </div>
                     <div class="weather-detail">
-                        <span class="detail-label">Time</span>
+                        <span class="detail-label">Avg. Temp</span>
                         <span class="detail-value" id="current-time">--</span>
                     </div>
                 </div>
 
-                <div class="weather-card">
-                    <h2><span class="icon">💨</span>Wind & Atmosphere</h2>
+                <div class="weather-card"> <!-- hier komt een  --> <!--   -->
+                    <h2><span class=/span>Advies</h2>
                     <div class="weather-detail">
-                        <span class="detail-label">Wind Speed</span>
+                        <span class="detail-label">Wind Speed</span> 
                         <span class="detail-value" id="wind-speed">-- km/h</span>
-                    </div>
-                    <div class="weather-detail">
-                        <span class="detail-label">Wind Direction</span>
-                        <span class="detail-value" id="wind-direction">--°</span>
-                    </div>
-                    <div class="weather-detail">
-                        <span class="detail-label">Humidity</span>
-                        <span class="detail-value" id="humidity">--%</span>
-                    </div>
-                    <div class="weather-detail">
-                        <span class="detail-label">Pressure</span>
-                        <span class="detail-value" id="pressure">-- hPa</span>
                     </div>
                 </div>
 
                 <div class="weather-card">
-                    <h2><span class="icon">☀️</span>Sun & Visibility</h2>
+                    <h2><span class=/span>Neerslag</h2>
                     <div class="weather-detail">
-                        <span class="detail-label">UV Index</span>
+                        <span class="detail-label">Laatste neerslag</span>
                         <span class="detail-value" id="uv-index">--</span>
                     </div>
                     <div class="weather-detail">
-                        <span class="detail-label">Visibility</span>
-                        <span class="detail-value" id="visibility">-- km</span>
+                        <span class="detail-label">Luchtvochtigheid</span>
+                        <span class="detail-value" id="visibility">--%</span>
                     </div>
                     <div class="weather-detail">
-                        <span class="detail-label">Cloud Cover</span>
-                        <span class="detail-value" id="cloud-cover">--%</span>
+                        <span class="detail-label">Zonuren</span>
+                        <span class="detail-value" id="cloud-cover">--hr</span>
                     </div>
-                    <div class="weather-detail">
-                        <span class="detail-label">Precipitation</span>
-                        <span class="detail-value" id="precipitation">-- mm</span>
-                    </div>
+
                 </div>
             </div>
 
             <div class="forecast-container">
-                <h2 class="forecast-title"><span class="icon">📅</span>7-Day Forecast</h2>
+                <h2 class="forecast-title"><span class=/span>5-Daagse voorspelling</h2>
                 <div class="forecast-grid" id="forecast-grid">
                     <!-- Forecast data will be populated here -->
                 </div>
@@ -113,242 +98,6 @@ No server-side processing required - perfect for GitHub Pages deployment
         </div>
     </div>
 
-    <script>
-        // Default location: Leiden, Netherlands
-        let currentLocation = {
-            latitude: 52.1601,
-            longitude: 4.4970,
-            name: "Leiden, Netherlands",
-            timezone: "Europe/Amsterdam"
-        };
 
-        // Weather code descriptions
-        const weatherCodes = {
-            0: 'Clear sky',
-            1: 'Mainly clear',
-            2: 'Partly cloudy',
-            3: 'Overcast',
-            45: 'Fog',
-            48: 'Depositing rime fog',
-            51: 'Light drizzle',
-            53: 'Moderate drizzle',
-            55: 'Dense drizzle',
-            56: 'Light freezing drizzle',
-            57: 'Dense freezing drizzle',
-            61: 'Slight rain',
-            63: 'Moderate rain',
-            65: 'Heavy rain',
-            66: 'Light freezing rain',
-            67: 'Heavy freezing rain',
-            71: 'Slight snow fall',
-            73: 'Moderate snow fall',
-            75: 'Heavy snow fall',
-            77: 'Snow grains',
-            80: 'Slight rain showers',
-            81: 'Moderate rain showers',
-            82: 'Violent rain showers',
-            85: 'Slight snow showers',
-            86: 'Heavy snow showers',
-            95: 'Thunderstorm',
-            96: 'Thunderstorm with slight hail',
-            99: 'Thunderstorm with heavy hail'
-        };
 
-        // Search for city coordinates using OpenMeteo Geocoding API
-        async function searchCity(cityName) {
-            try {
-                const searchBtn = document.getElementById('searchBtn');
-                searchBtn.disabled = true;
-                searchBtn.textContent = 'Searching...';
 
-                const geocodingUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(cityName)}&count=1&language=en&format=json`;
-                
-                const response = await fetch(geocodingUrl);
-                if (!response.ok) {
-                    throw new Error('Failed to search for city');
-                }
-
-                const data = await response.json();
-                
-                if (!data.results || data.results.length === 0) {
-                    throw new Error('City not found. Please try a different city name.');
-                }
-
-                const result = data.results[0];
-                
-                // Update current location
-                currentLocation = {
-                    latitude: result.latitude,
-                    longitude: result.longitude,
-                    name: `${result.name}${result.admin1 ? ', ' + result.admin1 : ''}${result.country ? ', ' + result.country : ''}`,
-                    timezone: result.timezone || 'UTC'
-                };
-
-                // Update location display
-                document.getElementById('locationName').textContent = currentLocation.name;
-                document.getElementById('currentLocation').style.display = 'block';
-
-                // Fetch weather data for new location
-                await fetchWeatherData();
-
-                searchBtn.disabled = false;
-                searchBtn.textContent = 'Search';
-
-            } catch (error) {
-                console.error('Error searching for city:', error);
-                
-                const searchBtn = document.getElementById('searchBtn');
-                searchBtn.disabled = false;
-                searchBtn.textContent = 'Search';
-                
-                // Show error message
-                showError(`Error: ${error.message}`);
-            }
-        }
-
-        function showError(message) {
-            const errorDiv = document.getElementById('error');
-            errorDiv.querySelector('p').textContent = message;
-            errorDiv.style.display = 'block';
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('weather-content').style.display = 'none';
-            
-            // Hide error after 5 seconds
-            setTimeout(() => {
-                errorDiv.style.display = 'none';
-            }, 5000);
-        }
-
-        async function fetchWeatherData() {
-            try {
-                document.getElementById('loading').style.display = 'block';
-                document.getElementById('error').style.display = 'none';
-                document.getElementById('weather-content').style.display = 'none';
-
-                // Current weather API call
-                const currentWeatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${currentLocation.latitude}&longitude=${currentLocation.longitude}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,rain,showers,snowfall,weather_code,cloud_cover,pressure_msl,surface_pressure,wind_speed_10m,wind_direction_10m,wind_gusts_10m,uv_index,visibility&timezone=${encodeURIComponent(currentLocation.timezone)}&forecast_days=1`;
-                
-                // 7-day forecast API call
-                const forecastUrl = `https://api.open-meteo.com/v1/forecast?latitude=${currentLocation.latitude}&longitude=${currentLocation.longitude}&daily=weather_code,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,sunrise,sunset,daylight_duration,sunshine_duration,uv_index_max,precipitation_sum,rain_sum,showers_sum,snowfall_sum,precipitation_hours,precipitation_probability_max,wind_speed_10m_max,wind_gusts_10m_max,wind_direction_10m_dominant&timezone=${encodeURIComponent(currentLocation.timezone)}&forecast_days=7`;
-
-                const [currentResponse, forecastResponse] = await Promise.all([
-                    fetch(currentWeatherUrl),
-                    fetch(forecastUrl)
-                ]);
-
-                if (!currentResponse.ok || !forecastResponse.ok) {
-                    throw new Error('Failed to fetch weather data');
-                }
-
-                const currentData = await currentResponse.json();
-                const forecastData = await forecastResponse.json();
-
-                displayCurrentWeather(currentData);
-                displayForecast(forecastData);
-                
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('weather-content').style.display = 'block';
-                
-                // Update last updated time
-                const now = new Date();
-                const timeOptions = { 
-                    timeZone: currentLocation.timezone, 
-                    year: 'numeric', 
-                    month: 'short', 
-                    day: 'numeric', 
-                    hour: '2-digit', 
-                    minute: '2-digit' 
-                };
-                document.getElementById('last-updated').textContent = 
-                    `Last updated: ${now.toLocaleString('en-GB', timeOptions)} (${currentLocation.timezone})`;
-
-            } catch (error) {
-                console.error('Error fetching weather data:', error);
-                showError('Failed to load weather data. Please try again later.');
-            }
-        }
-
-        function displayCurrentWeather(data) {
-            const current = data.current;
-            
-            document.getElementById('current-temp').textContent = `${Math.round(current.temperature_2m)}°C`;
-            document.getElementById('feels-like').textContent = `${Math.round(current.apparent_temperature)}°C`;
-            document.getElementById('weather-code').textContent = weatherCodes[current.weather_code] || 'Unknown';
-            document.getElementById('current-time').textContent = new Date(current.time).toLocaleTimeString('en-GB', {
-                timeZone: currentLocation.timezone,
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-            
-            document.getElementById('wind-speed').textContent = `${Math.round(current.wind_speed_10m)} km/h`;
-            document.getElementById('wind-direction').textContent = `${current.wind_direction_10m}°`;
-            document.getElementById('humidity').textContent = `${current.relative_humidity_2m}%`;
-            document.getElementById('pressure').textContent = `${Math.round(current.pressure_msl)} hPa`;
-            
-            document.getElementById('uv-index').textContent = current.uv_index || 'N/A';
-            document.getElementById('visibility').textContent = `${(current.visibility / 1000).toFixed(1)} km`;
-            document.getElementById('cloud-cover').textContent = `${current.cloud_cover}%`;
-            document.getElementById('precipitation').textContent = `${current.precipitation} mm`;
-        }
-
-        function displayForecast(data) {
-            const forecastGrid = document.getElementById('forecast-grid');
-            forecastGrid.innerHTML = '';
-            
-            for (let i = 0; i < 7; i++) {
-                const date = new Date(data.daily.time[i]);
-                const dayName = date.toLocaleDateString('en-GB', { weekday: 'short' });
-                const dayDate = date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
-                
-                const forecastDay = document.createElement('div');
-                forecastDay.className = 'forecast-day';
-                
-                forecastDay.innerHTML = `
-                    <div class="forecast-date">${dayName}<br>${dayDate}</div>
-                    <div class="forecast-temps">
-                        <div class="max-temp">${Math.round(data.daily.temperature_2m_max[i])}°</div>
-                        <div class="min-temp">${Math.round(data.daily.temperature_2m_min[i])}°</div>
-                    </div>
-                    <div style="font-size: 0.8rem; color: #718096; margin-top: 5px;">
-                        ${weatherCodes[data.daily.weather_code[i]] || 'Unknown'}
-                    </div>
-                `;
-                
-                forecastGrid.appendChild(forecastDay);
-            }
-        }
-
-        // Event listeners
-        document.addEventListener('DOMContentLoaded', function() {
-            const citySearch = document.getElementById('citySearch');
-            const searchBtn = document.getElementById('searchBtn');
-
-            // Search button click
-            searchBtn.addEventListener('click', function() {
-                const cityName = citySearch.value.trim();
-                if (cityName) {
-                    searchCity(cityName);
-                }
-            });
-
-            // Enter key press in search box
-            citySearch.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    const cityName = citySearch.value.trim();
-                    if (cityName) {
-                        searchCity(cityName);
-                    }
-                }
-            });
-
-            // Load default location (Leiden) on page load
-            document.getElementById('locationName').textContent = currentLocation.name;
-            document.getElementById('currentLocation').style.display = 'block';
-            fetchWeatherData();
-        });
-
-        // Auto-refresh every 10 minutes
-        setInterval(fetchWeatherData, 10 * 60 * 1000);
-    </script>
-</body>
-</html>

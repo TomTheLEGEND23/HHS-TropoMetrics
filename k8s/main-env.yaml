@@ -1,0 +1,118 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: tropometrics
+  labels:
+    environment: production
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tropometrics-main
+  namespace: tropometrics
+  labels:
+    app: tropometrics
+    environment: production
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 2
+  selector:
+    matchLabels:
+      app: tropometrics
+      environment: production
+  template:
+    metadata:
+      labels:
+        app: tropometrics
+        environment: production
+    spec:
+      containers:
+      - name: tropometrics
+        image: ghcr.io/tomthelegend23/hhs-tropometrics:main
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 30
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        env:
+        - name: ENVIRONMENT
+          value: "production"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tropometrics-main-service
+  namespace: tropometrics
+  labels:
+    app: tropometrics
+    environment: production
+spec:
+  type: NodePort
+  selector:
+    app: tropometrics
+    environment: production
+  ports:
+  - port: 80
+    targetPort: 80
+    nodePort: 30080
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: tropometrics-main-hpa
+  namespace: tropometrics
+  labels:
+    app: tropometrics
+    environment: production
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: tropometrics-main
+  minReplicas: 3
+  maxReplicas: 12
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 40
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+      - type: Percent
+        value: 50
+        periodSeconds: 60
+    scaleUp:
+      stabilizationWindowSeconds: 60
+      policies:
+      - type: Percent
+        value: 100
+        periodSeconds: 60
+      - type: Pods
+        value: 2
+        periodSeconds: 60
+      selectPolicy: Max

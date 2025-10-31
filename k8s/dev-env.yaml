@@ -3,41 +3,41 @@ kind: Namespace
 metadata:
   name: tropometrics
   labels:
-    environment: production
+    environment: development
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: tropometrics-main
+  name: tropometrics-dev
   namespace: tropometrics
   labels:
     app: tropometrics
-    environment: production
+    environment: development
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: tropometrics
-      environment: production
+      environment: development
   template:
     metadata:
       labels:
         app: tropometrics
-        environment: production
+        environment: development
     spec:
       containers:
       - name: tropometrics
-        image: ghcr.io/tomthelegend23/hhs-tropometrics:main
+        image: ghcr.io/tomthelegend23/hhs-tropometrics:dev
         imagePullPolicy: Always
         ports:
         - containerPort: 80
         resources:
           requests:
-            memory: "64Mi"
-            cpu: "100m"
+            memory: "32Mi"
+            cpu: "50m"
           limits:
-            memory: "256Mi"
-            cpu: "500m"
+            memory: "128Mi"
+            cpu: "200m"
         livenessProbe:
           httpGet:
             path: /
@@ -52,22 +52,24 @@ spec:
           periodSeconds: 10
         env:
         - name: ENVIRONMENT
-          value: "production"
+          value: "development"
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: tropometrics-main-service
+  name: tropometrics-dev-service
   namespace: tropometrics
   labels:
     app: tropometrics
-    environment: production
+    environment: development
 spec:
   type: NodePort
   selector:
     app: tropometrics
-    environment: production
+    environment: development
   ports:
   - port: 80
     targetPort: 80
-    nodePort: 30080
+    nodePort: 30082
+
+    ###
