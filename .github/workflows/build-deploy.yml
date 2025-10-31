@@ -57,22 +57,22 @@ jobs:
         case $BRANCH_NAME in
           main)
             echo "environment=Production" >> $GITHUB_OUTPUT
-            echo "namespace=tropometrics-prod" >> $GITHUB_OUTPUT
+            echo "namespace=tropometrics" >> $GITHUB_OUTPUT
             echo "port=30080" >> $GITHUB_OUTPUT
             ;;
           dev)
             echo "environment=Development" >> $GITHUB_OUTPUT
-            echo "namespace=tropometrics-dev" >> $GITHUB_OUTPUT
-            echo "port=30081" >> $GITHUB_OUTPUT
+            echo "namespace=tropometrics" >> $GITHUB_OUTPUT
+            echo "port=30082" >> $GITHUB_OUTPUT
             ;;
           test)
             echo "environment=Testing" >> $GITHUB_OUTPUT
-            echo "namespace=tropometrics-test" >> $GITHUB_OUTPUT
-            echo "port=30082" >> $GITHUB_OUTPUT
+            echo "namespace=tropometrics" >> $GITHUB_OUTPUT
+            echo "port=30081" >> $GITHUB_OUTPUT
             ;;
           *)
             echo "environment=Feature" >> $GITHUB_OUTPUT
-            echo "namespace=tropometrics-feature" >> $GITHUB_OUTPUT
+            echo "namespace=tropometrics" >> $GITHUB_OUTPUT
             echo "port=30083" >> $GITHUB_OUTPUT
             ;;
         esac
