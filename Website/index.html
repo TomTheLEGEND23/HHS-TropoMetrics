@@ -44,26 +44,25 @@ No server-side processing required - perfect for GitHub Pages deployment
             <div class="weather-grid">
                 <div class="weather-card">
                     <h2><span class=/span>Temperatuur</h2>
-                    <div class="current-temp" id="current-temp">--°C</div>
+                    <div class="current-temp" id="temp-current">--°C</div>
                     <div class="weather-detail">
                         <span class="detail-label">Min. Temp</span>
-                        <span class="detail-value" id="feels-like">--°C</span>
+                        <span class="detail-value" id="temp-min">--°C</span>
                     </div>
                     <div class="weather-detail">
                         <span class="detail-label">Max. Temp</span>
-                        <span class="detail-value" id="weather-code">--</span>
+                        <span class="detail-value" id="temp-max">--</span>
                     </div>
                     <div class="weather-detail">
                         <span class="detail-label">Avg. Temp</span>
-                        <span class="detail-value" id="current-time">--</span>
+                        <span class="detail-value" id="temp-avg">--</span>
                     </div>
                 </div>
 
                 <div class="weather-card"> <!-- hier komt een  --> <!--   -->
                     <h2><span class=/span>Advies</h2>
                     <div class="weather-detail">
-                        <span class="detail-label">Wind Speed</span> 
-                        <span class="detail-value" id="wind-speed">-- km/h</span>
+                        <span class="detail-value" id="advice">--</span>
                     </div>
                 </div>
 
@@ -71,15 +70,15 @@ No server-side processing required - perfect for GitHub Pages deployment
                     <h2><span class=/span>Neerslag</h2>
                     <div class="weather-detail">
                         <span class="detail-label">Laatste neerslag</span>
-                        <span class="detail-value" id="uv-index">--</span>
+                        <span class="detail-value" id="last-rain">--</span>
                     </div>
                     <div class="weather-detail">
                         <span class="detail-label">Luchtvochtigheid</span>
-                        <span class="detail-value" id="visibility">--%</span>
+                        <span class="detail-value" id="humidity">--%</span>
                     </div>
                     <div class="weather-detail">
                         <span class="detail-label">Zonuren</span>
-                        <span class="detail-value" id="cloud-cover">--hr</span>
+                        <span class="detail-value" id="solar-hours">--hr</span>
                     </div>
 
                 </div>
@@ -97,7 +96,8 @@ No server-side processing required - perfect for GitHub Pages deployment
             <!-- Last updated time will be shown here -->
         </div>
     </div>
-
+    <script src="code/data-weather.js"></script>
+</body>
 
 
 
