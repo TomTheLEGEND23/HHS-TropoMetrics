@@ -11,7 +11,7 @@ const test_user = {
 async function getData(location) {
     const coordinates = getCoordinates();
 
-    const api_request = `https://api.open-meteo.com/v1/forecast?latitude=${encodeURIComponent(coordinates.latitude)}&longitude=${encodeURIComponent(coordinates.longitude)}&daily=temperature_2m_max,temperature_2m_min,daylight_duration&hourly=precipitation,relative_humidity_2m&current=temperature_2m`;
+    const api_request = `https://api.open-meteo.com/v1/forecast?latitude=${encodeURIComponent(coordinates.latitude)}&longitude=${encodeURIComponent(coordinates.longitude)}&daily=temperature_2m_max,temperature_2m_min,daylight_duration&hourly=precipitation,relative_humidity_2m&current=temperature_2m&timezone=Europe%2FBerlin`;
 
     // Get the data from the api
     const weather_response = await fetch(api_request);
@@ -35,6 +35,8 @@ function displayData(weather_data) {
     displayAdvice(weather_data);
 
     displayRightColumn(weather_data);
+
+    displayPrediction(weather_data);
 }
 
 
@@ -91,6 +93,72 @@ function displayRightColumn(weather_data){
     solar_text = document.getElementById("solar-hours");
     const solar_data = weather_data.daily.daylight_duration;
     solar_text.textContent = Math.round(solar_data[0] / 3600) + " uur en " + Math.round((solar_data[0] % 3600) / 60) + " minuten.";
+}
+
+
+function displayPrediction(weather_data){
+    const precipitationGrid = document.getElementById('precipitation-grid');
+
+    const date = new Date();
+    let time_hour = date.getHours();
+
+    if (time_hour > 0){
+        const rest = time_hour % 6;
+        time_hour -= rest;
+    }
+
+    const time_line_graph = 24 * 5 + time_hour;
+
+    if (weather_data.hourly.length < time_line_graph){
+        // Error
+    }
+
+    let precipitation_5days = [];
+    let amount = 0;
+    let max_precipitation = 0.1;
+    for (let i = time_hour; i < time_line_graph; i++) {
+        amount += weather_data.hourly.precipitation[i];
+
+        if ((i % 6) == 0 && i != 0){
+            precipitation_5days.push(amount);
+            if (max_precipitation < amount){
+                max_precipitation = amount;
+            }
+            amount = 0;
+        }        
+    }
+
+    if (max_precipitation < 1){
+        max_precipitation *= 2;
+    } else {
+        max_precipitation += 2;
+    }
+
+    // Implement y-axis
+    const precipitation_text_max = document.getElementById('max-precipitation');
+    precipitation_text_max.textContent = max_precipitation + "mm";
+    const precipitation_text_middle = document.getElementById('middle-precipitation');
+    precipitation_text_middle.textContent = max_precipitation/2 + "mm";
+
+    // Implement bars
+    for (let i = 0; i < precipitation_5days.length; i++){
+        let height_bar = precipitation_5days[i] * 200 / max_precipitation;
+
+        const precipitation_bar = document.createElement('div');
+        precipitation_bar.className = 'bar-histogram';
+        precipitation_bar.style = "height: " + height_bar +"px;";
+        precipitation_bar.title = "Day 1 - " + time_hour + ": " + precipitation_5days[i] + "mm";
+
+        precipitationGrid.appendChild(precipitation_bar);
+
+        time_hour = (time_hour + 6) % 24;
+        
+        if (time_hour == 0){
+            const day_divider = document.createElement('div');
+            day_divider.className = 'day-divider';
+            precipitationGrid.appendChild(day_divider);
+        }
+    }
 }
 
 
