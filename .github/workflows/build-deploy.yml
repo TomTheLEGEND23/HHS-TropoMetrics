@@ -86,8 +86,3 @@ jobs:
         echo "🌍 Environment: ${{ steps.env-info.outputs.environment }}"
         echo "🐳 Image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.env-info.outputs.branch }}"
         echo "📦 Namespace: ${{ steps.env-info.outputs.namespace }}"
-        echo "🚀 Portainer will automatically detect changes and redeploy"
-        echo "📍 Access via http://YOUR_NODE_IP:${{ steps.env-info.outputs.port }}"
-        echo ""
-        echo "� Deploy Command:"
-        echo "kubectl apply -f k8s/portainer-${{ steps.env-info.outputs.branch }}.yaml"
