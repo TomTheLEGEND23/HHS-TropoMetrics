@@ -95,8 +95,4 @@ function getCoordinates(){
     return coordinates;
 }
 
-
-// Get forcast data
-let coordinates = 
-
 getData();
