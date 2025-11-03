@@ -14,7 +14,7 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       packages: write
 
     steps:
@@ -80,8 +80,12 @@ jobs:
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
         git add k8s/main-env.yaml
-        git diff-index --quiet HEAD || git commit -m "🔄 Update deployment timestamp [skip ci]"
-        git push
+        if git diff-index --quiet HEAD; then
+          echo "No changes to commit"
+        else
+          git commit -m "🔄 Update deployment timestamp [skip ci]"
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
+        fi
 
     - name: Update manifest timestamp (Development)
       if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
@@ -91,8 +95,12 @@ jobs:
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
         git add k8s/dev-env.yaml
-        git diff-index --quiet HEAD || git commit -m "🔄 Update deployment timestamp [skip ci]"
-        git push
+        if git diff-index --quiet HEAD; then
+          echo "No changes to commit"
+        else
+          git commit -m "🔄 Update deployment timestamp [skip ci]"
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:dev
+        fi
 
     - name: Deployment notification
       if: github.event_name == 'push'
