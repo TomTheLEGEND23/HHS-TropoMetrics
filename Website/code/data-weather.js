@@ -1,7 +1,9 @@
 /* Get the data */
 //The request to the API
-async function getData() {
-    const api_request = `https://api.open-meteo.com/v1/forecast?latitude=52.012&longitude=4.380&daily=temperature_2m_max,temperature_2m_min,daylight_duration&hourly=precipitation,relative_humidity_2m&current=temperature_2m`;
+async function getData(location) {
+    const coordinates = getCoordinates();
+
+    const api_request = `https://api.open-meteo.com/v1/forecast?latitude=${encodeURIComponent(coordinates.latitude)}&longitude=${encodeURIComponent(coordinates.longitude)}&daily=temperature_2m_max,temperature_2m_min,daylight_duration&hourly=precipitation,relative_humidity_2m&current=temperature_2m`;
 
     // Get the data from the api
     const weather_response = await fetch(api_request);
@@ -84,5 +86,13 @@ function displayRightColumn(weather_data){
 }
 
 
-// Data 
+function getCoordinates(){
+    const coordinates = {
+        latitude: 52.012,
+        longitude: 4.380
+    }
+
+    return coordinates;
+}
+
 getData();
