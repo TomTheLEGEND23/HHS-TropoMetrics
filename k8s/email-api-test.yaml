@@ -1,7 +1,9 @@
 ---
-# Quick test deployment for email API
+# TropoMetrics Test Stack
+# Portainer Stack for testing email backend + frontend integration
 # Deploy with: kubectl apply -f k8s/email-api-test.yaml
 # Delete with: kubectl delete -f k8s/email-api-test.yaml
+# Portainer: Create stack from Git repository pointing to this file
 
 apiVersion: apps/v1
 kind: Deployment
@@ -10,6 +12,8 @@ metadata:
   namespace: tropometrics
   labels:
     app: email-api-test
+    stack: tropometrics-feature-Email-backend
+    component: email-api
 spec:
   replicas: 1
   selector:
@@ -19,6 +23,8 @@ spec:
     metadata:
       labels:
         app: email-api-test
+        stack: tropometrics-feature-Email-backend
+        component: email-api
     spec:
       containers:
       - name: email-api
@@ -50,6 +56,8 @@ metadata:
   namespace: tropometrics
   labels:
     app: email-api-test
+    stack: tropometrics-feature-Email-backend
+    component: email-api
 spec:
   type: NodePort
   selector:
@@ -67,6 +75,8 @@ metadata:
   namespace: tropometrics
   labels:
     app: frontend-test
+    stack: tropometrics-feature-Email-backend
+    component: frontend
 spec:
   replicas: 1
   selector:
@@ -76,6 +86,8 @@ spec:
     metadata:
       labels:
         app: frontend-test
+        stack: tropometrics-feature-Email-backend
+        component: frontend
     spec:
       containers:
       - name: frontend
@@ -94,6 +106,8 @@ metadata:
   namespace: tropometrics
   labels:
     app: frontend-test
+    stack: tropometrics-feature-Email-backend
+    component: frontend
 spec:
   type: NodePort
   selector:
