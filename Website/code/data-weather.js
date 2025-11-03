@@ -1,3 +1,11 @@
+/* TEST USER */
+const test_user = {
+    email: "klant@tropometrics.nl",
+    api_key: "f7fdaa2c-d204-4083-9ca9-34d7bdec25ac",
+    latitude: 52.012,
+    longitude: 4.380
+} 
+
 /* Get the data */
 //The request to the API
 async function getData(location) {
@@ -88,11 +96,12 @@ function displayRightColumn(weather_data){
 
 function getCoordinates(){
     const coordinates = {
-        latitude: 52.012,
-        longitude: 4.380
+        latitude: test_user.latitude,
+        longitude: test_user.longitude
     }
 
     return coordinates;
 }
+
 
 getData();
