@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
       - name: email-api
-        image: ghcr.io/tomthelegend23/hhs-tropometrics-email-api:dev
+        image: ghcr.io/tomthelegend23/hhs-tropometrics-email-api:feature-Email-backend
         imagePullPolicy: Always
         ports:
         - containerPort: 8000
@@ -79,7 +79,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: ghcr.io/tomthelegend23/hhs-tropometrics:dev
+        image: ghcr.io/tomthelegend23/hhs-tropometrics:feature-Email-backend
         imagePullPolicy: Always
         ports:
         - containerPort: 80
