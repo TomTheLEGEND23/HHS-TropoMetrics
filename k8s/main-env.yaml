@@ -29,6 +29,9 @@ spec:
       labels:
         app: tropometrics
         environment: production
+      annotations:
+        # This annotation forces redeployment when updated
+        kubectl.kubernetes.io/restartedAt: "2025-11-03T00:00:00Z"
     spec:
       containers:
       - name: tropometrics
@@ -58,6 +61,21 @@ spec:
         env:
         - name: ENVIRONMENT
           value: "production"
+        - name: EMAIL_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: tropometrics-email-secrets
+              key: Email-Username
+        - name: EMAIL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: tropometrics-email-secrets
+              key: Email-Password
+        - name: EMAIL_SERVER
+          valueFrom:
+            secretKeyRef:
+              name: tropometrics-email-secrets
+              key: Email-Server
 ---
 apiVersion: v1
 kind: Service

@@ -76,3 +76,8 @@ temp/
 
 # GitHub Pages
 Gemfile.lock
+
+# Kubernetes Secrets (never commit!)
+k8s/secrets.yaml
+k8s/*-secrets.yaml
+**/secrets.yaml

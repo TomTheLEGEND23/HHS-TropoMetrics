@@ -2,9 +2,9 @@ name: Build and Deploy Container
 
 on:
   push:
-    branches: [ main, dev, test ]
+    branches: [ main, dev ]
   pull_request:
-    branches: [ main, dev, test ]
+    branches: [ main, dev ]
 
 env:
   REGISTRY: ghcr.io
@@ -40,7 +40,6 @@ jobs:
           type=raw,value=latest,enable={{is_default_branch}}
           type=raw,value=main,enable=${{ github.ref == 'refs/heads/main' }}
           type=raw,value=dev,enable=${{ github.ref == 'refs/heads/dev' }}
-          type=raw,value=test,enable=${{ github.ref == 'refs/heads/test' }}
 
     - name: Build and push Docker image
       uses: docker/build-push-action@v5
@@ -63,20 +62,37 @@ jobs:
           dev)
             echo "environment=Development" >> $GITHUB_OUTPUT
             echo "namespace=tropometrics" >> $GITHUB_OUTPUT
-            echo "port=30082" >> $GITHUB_OUTPUT
-            ;;
-          test)
-            echo "environment=Testing" >> $GITHUB_OUTPUT
-            echo "namespace=tropometrics" >> $GITHUB_OUTPUT
             echo "port=30081" >> $GITHUB_OUTPUT
             ;;
           *)
             echo "environment=Feature" >> $GITHUB_OUTPUT
             echo "namespace=tropometrics" >> $GITHUB_OUTPUT
-            echo "port=30083" >> $GITHUB_OUTPUT
+            echo "port=30082" >> $GITHUB_OUTPUT
             ;;
         esac
         echo "branch=$BRANCH_NAME" >> $GITHUB_OUTPUT
+
+    - name: Update manifest timestamp (Production)
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      run: |
+        TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+        sed -i "s|kubectl.kubernetes.io/restartedAt:.*|kubectl.kubernetes.io/restartedAt: \"$TIMESTAMP\"|g" k8s/main-env.yaml
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git add k8s/main-env.yaml
+        git diff-index --quiet HEAD || git commit -m "🔄 Update deployment timestamp [skip ci]"
+        git push
+
+    - name: Update manifest timestamp (Development)
+      if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
+      run: |
+        TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+        sed -i "s|kubectl.kubernetes.io/restartedAt:.*|kubectl.kubernetes.io/restartedAt: \"$TIMESTAMP\"|g" k8s/dev-env.yaml
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git add k8s/dev-env.yaml
+        git diff-index --quiet HEAD || git commit -m "🔄 Update deployment timestamp [skip ci]"
+        git push
 
     - name: Deployment notification
       if: github.event_name == 'push'
