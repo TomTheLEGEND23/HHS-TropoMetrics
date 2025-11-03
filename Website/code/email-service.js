@@ -1,103 +1,84 @@
 /**
- * TropoMetrics Email Service - Simple Client-Side Email
- * 
- * This uses EmailJS service (https://www.emailjs.com/) to send emails directly from the browser.
- * EmailJS provides a free tier: 200 emails/month
- * 
- * SETUP:
- * 1. Sign up at https://www.emailjs.com/
- * 2. Add Gmail service and verify your email
- * 3. Create an email template
- * 4. Get your Public Key, Service ID, and Template ID
- * 5. Update the credentials in email-config.js
- * 
- * NOTE: Configuration is loaded from email-config.js
- * Make sure to include email-config.js BEFORE this file in your HTML
+ * TropoMetrics Email Service
+ * Secure email sending via backend API
+ * Credentials never exposed to client
  */
 
 /**
- * Initialize EmailJS (loads the library if not already loaded)
- */
-async function initEmailJS() {
-    // Check if config is loaded
-    if (typeof window.EMAIL_CONFIG === 'undefined') {
-        throw new Error('Email configuration not loaded. Make sure to include email-config.js before email-service.js');
-    }
-
-    if (typeof emailjs !== 'undefined') {
-        return; // Already loaded
-    }
-    
-    // Load EmailJS library
-    return new Promise((resolve, reject) => {
-        const script = document.createElement('script');
-        script.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js';
-        script.onload = () => {
-            emailjs.init(window.EMAIL_CONFIG.publicKey);
-            resolve();
-        };
-        script.onerror = reject;
-        document.head.appendChild(script);
-    });
-}
-
-/**
- * Send an email using EmailJS
+ * Send an email via the backend API
  * @param {string} to - Recipient email address
  * @param {string} subject - Email subject
- * @param {string} message - Email message/text
- * @returns {Promise<Object>} Response object with success status
+ * @param {string} body - Email body content
+ * @param {boolean} html - Whether body is HTML (default: false)
+ * @returns {Promise<Object>} Response from API
  */
-async function sendEmail(to, subject, message) {
+async function sendEmail(to, subject, body, html = false) {
+    // Check if EMAIL_CONFIG is loaded
+    if (typeof EMAIL_CONFIG === 'undefined' || !EMAIL_CONFIG.apiUrl) {
+        throw new Error('Email API not configured. Please contact administrator.');
+    }
+
     try {
-        // Validate inputs
-        if (!to || !subject || !message) {
-            throw new Error('Missing required fields: to, subject, and message are required');
+        const response = await fetch(`${EMAIL_CONFIG.apiUrl}/api/send-email`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                to: to,
+                subject: subject,
+                body: body,
+                html: html
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.detail || 'Failed to send email');
         }
-
-        // Validate email format
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(to)) {
-            throw new Error('Invalid email address format');
-        }
-
-        console.log('📧 Sending email to:', to);
-
-        // Initialize EmailJS
-        await initEmailJS();
-
-        // Send email via EmailJS
-        const templateParams = {
-            to_email: to,
-            subject: subject,
-            message: message,
-            from_name: 'TropoMetrics Weather Service'
-        };
-
-        const response = await emailjs.send(
-            window.EMAIL_CONFIG.serviceId,
-            window.EMAIL_CONFIG.templateId,
-            templateParams
-        );
-
-        console.log('✅ Email sent successfully:', response);
 
         return {
             success: true,
-            message: 'Email sent successfully',
-            data: response
+            message: data.message
         };
-
     } catch (error) {
-        console.error('❌ Email sending failed:', error);
-        
+        console.error('Email sending failed:', error);
         return {
             success: false,
-            message: error.message || 'Failed to send email',
-            error: error.text || error.message
+            error: error.message
         };
     }
 }
 
-// Make function available globally
-window.sendEmail = sendEmail;
+/**
+ * Send a simple test email
+ * @param {string} to - Recipient email address
+ * @returns {Promise<Object>} Response from API
+ */
+async function sendTestEmail(to) {
+    return await sendEmail(
+        to,
+        'Test Email from TropoMetrics',
+        'This is a test email sent from the TropoMetrics weather dashboard.',
+        false
+    );
+}
+
+/**
+ * Check if email service is available
+ * @returns {Promise<boolean>} True if service is available
+ */
+async function checkEmailService() {
+    if (typeof EMAIL_CONFIG === 'undefined' || !EMAIL_CONFIG.apiUrl) {
+        return false;
+    }
+
+    try {
+        const response = await fetch(`${EMAIL_CONFIG.apiUrl}/health`);
+        return response.ok;
+    } catch (error) {
+        console.error('Email service health check failed:', error);
+        return false;
+    }
+}

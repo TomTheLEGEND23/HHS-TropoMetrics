@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Service Test - TropoMetrics</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        input, textarea, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: none;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .success {
+            background: rgba(76, 175, 80, 0.3);
+        }
+        .error {
+            background: rgba(244, 67, 54, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Secure Email Service Test</h1>
+        <p>Test the backend email API (credentials never exposed to browser)</p>
+        
+        <input type="email" id="to" placeholder="Recipient Email" required>
+        <input type="text" id="subject" placeholder="Subject" value="Test from TropoMetrics" required>
+        <textarea id="body" rows="5" placeholder="Email body...">This is a test email sent via the secure backend API!</textarea>
+        
+        <button onclick="testEmail()">📧 Send Email</button>
+        <button onclick="checkHealth()">🏥 Check Service Health</button>
+        
+        <div id="result"></div>
+    </div>
+
+    <!-- Load email configuration and service -->
+    <script src="code/email-config.js"></script>
+    <script src="code/email-service.js"></script>
+    
+    <script>
+        async function testEmail() {
+            const to = document.getElementById('to').value;
+            const subject = document.getElementById('subject').value;
+            const body = document.getElementById('body').value;
+            const result = document.getElementById('result');
+            
+            if (!to || !subject || !body) {
+                result.className = 'error';
+                result.innerHTML = '❌ Please fill in all fields';
+                return;
+            }
+            
+            result.innerHTML = '⏳ Sending email...';
+            
+            const response = await sendEmail(to, subject, body, false);
+            
+            if (response.success) {
+                result.className = 'success';
+                result.innerHTML = `✅ ${response.message}`;
+            } else {
+                result.className = 'error';
+                result.innerHTML = `❌ Failed: ${response.error}`;
+            }
+        }
+        
+        async function checkHealth() {
+            const result = document.getElementById('result');
+            result.innerHTML = '⏳ Checking service health...';
+            
+            const isHealthy = await checkEmailService();
+            
+            if (isHealthy) {
+                result.className = 'success';
+                result.innerHTML = '✅ Email service is healthy and ready!';
+            } else {
+                result.className = 'error';
+                result.innerHTML = '❌ Email service is not available';
+            }
+        }
+        
+        // Check health on page load
+        window.addEventListener('load', checkHealth);
+    </script>
+</body>
+</html>

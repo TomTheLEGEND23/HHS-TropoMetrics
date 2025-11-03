@@ -4,20 +4,18 @@
 
 set -e
 
-echo "🔧 Injecting SMTP email configuration into JavaScript..."
+echo "🔧 Injecting email API configuration into JavaScript..."
 
 # Create code directory if it doesn't exist
 mkdir -p /usr/share/nginx/html/code
 
-# Create the email config file from environment variables
+# Create the email config file with API endpoint
 cat > /usr/share/nginx/html/code/email-config.js <<EOF
-// Auto-generated configuration from Kubernetes secrets
+// Auto-generated configuration from Kubernetes environment
 // DO NOT EDIT - This file is generated at runtime
 
 const EMAIL_CONFIG = {
-    username: '${EMAIL_USERNAME}',
-    password: '${EMAIL_PASSWORD}',
-    server: '${EMAIL_SERVER}'
+    apiUrl: '${EMAIL_API_URL}'
 };
 
 // Make available globally
@@ -26,9 +24,8 @@ if (typeof window !== 'undefined') {
 }
 EOF
 
-echo "✅ Email configuration injected successfully"
-echo "📧 Server: ${EMAIL_SERVER}"
-echo "📧 Username: ${EMAIL_USERNAME}"
+echo "✅ Email API configuration injected successfully"
+echo "📧 API URL: ${EMAIL_API_URL}"
 
 # Start nginx
 exec nginx -g 'daemon off;'

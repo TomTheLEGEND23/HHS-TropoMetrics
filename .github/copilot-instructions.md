@@ -62,6 +62,7 @@ Proxmox server running K3s (lightweight Kubernetes) cluster.
 - Update README.md with deployment instructions and technical details after changes
 - If any information about the infrastructure added/changed, update copilot-instructions.md accordingly
 - Scan codebase for unused code/files and report findings to user for confirmation before removal
+- do not add security vulnerabilities and warn the user is there are any
 
 ## Environment Endpoints
 | Environment | Branch | Port | URL |
@@ -70,9 +71,11 @@ Proxmox server running K3s (lightweight Kubernetes) cluster.
 | Development | dev | 30081 | http://10.0.0.101:30081 |
 
 ## Code Structure
-- **Frontend**: Website/index.html, Website/styles.css
-- **Container**: Dockerfile (nginx:alpine base)
-- **Entrypoint**: docker-entrypoint.sh (secrets injection)
-- **Manifests**: k8s/main-env.yaml, k8s/dev-env.yaml
-- **CI/CD**: .github/workflows/build-deploy.yml
-- **Secrets Template**: k8s/secrets-template.yaml (placeholders only)
+- **Frontend**: Website/index.html, Website/styles.css, Website/code/email-service.js
+- **Frontend Container**: Dockerfile (nginx:alpine base)
+- **Email API**: email-api/main.py (FastAPI backend)
+- **Email API Container**: email-api/Dockerfile (Python 3.11)
+- **Entrypoint**: docker-entrypoint.sh (API URL injection)
+- **Manifests**: k8s/main-env.yaml, k8s/dev-env.yaml (both include email-api deployment)
+- **CI/CD**: .github/workflows/build-deploy.yml (builds both images)
+- **Secrets**: Stored in K8s, accessed only by email-api backend
