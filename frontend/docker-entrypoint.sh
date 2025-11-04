@@ -4,18 +4,22 @@
 
 set -e
 
-echo "🔧 Injecting email API configuration into JavaScript..."
+echo "🔧 Configuring nginx proxy and email API..."
+
+# Process nginx template with environment variables
+export EMAIL_API_URL=${EMAIL_API_URL:-http://tropometrics-email-api-service:8000}
+envsubst '${EMAIL_API_URL}' < /etc/nginx/templates/default.conf.template > /etc/nginx/conf.d/default.conf
 
 # Create code directory if it doesn't exist
 mkdir -p /usr/share/nginx/html/code
 
-# Create the email config file with API endpoint
+# Create the email config file - use relative URL (proxied by nginx)
 cat > /usr/share/nginx/html/code/email-config.js <<EOF
 // Auto-generated configuration from Kubernetes environment
 // DO NOT EDIT - This file is generated at runtime
 
 const EMAIL_CONFIG = {
-    apiUrl: '${EMAIL_API_URL}'
+    apiUrl: ''  // Empty string = same origin, proxied by nginx to backend
 };
 
 // Make available globally
@@ -25,7 +29,8 @@ if (typeof window !== 'undefined') {
 EOF
 
 echo "✅ Email API configuration injected successfully"
-echo "📧 API URL: ${EMAIL_API_URL}"
+echo "📧 Backend API URL: ${EMAIL_API_URL}"
+echo "📧 Frontend uses relative URLs (proxied by nginx)"
 
 # Start nginx
 exec nginx -g 'daemon off;'
