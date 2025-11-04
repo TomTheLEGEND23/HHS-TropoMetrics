@@ -7,9 +7,6 @@ COPY frontend/Website/ /usr/share/nginx/html/
 COPY frontend/docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
 
-# Copy custom nginx configuration (will be processed by entrypoint)
-COPY frontend/nginx.conf /etc/nginx/templates/default.conf.template
-
 # Expose port 80
 EXPOSE 80
 
