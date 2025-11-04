@@ -2,10 +2,12 @@
 const test_user = {
     email: "klant@tropometrics.nl",
     api_key: "f7fdaa2c-d204-4083-9ca9-34d7bdec25ac",
-    // latitude: 52.012,
-    // longitude: 4.380
-    latitude: -5.013,
-    longitude: -58.381
+    latitude: 23.4162,
+    longitude: 25.6628
+     //latitude: 52.012,
+     //longitude: 4.380
+    //latitude: -5.013,
+    //longitude: -58.381
 } 
 
 /* Get the data */
@@ -13,7 +15,7 @@ const test_user = {
 async function getData(location) {
     const coordinates = getCoordinates();
 
-    const api_request = `https://api.open-meteo.com/v1/forecast?latitude=${encodeURIComponent(coordinates.latitude)}&longitude=${encodeURIComponent(coordinates.longitude)}&daily=temperature_2m_max,temperature_2m_min,daylight_duration&hourly=precipitation,relative_humidity_2m&current=temperature_2m&timezone=Europe%2FBerlin`;
+    const api_request = `https://api.open-meteo.com/v1/forecast?latitude=${encodeURIComponent(coordinates.latitude)}&longitude=${encodeURIComponent(coordinates.longitude)}&daily=temperature_2m_max,temperature_2m_min,daylight_duration&hourly=precipitation,relative_humidity_2m,soil_moisture_27_to_81cm&current=temperature_2m&timezone=Europe%2FBerlin`;
 
     // Get the data from the api
     const weather_response = await fetch(api_request);
@@ -61,20 +63,11 @@ function displayTempColumn(weather_data){
 
 function displayAdvice(weather_data){
     advice_text = document.getElementById("advice");
-    water = false;
 
-    rain_data = weather_data.hourly.precipitation;
-    let rain_data_length = rain_data.length;
+    let rain_data = weather_data.hourly.soil_moisture_27_to_81cm;
+    let soil_moisture_27_to_81cm = rain_data[0];
 
-    // Logic for the advice
-    // TODO uitbreiden
-    for (let i = 0; i < rain_data_length; i++){
-        if (rain_data[i] > 10){
-            water = true;
-        }
-    }
-
-    if (water){
+    if (soil_moisture_27_to_81cm <= 0.14){
         advice_text.textContent = "Geef water";
     } else {
         advice_text.textContent = "Water geven is nu niet nodig";
@@ -85,7 +78,9 @@ function displayAdvice(weather_data){
 function displayRightColumn(weather_data){
     // Last rainfall
     // TODO
-
+    soil_moisture_text = document.getElementById("soil-mosture");
+    const soil_moisture_27_to_81cm = weather_data.hourly.soil_moisture_27_to_81cm;
+    soil_moisture_text.textContent = soil_moisture_27_to_81cm[0]*100 + "%";
     // Humidity
     humidity_text = document.getElementById("humidity");
     const humidity_data = weather_data.hourly.relative_humidity_2m;
