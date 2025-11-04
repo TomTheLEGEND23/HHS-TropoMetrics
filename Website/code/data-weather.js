@@ -2,8 +2,10 @@
 const test_user = {
     email: "klant@tropometrics.nl",
     api_key: "f7fdaa2c-d204-4083-9ca9-34d7bdec25ac",
-    latitude: 52.012,
-    longitude: 4.380
+    // latitude: 52.012,
+    // longitude: 4.380
+    latitude: -5.013,
+    longitude: -58.381
 } 
 
 /* Get the data */
@@ -140,6 +142,8 @@ function displayPrediction(weather_data){
     const precipitation_text_middle = document.getElementById('middle-precipitation');
     precipitation_text_middle.textContent = max_precipitation/2 + "mm";
 
+    let day_counter = date.getDate();
+    month_bar = date.getMonth();
     // Implement bars
     for (let i = 0; i < precipitation_5days.length; i++){
         let height_bar = precipitation_5days[i] * 200 / max_precipitation;
@@ -147,16 +151,18 @@ function displayPrediction(weather_data){
         const precipitation_bar = document.createElement('div');
         precipitation_bar.className = 'bar-histogram';
         precipitation_bar.style = "height: " + height_bar +"px;";
-        precipitation_bar.title = "Day 1 - " + time_hour + ": " + precipitation_5days[i] + "mm";
+        precipitation_bar.title = day_counter + "/" + (month_bar+1) + " - " + time_hour + ": " + precipitation_5days[i] + "mm";
 
         precipitationGrid.appendChild(precipitation_bar);
 
         time_hour = (time_hour + 6) % 24;
         
         if (time_hour == 0){
+            day_counter++;
+
             const day_divider = document.createElement('div');
             day_divider.className = 'day-divider';
-            precipitationGrid.appendChild(day_divider);
+            precipitationGrid.appendChild(day_divider);            
         }
     }
 }

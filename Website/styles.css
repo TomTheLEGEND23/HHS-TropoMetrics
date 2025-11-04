@@ -249,6 +249,20 @@ body {
   margin: 0 8px;
 }
 
+.day-label {
+    text-align: center;
+    font-size: 12px;
+    margin-top: 5px;
+    color: #333;
+}
+
+.day-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 4px;
+}
+
 
 .forecast-day {
     text-align: center;
