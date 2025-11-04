@@ -6,9 +6,14 @@ set -e
 
 echo "🔧 Configuring nginx proxy and email API..."
 
-# Process nginx template with environment variables
+# Process nginx template with environment variables (if template exists)
 export EMAIL_API_URL=${EMAIL_API_URL:-http://tropometrics-email-api-service:8000}
-envsubst '${EMAIL_API_URL}' < /etc/nginx/templates/default.conf.template > /etc/nginx/conf.d/default.conf
+if [ -f /etc/nginx/templates/default.conf.template ]; then
+    echo "📝 Processing nginx template..."
+    envsubst '${EMAIL_API_URL}' < /etc/nginx/templates/default.conf.template > /etc/nginx/conf.d/default.conf
+else
+    echo "⚠️  Nginx template not found, using default configuration"
+fi
 
 # Create code directory if it doesn't exist
 mkdir -p /usr/share/nginx/html/code
