@@ -179,9 +179,29 @@ function getCoordinates(){
     // Search button click
     alert_button.addEventListener('click', function() {
         // Code for the email
-        console.log("Hello in button");
+        sendAdviceMail();
     });
  });
 
+
+async function sendAdviceMail(){
+// Get advice from the page
+    const adviceElement = document.getElementById('advice');
+    const advice = adviceElement?.textContent || '';
+    console.log("In de knop");
+
+    if (advice.includes('Geef water')) {
+        console.log("In de mail verzenden");
+        const result = await sendEmail(
+            'tropometrics@gmail.com',
+            'TropoMetrics Watering Advice',
+            `${advice}\n\nBased on current weather conditions, watering is recommended. Check your TropoMetrics dashboard for detailed information.`
+        );
+
+        if (result.success) {
+            console.log('Watering advice sent!');
+        }
+    }
+}
 
 getData();
