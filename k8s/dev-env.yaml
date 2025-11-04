@@ -26,7 +26,7 @@ spec:
         environment: development
       annotations:
         # This annotation forces redeployment when updated
-        kubectl.kubernetes.io/restartedAt: "2025-11-04T11:46:23Z"
+        kubectl.kubernetes.io/restartedAt: "2025-11-04T13:03:08Z"
     spec:
       containers:
       - name: tropometrics
