@@ -21,10 +21,99 @@ Containerized weather dashboard deployed on K3s Kubernetes cluster with automate
 
 - **Real-time Weather Data**: Current temperature, humidity, wind speed, pressure, and more
 - **7-Day Forecast**: Extended weather forecast with daily high/low temperatures
+- **Email Notifications**: Secure backend API for sending weather alerts and reports
 - **Responsive Design**: Works on desktop, tablet, and mobile devices
 - **Auto-scaling**: Production environment scales 3-12 pods based on CPU usage
 - **Rolling Updates**: Zero-downtime deployments with gradual rollout strategy
 - **Secure Configuration**: Secrets stored in K3s, never in Git repository
+
+## Email Feature
+
+The application includes a secure email API backend for sending weather notifications and alerts.
+
+### Architecture
+```
+Browser → Frontend (30081) → Loads email-config.js with API URL
+          ↓
+Browser → Email API (30091) → Authenticates with SMTP
+          ↓
+SMTP Server (Gmail/etc) → Sends email
+```
+
+### Testing the Email Service
+
+Visit the email test page:
+- **Production**: http://10.0.0.101:30080/email-test.html
+- **Development**: http://10.0.0.101:30081/email-test.html
+
+The test page allows you to:
+1. **Check Service Health** - Verify the email API is running
+2. **Send Test Emails** - Enter recipient, subject, and message to send emails
+3. **View Results** - See success/failure messages in real-time
+
+### Using Email in Your Code
+
+```javascript
+// Check if email service is available
+const isHealthy = await checkEmailService();
+
+if (isHealthy) {
+    // Send an email
+    const result = await sendEmail(
+        'recipient@example.com',
+        'Weather Alert',
+        'Heavy rain expected today!'
+    );
+    
+    if (result.success) {
+        console.log('Email sent successfully!');
+    } else {
+        console.error('Failed to send:', result.error);
+    }
+}
+```
+
+### Direct API Access
+
+You can also call the email API directly:
+
+**Check Health:**
+```bash
+curl http://10.0.0.101:30091/health
+# Returns: {"status":"ok"}
+```
+
+**Send Email:**
+```bash
+curl -X POST http://10.0.0.101:30091/api/send-email \
+  -H "Content-Type: application/json" \
+  -d '{
+    "to": "recipient@example.com",
+    "subject": "Test Email",
+    "body": "This is a test message",
+    "html": false
+  }'
+```
+
+### Configuration
+
+The email API requires SMTP credentials stored as Kubernetes secrets:
+
+```yaml
+Name: tropometrics-email-secrets
+Keys:
+  - Email-Username: your-email@gmail.com
+  - Email-Password: your-app-password  # Gmail App Password, not regular password
+  - Email-Server: smtp.gmail.com:587
+```
+
+For Gmail App Passwords:
+1. Enable 2-Factor Authentication on your Google Account
+2. Go to https://myaccount.google.com/apppasswords
+3. Generate an "App Password" for "Mail"
+4. Use the 16-character password (remove spaces)
+
+See `email-api/README.md` for detailed API documentation.
 
 ## Weather Data Includes
 
@@ -59,10 +148,12 @@ This application uses the [Open-Meteo API](https://open-meteo.com/en/features#av
 - **Management**: Portainer
 
 ### Environment Endpoints
-| Environment | Branch | Port | URL |
-|------------|--------|------|-----|
-| Production | main | 30080 | http://10.0.0.101:30080 |
-| Development | dev | 30081 | http://10.0.0.101:30081 |
+| Environment | Service | Branch | Port | URL |
+|------------|---------|--------|------|-----|
+| Production | Frontend | main | 30080 | http://10.0.0.101:30080 |
+| Production | Email API | main | 30090 | http://10.0.0.101:30090 |
+| Development | Frontend | dev | 30081 | http://10.0.0.101:30081 |
+| Development | Email API | dev | 30091 | http://10.0.0.101:30091 |
 
 ## Deployment
 
@@ -194,10 +285,12 @@ docker-compose up
 ## Security
 
 - ✅ **Secrets in K3s**: Email credentials stored as Kubernetes Secrets
-- ✅ **Runtime Injection**: Secrets injected into pods as environment variables
+- ✅ **Backend API**: Email credentials never exposed to browser, only to backend pods
+- ✅ **Runtime Injection**: Secrets injected into email-api pods as environment variables
 - ✅ **No Credentials in Git**: `.gitignore` prevents secret files from being committed
-- ✅ **Auto-generated Config**: `docker-entrypoint.sh` creates config at container startup
-- ⚠️ **Client-Side Visibility**: Current SMTP setup exposes credentials to browser (consider backend API for production)
+- ✅ **Auto-generated Config**: `docker-entrypoint.sh` creates frontend config at container startup
+- ✅ **CORS Protection**: Email API configured with CORS to allow frontend access
+- ⚠️ **Public API Access**: Email API exposed via NodePort (consider ingress/auth for production)
 
 ## Monitoring & Maintenance
 
