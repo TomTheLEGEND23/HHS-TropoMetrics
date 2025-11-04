@@ -1,12 +1,34 @@
 version: '3.8'
 
 services:
-  tropometrics:
-    image: ghcr.io/tomthelegend23/hhs-tropometrics:latest
-    container_name: tropometrics-app
+  email-api:
+    image: ghcr.io/tomthelegend23/hhs-tropometrics-email-api:main
+    container_name: tropometrics-email-api
     ports:
-      - "8080:80"  # Access via http://YOUR_SERVER_IP:8080
+      - "8000:8000"
     restart: unless-stopped
+    environment:
+      - SMTP_SERVER=${SMTP_SERVER:-smtp.example.com}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_USERNAME=${SMTP_USERNAME:-user@example.com}
+      - SMTP_PASSWORD=${SMTP_PASSWORD:-password}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+  frontend:
+    image: ghcr.io/tomthelegend23/hhs-tropometrics:main
+    container_name: tropometrics-frontend
+    ports:
+      - "8080:80"  # Access via http://localhost:8080
+    restart: unless-stopped
+    environment:
+      - EMAIL_API_URL=http://email-api:8000
+    depends_on:
+      - email-api
     healthcheck:
       test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:80/"]
       interval: 30s

@@ -110,10 +110,13 @@ kubectl apply -f k8s/dev-env.yaml
 
 ### Local Development
 ```bash
-# Open Website/index.html in browser
+# Open frontend/Website/index.html in browser
 # Or run with Docker:
-docker build -t tropometrics .
+docker build -t tropometrics ./frontend
 docker run -p 8080:80 tropometrics
+
+# Or use Docker Compose (runs both frontend and email-api):
+docker-compose up
 ```
 
 ## Technical Stack
@@ -145,16 +148,29 @@ docker run -p 8080:80 tropometrics
 │   ├── copilot-instructions.md     # Copilot development guidelines
 │   └── workflows/
 │       └── build-deploy.yml        # Multi-branch CI/CD pipeline
-├── Website/
-│   ├── index.html                  # Weather dashboard application
-│   └── styles.css                  # Responsive CSS styles
-├── k8s/
+├── frontend/                        # Frontend service
+│   ├── Website/                    # Web application files
+│   │   ├── index.html              # Weather dashboard
+│   │   ├── styles.css              # Responsive CSS
+│   │   └── code/                   # JavaScript modules
+│   │       ├── data-weather.js     # Weather data fetching
+│   │       ├── email-service.js    # Email functionality
+│   │       └── email-usage-example.js
+│   ├── Dockerfile                  # nginx:alpine container build
+│   ├── docker-entrypoint.sh        # Runtime environment injection
+│   └── .dockerignore               # Frontend build exclusions
+├── email-api/                       # Email API service
+│   ├── main.py                     # FastAPI backend
+│   ├── requirements.txt            # Python dependencies
+│   ├── Dockerfile                  # Python 3.11 container build
+│   └── README.md                   # Email API documentation
+├── k8s/                            # Kubernetes manifests
 │   ├── main-env.yaml               # Production deployment + HPA
 │   ├── dev-env.yaml                # Development deployment
-│   └── secrets-template.yaml       # Secret structure template (placeholders)
-├── docker-entrypoint.sh            # Runtime secrets injection script
-├── Dockerfile                      # nginx:alpine container build
-├── docker-compose.yml              # Docker Compose configuration
+│   └── email-api-test.yaml         # Email API test configuration
+├── docker-compose.yml              # Local development orchestration
+├── .dockerignore                   # Root build exclusions
+├── .gitignore                      # Git exclusions
 └── README.md                       # This file
 ```
 

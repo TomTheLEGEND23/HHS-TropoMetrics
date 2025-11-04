@@ -1,0 +1,13 @@
+# Git files
+.git
+.gitignore
+
+# Documentation
+README.md
+
+# Other services
+../email-api
+../k8s
+
+# Docker files
+docker-compose.yml

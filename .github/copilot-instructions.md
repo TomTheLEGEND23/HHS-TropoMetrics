@@ -64,6 +64,7 @@ Proxmox server running K3s (lightweight Kubernetes) cluster.
 - Scan codebase for unused code/files and report findings to user for confirmation before removal
 - do not add security vulnerabilities and warn the user is there are any
 - use the branch name when creating new resources or labels for a services in that branch
+- do not push the code to github the code is push to guithub via vscode user will do this at his own lesiure
 
 ## Environment Endpoints
 | Environment | Branch | Port | URL |
