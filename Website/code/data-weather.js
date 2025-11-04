@@ -178,4 +178,15 @@ function getCoordinates(){
 }
 
 
+ document.addEventListener('DOMContentLoaded', function() {
+    const alert_button = document.getElementById('alert-button');
+
+    // Search button click
+    alert_button.addEventListener('click', function() {
+        // Code for the email
+        console.log("Hello in button");
+    });
+ });
+
+
 getData();
