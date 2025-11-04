@@ -61,21 +61,8 @@ spec:
         env:
         - name: ENVIRONMENT
           value: "production"
-        - name: EMAIL_USERNAME
-          valueFrom:
-            secretKeyRef:
-              name: tropometrics-email-secrets
-              key: Email-Username
-        - name: EMAIL_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: tropometrics-email-secrets
-              key: Email-Password
-        - name: EMAIL_SERVER
-          valueFrom:
-            secretKeyRef:
-              name: tropometrics-email-secrets
-              key: Email-Server
+        - name: EMAIL_API_URL
+          value: "http://tropometrics-email-api-service:8000"
 ---
 apiVersion: v1
 kind: Service
@@ -134,3 +121,91 @@ spec:
         value: 2
         periodSeconds: 60
       selectPolicy: Max
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tropometrics-email-api
+  namespace: tropometrics
+  labels:
+    app: tropometrics-email-api
+    environment: production
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: tropometrics-email-api
+      environment: production
+  template:
+    metadata:
+      labels:
+        app: tropometrics-email-api
+        environment: production
+      annotations:
+        kubectl.kubernetes.io/restartedAt: "2025-11-03T00:00:00Z"
+    spec:
+      containers:
+      - name: email-api
+        image: ghcr.io/tomthelegend23/hhs-tropometrics-email-api:main
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        env:
+        - name: ENVIRONMENT
+          value: "production"
+        - name: EMAIL_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: tropometrics-email-secrets
+              key: Email-Username
+        - name: EMAIL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: tropometrics-email-secrets
+              key: Email-Password
+        - name: EMAIL_SERVER
+          valueFrom:
+            secretKeyRef:
+              name: tropometrics-email-secrets
+              key: Email-Server
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tropometrics-email-api-service
+  namespace: tropometrics
+  labels:
+    app: tropometrics-email-api
+    environment: production
+spec:
+  type: ClusterIP
+  selector:
+    app: tropometrics-email-api
+    environment: production
+  ports:
+  - port: 8000
+    targetPort: 8000
