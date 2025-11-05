@@ -62,7 +62,7 @@ spec:
         - name: ENVIRONMENT
           value: "production"
         - name: EMAIL_API_URL
-          value: "http://10.0.0.101:30090"
+          value: "http://tropometrics-email-api-service:8000"
 ---
 apiVersion: v1
 kind: Service
@@ -202,11 +202,10 @@ metadata:
     app: tropometrics-email-api
     environment: production
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: tropometrics-email-api
     environment: production
   ports:
   - port: 8000
     targetPort: 8000
-    nodePort: 30090

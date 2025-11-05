@@ -14,7 +14,7 @@
  */
 async function sendEmail(to, subject, body, html = false) {
     // Check if EMAIL_CONFIG is loaded
-    if (typeof EMAIL_CONFIG === 'undefined' || !EMAIL_CONFIG.apiUrl) {
+    if (typeof EMAIL_CONFIG === 'undefined') {
         throw new Error('Email API not configured. Please contact administrator.');
     }
 
@@ -70,7 +70,7 @@ async function sendTestEmail(to) {
  * @returns {Promise<boolean>} True if service is available
  */
 async function checkEmailService() {
-    if (typeof EMAIL_CONFIG === 'undefined' || !EMAIL_CONFIG.apiUrl) {
+    if (typeof EMAIL_CONFIG === 'undefined') {
         return false;
     }
 

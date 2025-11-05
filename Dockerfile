@@ -3,6 +3,9 @@ FROM nginx:alpine
 # Copy the entire Website folder to nginx html directory
 COPY frontend/Website/ /usr/share/nginx/html/
 
+# Copy custom nginx configuration
+COPY frontend/nginx.conf /etc/nginx/conf.d/default.conf
+
 # Copy the entrypoint script
 COPY frontend/docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
