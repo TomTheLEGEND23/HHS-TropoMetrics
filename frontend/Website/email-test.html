@@ -1,110 +1,250 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="nl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Email Service Test - TropoMetrics</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 600px;
-            margin: 50px auto;
-            padding: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+        .email-test-container {
+            max-width: 800px;
+            margin: 0 auto;
         }
-        .container {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 30px;
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
+        
+        .test-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 24px;
         }
-        input, textarea, button {
+        
+        .test-card h2 {
+            color: var(--text-dark);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .test-card .subtitle {
+            color: var(--text-medium);
+            font-size: 0.95rem;
+            margin-bottom: 24px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            color: var(--text-dark);
+            font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+        
+        .form-group input,
+        .form-group textarea {
             width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 5px;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            color: var(--text-dark);
+            transition: border-color 0.2s;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-green);
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 14px 24px;
             border: none;
-        }
-        button {
-            background: #4CAF50;
-            color: white;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
             cursor: pointer;
-            font-weight: bold;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
-        button:hover {
-            background: #45a049;
+        
+        .btn-primary {
+            background: var(--primary-green);
+            color: white;
         }
+        
+        .btn-primary:hover {
+            background: var(--dark-green);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(21, 135, 3, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #64748b;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #475569;
+            transform: translateY(-1px);
+        }
+        
         #result {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 5px;
+            margin-top: 24px;
+            padding: 16px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            display: none;
         }
+        
+        #result.show {
+            display: block;
+        }
+        
         .success {
-            background: rgba(76, 175, 80, 0.3);
+            background: #dcfce7;
+            color: #166534;
+            border-left: 4px solid #22c55e;
         }
+        
         .error {
-            background: rgba(244, 67, 54, 0.3);
+            background: #fee2e2;
+            color: #991b1b;
+            border-left: 4px solid #ef4444;
+        }
+        
+        .loading {
+            background: #e0f2fe;
+            color: #075985;
+            border-left: 4px solid #0ea5e9;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🔐 Secure Email Service Test</h1>
-        <p>Test the backend email API (credentials never exposed to browser)</p>
+    <div class="container email-test-container">
+        <div class="header">
+            <div class="logo-container">
+                <h1>🌾 TropoMetrics</h1>
+            </div>
+            <p class="tagline">Email Service Test Panel</p>
+        </div>
+
+        <div class="test-card">
+            <h2>
+                <span>🔐</span>
+                Secure Email Test
+            </h2>
+            <p class="subtitle">Test de backend email API (credentials worden nooit blootgesteld aan de browser)</p>
+            
+            <form onsubmit="testEmail(event)">
+                <div class="form-group">
+                    <label for="to">Ontvanger Email *</label>
+                    <input type="email" id="to" placeholder="naam@voorbeeld.nl" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="subject">Onderwerp *</label>
+                    <input type="text" id="subject" placeholder="Email onderwerp" value="Test van TropoMetrics" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="body">Bericht *</label>
+                    <textarea id="body" placeholder="Email inhoud..." required>Dit is een test email verstuurd via de beveiligde backend API!</textarea>
+                </div>
+                
+                <div class="button-group">
+                    <button type="submit" class="btn btn-primary">
+                        <span>📧</span>
+                        <span>Verstuur Email</span>
+                    </button>
+                    <button type="button" onclick="checkHealth()" class="btn btn-secondary">
+                        <span>🏥</span>
+                        <span>Check Status</span>
+                    </button>
+                </div>
+            </form>
+            
+            <div id="result"></div>
+        </div>
         
-        <input type="email" id="to" placeholder="Recipient Email" required>
-        <input type="text" id="subject" placeholder="Subject" value="Test from TropoMetrics" required>
-        <textarea id="body" rows="5" placeholder="Email body...">This is a test email sent via the secure backend API!</textarea>
-        
-        <button onclick="testEmail()">📧 Send Email</button>
-        <button onclick="checkHealth()">🏥 Check Service Health</button>
-        
-        <div id="result"></div>
+        <footer>
+            <p class="footer-text">© 2025 TropoMetrics | Professionele Weerdata voor Landbouw</p>
+        </footer>
     </div>
 
     <!-- Load email configuration and service -->
-    <script src="code/email-config.js"></script>
-    <script src="code/email-service.js"></script>
+    <script src="code/email-config.js?v=2.0"></script>
+    <script src="code/email-service.js?v=2.0"></script>
     
     <script>
-        async function testEmail() {
+        async function testEmail(event) {
+            event.preventDefault();
+            
             const to = document.getElementById('to').value;
             const subject = document.getElementById('subject').value;
             const body = document.getElementById('body').value;
             const result = document.getElementById('result');
             
             if (!to || !subject || !body) {
-                result.className = 'error';
-                result.innerHTML = '❌ Please fill in all fields';
+                result.className = 'error show';
+                result.innerHTML = '❌ Vul alle velden in';
                 return;
             }
             
-            result.innerHTML = '⏳ Sending email...';
+            result.className = 'loading show';
+            result.innerHTML = '⏳ Email wordt verstuurd...';
             
             const response = await sendEmail(to, subject, body, false);
             
             if (response.success) {
-                result.className = 'success';
-                result.innerHTML = `✅ ${response.message}`;
+                result.className = 'success show';
+                result.innerHTML = `✅ Email succesvol verstuurd naar ${to}`;
             } else {
-                result.className = 'error';
-                result.innerHTML = `❌ Failed: ${response.error}`;
+                result.className = 'error show';
+                result.innerHTML = `❌ Fout bij versturen: ${response.error}`;
             }
         }
         
         async function checkHealth() {
             const result = document.getElementById('result');
-            result.innerHTML = '⏳ Checking service health...';
+            result.className = 'loading show';
+            result.innerHTML = '⏳ Service status wordt gecontroleerd...';
             
             const isHealthy = await checkEmailService();
             
             if (isHealthy) {
-                result.className = 'success';
-                result.innerHTML = '✅ Email service is healthy and ready!';
+                result.className = 'success show';
+                result.innerHTML = '✅ Email service is online en gereed!';
             } else {
-                result.className = 'error';
-                result.innerHTML = '❌ Email service is not available';
+                result.className = 'error show';
+                result.innerHTML = '❌ Email service is niet beschikbaar';
             }
         }
         

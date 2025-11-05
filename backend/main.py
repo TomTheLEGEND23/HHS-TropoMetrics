@@ -167,7 +167,7 @@ async def weather_data_api(request: Request, api_key: Optional[str] = None):
                 f"&daily=temperature_2m_max,temperature_2m_min,daylight_duration"
                 f"&hourly=precipitation,relative_humidity_2m,soil_moisture_27_to_81cm"
                 f"&current=temperature_2m"
-                f"&timezone=Europe%2FBerlin"
+                f"&timezone=Europe%2FAmsterdam"
             )
             
             response = await client.get(api_request)
@@ -206,7 +206,7 @@ async def weather_data_api(request: Request, api_key: Optional[str] = None):
                 "location": {
                     "latitude": WEATHER_LOCATION['latitude'],
                     "longitude": WEATHER_LOCATION['longitude'],
-                    "timezone": "Europe/Berlin"
+                    "timezone": "Europe/Amsterdam"
                 },
                 "source": "Open-Meteo API",
                 "endpoint": "/api"
