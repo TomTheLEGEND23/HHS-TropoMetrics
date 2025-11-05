@@ -56,7 +56,7 @@ else:
 # Valid API keys for weather data endpoint
 VALID_API_KEYS = [
     "f7fdaa2c-d204-4083-9ca9-34d7bdec25ac",  # Test user key
-    "demo-key-12345",                         # Demo key
+    "demo",                         # Demo key
 ]
 
 # Weather data configuration
