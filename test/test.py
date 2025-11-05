@@ -12,11 +12,20 @@ lijst_met_error = []
 lijst_tijden = []
 teller = 0 
 aantal = 5
+# Configure Chrome to run headless. Options are created once and reused for each iteration.
+options = webdriver.ChromeOptions()
+# Use the modern headless mode where available. Fallback to legacy --headless if needed.
+options.add_argument("--headless=new")
+options.add_argument("--window-size=1920,1080")
+# Common flags that help in headless / CI environments
+options.add_argument("--disable-gpu")
+options.add_argument("--no-sandbox")
+options.add_argument("--disable-dev-shm-usage")
+options.add_experimental_option('excludeSwitches', ['enable-logging'])
+driver = webdriver.Chrome(options=options)
 while teller <= aantal:
     teller += 1
-    driver = webdriver.Chrome()
     tijd_start = time.time()
-
     driver.get("http://10.0.0.101:30081/")
     
     try:    
@@ -32,7 +41,7 @@ while teller <= aantal:
         tijd_verschil = tijd_eind - tijd_start
         lijst_met_error.append(tijd_verschil)
         print("Mislukte poging ", teller)
-    driver.quit()
+driver.quit()
         
 average = sum (lijst_zonder_error) / len(lijst_zonder_error)
 print("Gemiddelde tijd zonder error: ", average)
