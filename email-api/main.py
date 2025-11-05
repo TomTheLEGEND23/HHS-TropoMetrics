@@ -72,7 +72,7 @@ async def health():
     """Kubernetes health check"""
     if not EMAIL_USERNAME or not EMAIL_PASSWORD:
         raise HTTPException(status_code=503, detail="Email credentials not configured")
-    return {"status": "ok"}
+    return {"status": "ok","Backend": "Online"}
 
 
 @app.post("/api/send-email")
