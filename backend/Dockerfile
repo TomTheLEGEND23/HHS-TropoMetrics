@@ -1,4 +1,4 @@
-# Email API Backend
+# Backend API (Weather + Email)
 FROM python:3.11-slim
 
 WORKDIR /app

@@ -1,358 +1,188 @@
-# TropoMetrics - Weather Dashboard
+# 🌾 TropoMetrics - Professionele Weerdienst
 
 **Haagse Hogeschool Project**: Schaalbaar, veilig en redundant netwerk met weerdata-dienst voor de agrarische sector.
 
-Containerized weather dashboard deployed on K3s Kubernetes cluster with automated CI/CD, GitOps, and multi-environment support.
+Containerized weather dashboard with REST API, deployed on K3s Kubernetes cluster with automated CI/CD and multi-environment support.
 
-[![Build and Deploy Container](https://github.com/TomTheLEGEND23/HHS-TropoMetrics/actions/workflows/build-deploy.yml/badge.svg)](https://github.com/TomTheLEGEND23/HHS-TropoMetrics/actions/workflows/build-deploy.yml)
+[![Build and Deploy](https://github.com/TomTheLEGEND23/HHS-TropoMetrics/actions/workflows/build-deploy.yml/badge.svg)](https://github.com/TomTheLEGEND23/HHS-TropoMetrics/actions/workflows/build-deploy.yml)
 
-🐳 **Container Registry**: [ghcr.io/tomthelegend23/hhs-tropometrics](https://github.com/TomTheLEGEND23/HHS-TropoMetrics/pkgs/container/hhs-tropometrics)
+## Quick Access
+
+| Environment | Frontend | Weather API | Backend Health |
+|------------|----------|-------------|----------------|
+| **Production** | http://10.0.0.101:30080 | http://10.0.0.101:30080/api | http://10.0.0.101:30080/api/health |
+| **Development** | http://10.0.0.101:30081 | http://10.0.0.101:30081/api | http://10.0.0.101:30081/api/health |
 
 ## Architecture
 
+### Stack
+- **Frontend**: Nginx + Static HTML/CSS/JavaScript
+- **Backend**: FastAPI (Python 3.11) - Email & Weather API
 - **Platform**: K3s (Lightweight Kubernetes) on Proxmox
-- **Management**: Portainer with GitOps automation
-- **CI/CD**: GitHub Actions with multi-branch deployments
-- **Environments**: Production (main), Development (dev)
-- **Container Registry**: GitHub Container Registry (GHCR)
-- **Secrets Management**: Kubernetes Secrets injected as environment variables
+- **CI/CD**: GitHub Actions → GHCR → Portainer GitOps
+- **Security**: Kubernetes Secrets, API Key Authentication
+
+### Components
+```
+┌─────────────┐
+│   Browser   │
+└──────┬──────┘
+       │
+       ↓
+┌─────────────────────────┐
+│  Frontend (Nginx)       │  Port 30080/30081
+│  - Website UI           │
+│  - Reverse Proxy        │
+└──────┬──────────────────┘
+       │ Internal Cluster
+       ↓
+┌─────────────────────────┐
+│  Backend (FastAPI)      │  ClusterIP :8000
+│  - /api (Weather Data)  │  + API Key Auth
+│  - /api/send-email      │  + Email Service
+│  - /health              │
+└─────────────────────────┘
+```
 
 ## Features
 
-- **Real-time Weather Data**: Current temperature, humidity, wind speed, pressure, and more
-- **7-Day Forecast**: Extended weather forecast with daily high/low temperatures
-- **Email Notifications**: Secure backend API for sending weather alerts and reports
-- **Responsive Design**: Works on desktop, tablet, and mobile devices
-- **Auto-scaling**: Production environment scales 3-12 pods based on CPU usage
-- **Rolling Updates**: Zero-downtime deployments with gradual rollout strategy
-- **Secure Configuration**: Secrets stored in K3s, never in Git repository
+✅ **Real-time Weather Data**: Temperature, humidity, soil moisture, irrigation advice  
+✅ **5-Day Forecast**: Precipitation predictions with interactive charts  
+✅ **REST API**: JSON weather data with API key authentication  
+✅ **Email Alerts**: Secure SMTP backend for weather notifications  
+✅ **Responsive Design**: Mobile-friendly agricultural dashboard  
+✅ **Auto-scaling**: Production scales 3-12 pods based on load  
+✅ **Zero-downtime**: Rolling updates with health checks
 
-## Email Feature
+## API Endpoints
 
-The application includes a secure email API backend for sending weather notifications and alerts.
+### Weather Data API
+Get structured weather data with API key authentication.
 
-### Architecture
-```
-Browser → Frontend (30081) → Loads email-config.js with API URL
-          ↓
-Browser → Email API (30091) → Authenticates with SMTP
-          ↓
-SMTP Server (Gmail/etc) → Sends email
+```bash
+# Get weather data
+curl "http://10.0.0.101:30081/api?api_key=YOUR_API_KEY"
 ```
 
-### Testing the Email Service
+**Response**: JSON with current weather, forecasts, irrigation advice, and raw data.
 
-Visit the email test page:
-- **Production**: http://10.0.0.101:30080/email-test.html
-- **Development**: http://10.0.0.101:30081/email-test.html
+**Valid API Keys**:
+- `f7fdaa2c-d204-4083-9ca9-34d7bdec25ac` (test)
+- `demo-key-12345` (demo)
 
-The test page allows you to:
-1. **Check Service Health** - Verify the email API is running
-2. **Send Test Emails** - Enter recipient, subject, and message to send emails
-3. **View Results** - See success/failure messages in real-time
+See `/frontend/Website/api/README.md` for full API documentation.
 
-### Using Email in Your Code
+### Email Notifications
 
+Send weather alerts via secure SMTP backend.
+
+**JavaScript:**
 ```javascript
-// Check if email service is available
-const isHealthy = await checkEmailService();
-
-if (isHealthy) {
-    // Send an email
-    const result = await sendEmail(
-        'recipient@example.com',
-        'Weather Alert',
-        'Heavy rain expected today!'
-    );
-    
-    if (result.success) {
-        console.log('Email sent successfully!');
-    } else {
-        console.error('Failed to send:', result.error);
-    }
-}
+const result = await sendEmail(
+    'farmer@example.com',
+    'Weather Alert',
+    'Heavy rain expected today!'
+);
 ```
 
-### Direct API Access
-
-You can also call the email API directly:
-
-**Check Health:**
+**Direct API:**
 ```bash
-curl http://10.0.0.101:30091/health
-# Returns: {"status":"ok"}
-```
-
-**Send Email:**
-```bash
-curl -X POST http://10.0.0.101:30091/api/send-email \
+curl -X POST http://10.0.0.101:30081/api/send-email \
   -H "Content-Type: application/json" \
-  -d '{
-    "to": "recipient@example.com",
-    "subject": "Test Email",
-    "body": "This is a test message",
-    "html": false
-  }'
+  -d '{"to":"test@example.com","subject":"Alert","body":"Message"}'
 ```
 
-### Configuration
+**Test Page**: http://10.0.0.101:30081/email-test.html
 
-The email API requires SMTP credentials stored as Kubernetes secrets:
+## Configuration
 
-```yaml
-Name: tropometrics-email-secrets
-Keys:
-  - Email-Username: your-email@gmail.com
-  - Email-Password: your-app-password  # Gmail App Password, not regular password
-  - Email-Server: smtp.gmail.com:587
+### Kubernetes Secrets
+Email SMTP credentials stored as K8s secrets:
+
+```bash
+kubectl create secret generic tropometrics-email-secrets \
+  --namespace=tropometrics \
+  --from-literal=Email-Username=your-email@gmail.com \
+  --from-literal=Email-Password=your-app-password \
+  --from-literal=Email-Server=smtp.gmail.com:587
 ```
 
-For Gmail App Passwords:
-1. Enable 2-Factor Authentication on your Google Account
-2. Go to https://myaccount.google.com/apppasswords
-3. Generate an "App Password" for "Mail"
-4. Use the 16-character password (remove spaces)
-
-See `email-api/README.md` for detailed API documentation.
-
-## Weather Data Includes
-
-### Current Weather
-- Temperature and "feels like" temperature
-- Weather conditions with descriptive codes
-- Wind speed and direction
-- Humidity and atmospheric pressure
-- UV index and visibility
-- Cloud cover and precipitation
-
-### 7-Day Forecast
-- Daily high and low temperatures
-- Weather conditions for each day
-- Date and day of the week
-
-## API Source
-
-This application uses the [Open-Meteo API](https://open-meteo.com/en/features#available_apis), which provides:
-- Free weather data access
-- No API key required
-- High-quality meteorological data
-- Multiple forecast models
-- Global coverage
-
-## K3s Cluster Setup
-
-### Infrastructure
-- **k3s-1** (master): 10.0.0.101
-- **k3s-2-5** (workers): 10.0.0.102-105
-- **Namespace**: `tropometrics`
-- **Management**: Portainer
-
-### Environment Endpoints
-| Environment | Service | Branch | Port | URL |
-|------------|---------|--------|------|-----|
-| Production | Frontend | main | 30080 | http://10.0.0.101:30080 |
-| Production | Email API | main | 30090 | http://10.0.0.101:30090 |
-| Development | Frontend | dev | 30081 | http://10.0.0.101:30081 |
-| Development | Email API | dev | 30091 | http://10.0.0.101:30091 |
+**Gmail Setup**: Enable 2FA → Create App Password → https://myaccount.google.com/apppasswords
 
 ## Deployment
 
-### Automated GitOps Workflow
+### K3s Cluster
+**Nodes**: k3s-1 (master, 10.0.0.101), k3s-2-5 (workers, 10.0.0.102-105)  
+**Namespace**: `tropometrics`  
+**Management**: Portainer GitOps
 
-1. **Push code** to `main` or `dev` branch
-2. **GitHub Actions** builds Docker image with branch-specific tag
-3. **Image pushed** to GitHub Container Registry
-4. **Portainer** detects repository change via GitOps
-5. **Auto-deployment** pulls new image and updates pods
-6. **Rolling update** ensures zero-downtime (production only)
+### GitOps Workflow
+1. Push to `main` or `dev` branch
+2. GitHub Actions builds frontend + backend images
+3. Pushes to GHCR (`ghcr.io/tomthelegend23/hhs-tropometrics/`)
+4. Portainer auto-deploys to K3s cluster
 
-### Initial Setup
-
-#### 1. Create Secrets in Portainer
-Navigate to: **Kubernetes → Configuration → Secrets → Add Secret**
-
-```yaml
-Name: tropometrics-email-secrets
-Namespace: tropometrics
-Keys:
-  - Email-Username: your-smtp-username
-  - Email-Password: your-smtp-password
-  - Email-Server: smtp.example.com:587
-```
-
-#### 2. Deploy via Portainer GitOps
-1. Open Portainer → **Applications**
-2. Click **Add Application** → **Git Repository**
-3. Configure:
-   - **Repository URL**: `https://github.com/TomTheLEGEND23/HHS-TropoMetrics`
-   - **Reference**: `refs/heads/main` (or `dev`)
-   - **Manifest Path**: `k8s/main-env.yaml` (or `dev-env.yaml`)
-   - **Auto-update**: Enable
-4. Deploy
-
-#### 3. Manual Deployment (Alternative)
+### Manual Deployment
 ```bash
-# Production
-kubectl apply -f k8s/main-env.yaml
+# Apply manifests
+kubectl apply -f k8s/dev-env.yaml   # Development
+kubectl apply -f k8s/main-env.yaml  # Production
 
-# Development
-kubectl apply -f k8s/dev-env.yaml
+# Check status
+kubectl get pods,svc -n tropometrics
 ```
 
 ### Local Development
 ```bash
-# Open frontend/Website/index.html in browser
-# Or run with Docker:
-docker build -t tropometrics ./frontend
-docker run -p 8080:80 tropometrics
-
-# Or use Docker Compose (runs both frontend and email-api):
-docker-compose up
+docker-compose up --build
+# Frontend: http://localhost:8080
+# Backend: http://localhost:8000
 ```
-
-## Technical Stack
-
-### Infrastructure
-- **Orchestration**: K3s (Lightweight Kubernetes)
-- **Container Runtime**: Docker
-- **Management**: Portainer
-- **CI/CD**: GitHub Actions
-- **Registry**: GitHub Container Registry (GHCR)
-
-### Application
-- **Frontend**: Static HTML/CSS/JavaScript
-- **Web Server**: nginx:alpine
-- **API**: Open-Meteo (no key required)
-- **Location**: Leiden, Netherlands (52.1601°N, 4.4970°E)
-
-### Kubernetes Resources
-- **Deployments**: Multi-environment with branch-specific images
-- **Services**: NodePort exposure (30080, 30081)
-- **HPA**: Auto-scaling on production (3-12 replicas, 40% CPU target)
-- **Secrets**: Runtime injection via environment variables
-- **Strategy**: RollingUpdate (maxUnavailable: 1, maxSurge: 2)
-
 ## Project Structure
-
 ```
-├── .github/
-│   ├── copilot-instructions.md     # Copilot development guidelines
-│   └── workflows/
-│       └── build-deploy.yml        # Multi-branch CI/CD pipeline
-├── frontend/                        # Frontend service
-│   ├── Website/                    # Web application files
-│   │   ├── index.html              # Weather dashboard
-│   │   ├── styles.css              # Responsive CSS
-│   │   └── code/                   # JavaScript modules
-│   │       ├── data-weather.js     # Weather data fetching
-│   │       ├── email-service.js    # Email functionality
-│   │       └── email-usage-example.js
-│   ├── Dockerfile                  # nginx:alpine container build
-│   ├── docker-entrypoint.sh        # Runtime environment injection
-│   └── .dockerignore               # Frontend build exclusions
-├── email-api/                       # Email API service
-│   ├── main.py                     # FastAPI backend
-│   ├── requirements.txt            # Python dependencies
-│   ├── Dockerfile                  # Python 3.11 container build
-│   └── README.md                   # Email API documentation
-├── k8s/                            # Kubernetes manifests
-│   ├── main-env.yaml               # Production deployment + HPA
-│   ├── dev-env.yaml                # Development deployment
-│   └── email-api-test.yaml         # Email API test configuration
-├── docker-compose.yml              # Local development orchestration
-├── .dockerignore                   # Root build exclusions
-├── .gitignore                      # Git exclusions
-└── README.md                       # This file
+├── backend/
+│   ├── main.py              # FastAPI backend (weather API + email)
+│   ├── requirements.txt     # httpx, fastapi, pydantic, uvicorn
+│   └── Dockerfile           # Python 3.11 container
+├── frontend/
+│   ├── docker-entrypoint.sh # Generates email-config.js
+│   ├── nginx.conf           # Reverse proxy config
+│   ├── Dockerfile           # nginx:alpine container
+│   └── Website/
+│       ├── index.html       # Weather dashboard
+│       ├── email-test.html  # Email testing page
+│       ├── styles.css       # Professional styling
+│       └── code/
+│           ├── email-service.js   # Email API client
+│           └── data-weather.js    # Weather data + charts
+├── k8s/
+│   ├── main-env.yaml        # Production (30080) + HPA
+│   └── dev-env.yaml         # Development (30081)
+├── .github/workflows/
+│   └── build-deploy.yml     # CI/CD pipeline
+└── docker-compose.yml       # Local development
 ```
-
-## CI/CD Pipeline
-
-### Trigger Events
-- Push to `main` or `dev` branches
-- Pull requests to these branches
-
-### Build Process
-1. Checkout code
-2. Login to GHCR
-3. Extract metadata (tags, labels)
-4. Build Docker image with branch-specific tag
-5. Push to `ghcr.io/tomthelegend23/hhs-tropometrics:{branch}`
-
-### Image Tags
-- `main` → Production image
-- `dev` → Development image
-
-## Security
-
-- ✅ **Secrets in K3s**: Email credentials stored as Kubernetes Secrets
-- ✅ **Backend API**: Email credentials never exposed to browser, only to backend pods
-- ✅ **Runtime Injection**: Secrets injected into email-api pods as environment variables
-- ✅ **No Credentials in Git**: `.gitignore` prevents secret files from being committed
-- ✅ **Auto-generated Config**: `docker-entrypoint.sh` creates frontend config at container startup
-- ✅ **CORS Protection**: Email API configured with CORS to allow frontend access
-- ⚠️ **Public API Access**: Email API exposed via NodePort (consider ingress/auth for production)
-
-## Monitoring & Maintenance
-
-### View Deployment Status
-```bash
-kubectl get pods -n tropometrics
-kubectl get hpa -n tropometrics
-```
-
-### Check Logs
-```bash
-kubectl logs -n tropometrics -l app=tropometrics,environment=production
-```
-
-### Update Secrets
-1. Portainer → Kubernetes → Secrets → Edit `tropometrics-email-secrets`
-2. Restart pods: `kubectl rollout restart deployment/tropometrics-main -n tropometrics`
-
-### Scale Manually (override HPA)
-```bash
-kubectl scale deployment tropometrics-main -n tropometrics --replicas=5
-```
-
-## Resource Requirements
-
-### Production (main)
-- **Replicas**: 3-12 (auto-scaling)
-- **CPU**: 100m request, 500m limit per pod
-- **Memory**: 64Mi request, 256Mi limit per pod
-- **Storage**: Ephemeral (stateless application)
-
-### Development (dev)
-- **Replicas**: 1 (fixed)
-- **CPU**: 50m request, 200m limit
-- **Memory**: 32Mi request, 128Mi limit
 
 ## Troubleshooting
 
-### Pods not starting
+**Email unavailable:**
 ```bash
-kubectl describe pod <pod-name> -n tropometrics
-kubectl logs <pod-name> -n tropometrics
+kubectl logs -n tropometrics -l app=tropometrics-email-api-dev
+kubectl get secrets -n tropometrics
 ```
 
-### Secret issues
-- Verify secret exists: `kubectl get secret tropometrics-email-secrets -n tropometrics`
-- Check keys are correct: `kubectl describe secret tropometrics-email-secrets -n tropometrics`
+**Frontend 502:**
+```bash
+kubectl exec -n tropometrics deployment/tropometrics-dev -- \
+  wget -O- http://tropometrics-email-api-service:8000/health
+```
 
-### GitOps not auto-deploying
-- Check Portainer GitOps repository settings
-- Verify webhook is configured (if applicable)
-- Check Portainer logs for pull errors
+**Pod crashes:**
+```bash
+kubectl describe pod <pod-name> -n tropometrics
+kubectl logs -n tropometrics <pod-name> --previous
+```
 
-### Image not updating
-- Confirm `imagePullPolicy: Always` in deployment YAML
-- Manually restart: `kubectl rollout restart deployment/tropometrics-main -n tropometrics`
+---
 
-## Project Info
-
-**Haagse Hogeschool** proof-of-concept demonstrating:
-- Scalable Kubernetes deployment
-- Secure secrets management
-- CI/CD automation with GitOps
-- Multi-environment workflows
-- DevOps best practices
+**HHS TropoMetrics** - Agricultural weather monitoring system for precision farming.

@@ -2,9 +2,9 @@ name: Build and Deploy Container
 
 on:
   push:
-    branches: [ main, dev, feature-Email-backend ]
+    branches: [ main, dev ]
   pull_request:
-    branches: [ main, dev, feature-Email-backend ]
+    branches: [ main, dev]
 
 env:
   REGISTRY: ghcr.io
@@ -50,11 +50,11 @@ jobs:
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
 
-    - name: Extract metadata for Email API
-      id: meta-email
+    - name: Extract metadata for Backend
+      id: meta-backend
       uses: docker/metadata-action@v5
       with:
-        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-email-api
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-backend
         tags: |
           type=ref,event=branch
           type=ref,event=pr
@@ -63,14 +63,14 @@ jobs:
           type=raw,value=main,enable=${{ github.ref == 'refs/heads/main' }}
           type=raw,value=dev,enable=${{ github.ref == 'refs/heads/dev' }}
 
-    - name: Build and push Email API Docker image
+    - name: Build and push Backend Docker image
       uses: docker/build-push-action@v5
       with:
-        context: ./email-api
-        file: ./email-api/Dockerfile
+        context: ./backend
+        file: ./backend/Dockerfile
         push: true
-        tags: ${{ steps.meta-email.outputs.tags }}
-        labels: ${{ steps.meta-email.outputs.labels }}
+        tags: ${{ steps.meta-backend.outputs.tags }}
+        labels: ${{ steps.meta-backend.outputs.labels }}
 
     - name: Set environment info
       id: env-info

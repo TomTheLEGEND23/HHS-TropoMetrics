@@ -76,9 +76,9 @@ Proxmox server running K3s (lightweight Kubernetes) cluster.
 ## Code Structure
 - **Frontend**: Website/index.html, Website/styles.css, Website/code/email-service.js
 - **Frontend Container**: Dockerfile (nginx:alpine base)
-- **Email API**: email-api/main.py (FastAPI backend)
-- **Email API Container**: email-api/Dockerfile (Python 3.11)
+- **Backend API**: backend/main.py (FastAPI backend)
+- **Backend Container**: backend/Dockerfile (Python 3.11)
 - **Entrypoint**: docker-entrypoint.sh (API URL injection)
-- **Manifests**: k8s/main-env.yaml, k8s/dev-env.yaml (both include email-api deployment)
+- **Manifests**: k8s/main-env.yaml, k8s/dev-env.yaml (both include backend deployment)
 - **CI/CD**: .github/workflows/build-deploy.yml (builds both images)
-- **Secrets**: Stored in K8s, accessed only by email-api backend
+- **Secrets**: Stored in K8s, accessed only by backend

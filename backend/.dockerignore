@@ -1,3 +1,4 @@
 # Exclude Files and Directories
-EMAIL-API-USAGE.md
 Dockerfile
+EMAIL-BACKEND-SETUP.md
+README.md
