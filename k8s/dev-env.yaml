@@ -26,7 +26,7 @@ spec:
         environment: development
       annotations:
         # This annotation forces redeployment when updated
-        kubectl.kubernetes.io/restartedAt: "2025-11-05T13:33:45Z"
+        kubectl.kubernetes.io/restartedAt: "2025-11-05T17:24:49Z"
     spec:
       containers:
       - name: tropometrics
@@ -97,7 +97,7 @@ spec:
         app: tropometrics-email-api
         environment: development
       annotations:
-        kubectl.kubernetes.io/restartedAt: "2025-11-05T13:33:45Z"
+        kubectl.kubernetes.io/restartedAt: "2025-11-05T17:24:49Z"
     spec:
       containers:
       - name: email-api
