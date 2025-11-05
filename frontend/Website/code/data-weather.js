@@ -1,6 +1,6 @@
 /* TEST USER */
 const test_user = {
-    email: "klant@tropometrics.nl",,
+    email: "klant@tropometrics.nl",
     //latitude: 23.4162,
     //longitude: 25.6628
     //latitude: 52.012,
