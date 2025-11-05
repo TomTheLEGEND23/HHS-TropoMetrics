@@ -1,3 +1,13 @@
-# Exclude Files and Directories
+# Documentation (not needed in container)
 EMAIL-API-USAGE.md
+README.md
+
+# Build files
 Dockerfile
+
+# Parent directories
+../.git
+../.github
+../backend
+../k8s
+../docker-compose.yml
