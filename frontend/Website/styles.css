@@ -67,7 +67,7 @@ body {
     background: rgba(255, 255, 255, 0.95);
     border: 2px solid rgba(255, 255, 255, 0.3);
     border-radius: 12px;
-    color: var(--primary-green);
+    color: rgb(0, 0, 0);
     cursor: pointer;
     padding: 16px 28px;
     font-size: 1rem;
@@ -312,19 +312,34 @@ body {
 }
 
 /* Day divider */
+.day-divider-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    height: 100%;
+    margin: 0 10px;
+    position: relative;
+}
+
 .day-divider {
-  width: 2px;
-  height: 100%;
-  border-left: 2px dashed var(--text-light);
-  margin: 0 10px;
-  opacity: 0.5;
+    width: 2px;
+    height: 100%;
+    border-left: 2px dashed var(--text-light);
+    opacity: 0.6;
 }
 
 .day-label {
+    position: absolute;
+    bottom: -24px;
     text-align: center;
-    font-size: 12px;
-    margin-top: 5px;
-    color: #333;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-medium);
+    white-space: nowrap;
+    background: var(--card-bg);
+    padding: 2px 6px;
+    border-radius: 4px;
 }
 
 .day-container {

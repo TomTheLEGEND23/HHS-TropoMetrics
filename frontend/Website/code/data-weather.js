@@ -155,9 +155,19 @@ function displayPrediction(weather_data){
         if (time_hour == 0){
             day_counter++;
 
+            const day_divider_container = document.createElement('div');
+            day_divider_container.className = 'day-divider-container';
+            
             const day_divider = document.createElement('div');
             day_divider.className = 'day-divider';
-            precipitationGrid.appendChild(day_divider);            
+            
+            const day_label = document.createElement('div');
+            day_label.className = 'day-label';
+            day_label.textContent = day_counter + '/' + (month_bar + 1);
+            
+            day_divider_container.appendChild(day_divider);
+            day_divider_container.appendChild(day_label);
+            precipitationGrid.appendChild(day_divider_container);            
         }
     }
 }
