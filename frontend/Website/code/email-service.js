@@ -75,7 +75,7 @@ async function checkEmailService() {
     }
 
     try {
-        const response = await fetch(`${EMAIL_CONFIG.apiUrl}/health`);
+        const response = await fetch(`${EMAIL_CONFIG.apiUrl}/api/health`);
         return response.ok;
     } catch (error) {
         console.error('Email service health check failed:', error);
