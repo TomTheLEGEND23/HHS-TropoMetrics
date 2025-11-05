@@ -29,12 +29,13 @@ if (typeof window !== 'undefined') {
 EOF
 
 # Update nginx configuration with actual backend service name
-sed -i "s/BACKEND_SERVICE_PLACEHOLDER/${BACKEND_SERVICE_NAME}/g" /etc/nginx/nginx.conf
-sed -i "s/BACKEND_PORT_PLACEHOLDER/${BACKEND_PORT}/g" /etc/nginx/nginx.conf
+sed -i "s/BACKEND_SERVICE_PLACEHOLDER/${BACKEND_SERVICE_NAME}/g" /etc/nginx/conf.d/default.conf
+sed -i "s/BACKEND_PORT_PLACEHOLDER/${BACKEND_PORT}/g" /etc/nginx/conf.d/default.conf
 
 echo "✅ Email API configuration injected successfully"
 echo "📧 Backend service: ${BACKEND_SERVICE_NAME}:${BACKEND_PORT}"
 echo "📧 Frontend uses same-origin requests (proxied by nginx)"
+echo "📝 Updated nginx config: /etc/nginx/conf.d/default.conf"
 
 # Start nginx
 exec nginx -g 'daemon off;'
