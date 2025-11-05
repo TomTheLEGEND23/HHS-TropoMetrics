@@ -4,10 +4,10 @@ const test_user = {
     api_key: "f7fdaa2c-d204-4083-9ca9-34d7bdec25ac",
     //latitude: 23.4162,
     //longitude: 25.6628
-    latitude: 52.012,
-    longitude: 4.380
-    //latitude: -5.013,
-    //longitude: -58.381
+    //latitude: 52.012,
+    //longitude: 4.380
+    latitude: -5.013,
+    longitude: -58.381
 } 
 
 /* Get the data */
