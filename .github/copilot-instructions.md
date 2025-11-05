@@ -66,6 +66,7 @@ Proxmox server running K3s (lightweight Kubernetes) cluster.
 - use the branch name when creating new resources or labels for a services in that branch
 - do not push the code to github the code is push to guithub via vscode user will do this at his own lesiure
 - always update the readme.md file if archetechture is changed or new features are added
+- there are not containers or local dev environments for this project everything is done via k3s cluster on proxmox server and any data that is needed can be accese using ssh to the k3s-1 node "ssh root@10.0.0.101" 
 
 ## Environment Endpoints
 | Environment | Branch | Port | URL |
