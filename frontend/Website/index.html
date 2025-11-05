@@ -4,83 +4,106 @@ TropoMetrics - Weather Dashboard
 This static HTML page fetches weather data directly from the Open-Meteo API
 No server-side processing required - perfect for GitHub Pages deployment
 -->
-<html lang="en">
+<html lang="nl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TropoMetrics - Global Weather Dashboard</title>
+    <title>TropoMetrics - Weerdienst voor Agrarische Sector</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1> TropoMetrics</h1>
-            <p>De weerdienst voor de agrarische sector!!</p>
+            <div class="logo-container">
+                <h1>🌾 TropoMetrics</h1>
+            </div>
+            <p class="tagline">Professionele weerdienst voor de agrarische sector</p>
         </div>
 
         <div class="alert-container">
-            <input type="text" id="citySearch" class="search-box" placeholder="" autocomplete="off">
-            <button id="alert-button" class="alert-button">Test Alert</button>
+            <button id="alert-button" class="alert-button">
+                <span class="button-icon">✉️</span>
+                <span class="button-text">Verstuur Weeralarm</span>
+            </button>
         </div>
 
         <div id="weather-content">
             <div class="weather-grid">
                 <div class="weather-card">
-                    <h2><span class=/span>Temperatuur</h2>
-                    <div class="current-temp" id="temp-current">--°C</div>
-                    <div class="weather-detail">
-                        <span class="detail-label">Min. Temp</span>
-                        <span class="detail-value" id="temp-min">--°C</span>
+                    <div class="card-header">
+                        <span class="card-icon">🌡️</span>
+                        <h2>Temperatuur</h2>
                     </div>
-                    <div class="weather-detail">
-                        <span class="detail-label">Max. Temp</span>
-                        <span class="detail-value" id="temp-max">--</span>
+                    <div class="current-temp" id="temp-current">--°C</div>
+                    <div class="weather-details">
+                        <div class="weather-detail">
+                            <span class="detail-label">Minimum</span>
+                            <span class="detail-value" id="temp-min">--°C</span>
+                        </div>
+                        <div class="weather-detail">
+                            <span class="detail-label">Maximum</span>
+                            <span class="detail-value" id="temp-max">--°C</span>
+                        </div>
                     </div>
                 </div>
 
-                <div class="weather-card"> <!-- hier komt een  --> <!--   -->
-                    <h2><span class=/span>Advies</h2>
-                    <div class="weather-detail">
-                        <span class="detail-value" id="advice">--</span>
+                <div class="weather-card advice-card">
+                    <div class="card-header">
+                        <span class="card-icon">💧</span>
+                        <h2>Irrigatie Advies</h2>
+                    </div>
+                    <div class="advice-content">
+                        <div class="advice-badge" id="advice">--</div>
                     </div>
                 </div>
 
                 <div class="weather-card">
-                    <h2><span class=/span>Neerslag</h2>
-                    <div class="weather-detail">
-                        <span class="detail-label">Grondvochtigheid</span>
-                        <span class="detail-value" id="soil-mosture">--</span>
+                    <div class="card-header">
+                        <span class="card-icon">🌧️</span>
+                        <h2>Vocht & Zon</h2>
                     </div>
-                    <div class="weather-detail">
-                        <span class="detail-label">Luchtvochtigheid</span>
-                        <span class="detail-value" id="humidity">--%</span>
+                    <div class="weather-details">
+                        <div class="weather-detail">
+                            <span class="detail-label">Grondvochtigheid</span>
+                            <span class="detail-value" id="soil-mosture">--</span>
+                        </div>
+                        <div class="weather-detail">
+                            <span class="detail-label">Luchtvochtigheid</span>
+                            <span class="detail-value" id="humidity">--%</span>
+                        </div>
+                        <div class="weather-detail">
+                            <span class="detail-label">Zonuren Vandaag</span>
+                            <span class="detail-value" id="solar-hours">--</span>
+                        </div>
                     </div>
-                    <div class="weather-detail">
-                        <span class="detail-label">Zonuren</span>
-                        <span class="detail-value" id="solar-hours">--hr</span>
-                    </div>
-
                 </div>
             </div>
 
             <div class="forecast-container">
-                <h2 class="forecast-title"><span class=/span>5-Daagse neerslag voorspelling</h2>
+                <div class="card-header">
+                    <span class="card-icon">📊</span>
+                    <h2 class="forecast-title">5-Daagse Neerslagverwachting</h2>
+                </div>
                 <div class="chart-container">
                     <div class="y-axis-labels">
                         <div id="max-precipitation">20mm</div>
-                        <div id="middle-precipitation">20mm</div>
+                        <div id="middle-precipitation">10mm</div>
                         <div>0mm</div>
                     </div>
                     <div class="precipitation-grid" id="precipitation-grid"></div>
                 </div>
-                
-                </div>
             </div>
         </div>
 
-        <div class="last-updated" id="last-updated">
-            <!-- Last updated time will be shown here -->
-        </div>
+        <footer class="footer">
+            <div class="last-updated" id="last-updated">
+                <!-- Last updated time will be shown here -->
+            </div>
+            <p class="footer-text">© 2025 TropoMetrics | Professionele Weerdata voor Landbouw</p>
+        </footer>
     </div>
     
     <script src="code/email-config.js"></script>
