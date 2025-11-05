@@ -16,8 +16,9 @@ _site/
 .env.test.local
 .env.production.local
 
-# Email configuration (contains API keys)
+# Email configuration (auto-generated at runtime)
 Website/code/email-config.js
+frontend/Website/code/email-config.js
 
 # IDE files
 .vscode/

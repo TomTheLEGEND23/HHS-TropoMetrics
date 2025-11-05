@@ -185,22 +185,55 @@ function getCoordinates(){
 
 
 async function sendAdviceMail(){
-// Get advice from the page
+    // Get advice from the page
     const adviceElement = document.getElementById('advice');
     const advice = adviceElement?.textContent || '';
-    console.log("In de knop");
+    
+    console.log("📧 Sending email notification...");
 
-    if (advice.includes('Geef water')) {
-        console.log("In de mail verzenden");
+    // Get current weather data for the email
+    const temp = document.getElementById('temp-current')?.textContent || 'N/A';
+    const soilMoisture = document.getElementById('soil-mosture')?.textContent || 'N/A';
+    const humidity = document.getElementById('humidity')?.textContent || 'N/A';
+
+    // Create email body with weather information
+    const emailBody = `
+TropoMetrics Weather Alert
+
+Current Conditions:
+- Temperature: ${temp}
+- Soil Moisture: ${soilMoisture}
+- Air Humidity: ${humidity}
+
+Advice: ${advice}
+
+${advice.includes('Geef water') ? 'Based on current weather conditions, watering is recommended.' : 'No watering needed at this time.'}
+
+Check your TropoMetrics dashboard for detailed information and forecasts.
+
+---
+This is an automated message from TropoMetrics Weather Service
+Location: Lat ${test_user.latitude}, Lon ${test_user.longitude}
+    `.trim();
+
+    try {
         const result = await sendEmail(
             'tropometrics@gmail.com',
-            'TropoMetrics Watering Advice',
-            `${advice}\n\nBased on current weather conditions, watering is recommended. Check your TropoMetrics dashboard for detailed information.`
+            '🌦️ TropoMetrics Weather Alert - ' + advice,
+            emailBody,
+            false  // plain text email
         );
 
         if (result.success) {
-            console.log('Watering advice sent!');
+            console.log('✅ Email sent successfully!');
+            alert('✅ Weather alert sent to tropometrics@gmail.com');
+        } else {
+            console.error('❌ Failed to send email:', result.error);
+            alert('❌ Failed to send email: ' + result.error);
         }
+    } catch (error) {
+        console.error('❌ Error sending email:', error);
+        alert('❌ Error sending email. Check console for details.');
     }
 }
 
