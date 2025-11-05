@@ -280,16 +280,18 @@ body {
 /* Bar information */
 .bar-histogram {
   width: 28px;
-  background: linear-gradient(to top, var(--primary-green), var(--accent-green));
+  background: linear-gradient(to bottom, #60a5fa, #1e40af);
   border-radius: 6px 6px 0 0;
   transition: all 0.3s ease;
   position: relative;
   cursor: pointer;
+  box-shadow: 0 2px 4px rgba(30, 64, 175, 0.2);
 }
 
 .bar-histogram:hover {
-    opacity: 0.8;
+    opacity: 0.85;
     transform: scaleY(1.02);
+    box-shadow: 0 4px 8px rgba(30, 64, 175, 0.3);
 }
 
 .bar-histogram:hover::after {
