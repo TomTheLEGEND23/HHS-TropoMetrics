@@ -25,7 +25,7 @@ if (typeof window !== 'undefined') {
 EOF
 
 echo "✅ Email API configuration injected successfully"
-echo "📧 Backend service: ${EMAIL_API_URL:-tropometrics-email-api-service:8000}"
+echo "📧 Backend service: ${EMAIL_API_URL:-tropometrics-backend:8000}"
 echo "📧 Frontend uses same-origin requests (proxied by nginx)"
 
 # Start nginx
