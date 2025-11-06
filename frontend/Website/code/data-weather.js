@@ -9,6 +9,22 @@ const test_user = {
     longitude: -58.381
 } 
 
+
+// lijst API keys
+
+const VALID_API_KEYS = [
+    "f7fdaa2c-d204-4083-9ca9-34d7bdec25ac",  //Test user key
+    "demo",
+                            //Demo key
+]
+
+const test_userAPI = [
+"test"
+]
+
+
+
+
 /* Get the data */
 //The request to the API
 async function getData(location) {
@@ -246,4 +262,31 @@ Location: Lat ${test_user.latitude}, Lon ${test_user.longitude}
     }
 }
 
-getData();
+function getLocalData(){
+
+    advice_text = document.getElementById("advice");
+
+
+    let soil_moisture_27_to_81cm = Math.random();
+
+    if (soil_moisture_27_to_81cm <= 0.14){
+        advice_text.textContent = "Geef water";
+    } else {
+        advice_text.textContent = "Water geven is nu niet nodig";
+    }
+
+}
+
+
+// if statement om te checken of de api key overeenkomt.
+
+const UrlParameter = new URLSearchParams(window.location.search);
+const UrlKey = UrlParameter.get('api_key');
+
+if (VALID_API_KEYS.includes(UrlKey)){
+    getData();
+}
+
+if (test_userAPI.includes(UrlKey)){
+    getLocalData();
+}
