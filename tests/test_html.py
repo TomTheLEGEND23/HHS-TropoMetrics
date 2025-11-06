@@ -26,7 +26,7 @@ driver = webdriver.Chrome(options=options)
 while teller <= aantal:
     teller += 1
     tijd_start = time.time()
-    driver.get("http://10.0.0.101:30081/")
+    driver.get("http://10.0.0.101:30081/index.html?api_key=test")
     
     try:    
         WebDriverWait(driver, 20).until(
