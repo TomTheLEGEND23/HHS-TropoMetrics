@@ -264,6 +264,17 @@ Location: Lat ${test_user.latitude}, Lon ${test_user.longitude}
 
 function getLocalData(){
 
+    advice_text = document.getElementById("advice");
+
+
+    let soil_moisture_27_to_81cm = Math.random();
+
+    if (soil_moisture_27_to_81cm <= 0.14){
+        advice_text.textContent = "Geef water";
+    } else {
+        advice_text.textContent = "Water geven is nu niet nodig";
+    }
+
 }
 
 
@@ -277,5 +288,5 @@ if (VALID_API_KEYS.includes(UrlKey)){
 }
 
 if (test_userAPI.includes(UrlKey)){
-    console.log("In locale data");
+    getLocalData();
 }
