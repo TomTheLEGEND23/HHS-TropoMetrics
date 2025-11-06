@@ -35,7 +35,7 @@ while teller <= aantal:
         tijd_eind = time.time()
         tijd_verschil = tijd_eind - tijd_start
         lijst_zonder_error.append(tijd_verschil)
-        print("Succesvolle poging ", teller)    
+        print("Succesvolle poging ", teller)   
     except: 
         tijd_eind = time.time()
         tijd_verschil = tijd_eind - tijd_start
@@ -44,6 +44,6 @@ while teller <= aantal:
 driver.quit()
         
 average = sum (lijst_zonder_error) / len(lijst_zonder_error)
-print("Gemiddelde tijd zonder error: ", average)
+print("Latency succesvolle aanvragen: ", str (average) + "s")
 
 

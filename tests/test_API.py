@@ -44,6 +44,6 @@ while teller <= aantal:
 driver.quit()
         
 average = sum (lijst_zonder_error) / len(lijst_zonder_error)
-print("Gemiddelde tijd zonder error: ", average)
+print("Latency succesvolle aanvragen: ", str(average) + "s")
 
 
