@@ -9,8 +9,24 @@ from selenium.webdriver.support import expected_conditions as EC
 
 
 # Get base URL and API key from environment variables or use defaults
+# If TEST_BASE_URL is not provided, fall back to a sensible default used by the
+# local k3s environment. If that's not appropriate you should set TEST_BASE_URL
+# before running the tests (for example: export TEST_BASE_URL="http://10.0.0.101:30081").
 BASE_URL = os.environ.get("TEST_BASE_URL")
 API_KEY = os.environ.get("TEST_API_KEY", "test")
+
+# Basic validation and normalization of BASE_URL so Selenium doesn't receive an
+# invalid URL (which raises InvalidArgumentException). If BASE_URL is None we
+# attempt a reasonable local default. If it lacks a scheme, prepend http://.
+if not BASE_URL:
+    # Default development URL from repository environment notes
+    BASE_URL = "http://10.0.0.101:30081"
+    print(f"TEST_BASE_URL not set — defaulting to {BASE_URL}")
+
+# Ensure the URL contains a scheme
+if not BASE_URL.startswith("http://") and not BASE_URL.startswith("https://"):
+    print(f"Normalizing BASE_URL by prepending 'http://': {BASE_URL}")
+    BASE_URL = "http://" + BASE_URL
 
 lijst_zonder_error = []
 lijst_met_error = []
@@ -48,8 +64,13 @@ while teller <= aantal:
         lijst_met_error.append(tijd_verschil)
         print("Mislukte poging ", teller)
 driver.quit()
-        
-average = sum (lijst_zonder_error) / len(lijst_zonder_error)
-print("Latency succesvolle aanvragen: ", str (average) + "s")
+
+# Safely compute average only when there are successful attempts to avoid
+# ZeroDivisionError when lijst_zonder_error is empty.
+if len(lijst_zonder_error) > 0:
+    average = sum(lijst_zonder_error) / len(lijst_zonder_error)
+    print("Latency succesvolle aanvragen: ", str(average) + "s")
+else:
+    print("Geen succesvolle aanvragen gevonden — geen latency beschikbaar.")
 
 
