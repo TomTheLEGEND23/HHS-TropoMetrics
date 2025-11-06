@@ -12,6 +12,12 @@ from selenium.webdriver.support import expected_conditions as EC
 BASE_URL = os.environ.get("TEST_BASE_URL")
 API_KEY = os.environ.get("TEST_API_KEY", "test")
 
+# Build URL with or without API key parameter
+if API_KEY:
+    TEST_URL = f"{BASE_URL}/index.html?api_key={API_KEY}"
+else:
+    TEST_URL = f"{BASE_URL}/index.html"
+
 lijst_zonder_error = []
 lijst_met_error = []
 lijst_tijden = []
@@ -28,11 +34,11 @@ options.add_argument("--no-sandbox")
 options.add_argument("--disable-dev-shm-usage")
 options.add_experimental_option('excludeSwitches', ['enable-logging'])
 driver = webdriver.Chrome(options=options)
-print(f"Testing HTML page: {BASE_URL}/index.html?api_key={API_KEY}")
+print(f"Testing HTML page: {TEST_URL}")
 while teller <= aantal:
     teller += 1
     tijd_start = time.time()
-    driver.get(f"{BASE_URL}/index.html?api_key={API_KEY}")
+    driver.get(TEST_URL)
     
     try:    
         WebDriverWait(driver, 20).until(

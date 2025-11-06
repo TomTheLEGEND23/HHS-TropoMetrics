@@ -90,25 +90,32 @@ def main():
     
     # Ask for data source selection
     print("\nWhich data source would you like to test?")
-    print("1. Local Data (uses ?api_key=test)")
-    print("2. API Data (uses ?api_key=demo)")
+    print("1. ?api_key=test)")
+    print("2. ?api_key=demo)")
+    print("3. No API Key")
     
     while True:
-        data_choice = input("\nSelect data source (1-2): ").strip()
-        if data_choice in ['1', '2']:
+        data_choice = input("\nSelect data source (1-3): ").strip()
+        if data_choice in ['1', '2', '3']:
             break
-        print("Invalid choice. Please enter 1 or 2.")
+        print("Invalid choice. Please enter 1, 2, or 3.")
     
     # Set the API key based on selection
     if data_choice == '1':
         api_key = "test"
         data_source = "Local Data"
-    else:
+    elif data_choice == '2':
         api_key = "demo"
         data_source = "API Data"
+    else:
+        api_key = ""
+        data_source = "No API Key"
     
     print(f"\n{'='*60}")
-    print(f"Data Source: {data_source} (api_key={api_key})")
+    if api_key:
+        print(f"Data Source: {data_source} (api_key={api_key})")
+    else:
+        print(f"Data Source: {data_source} (no API parameter)")
     print(f"{'='*60}")
     
     # Ask which tests to run
