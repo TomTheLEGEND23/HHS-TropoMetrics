@@ -4,30 +4,54 @@ Automated testing suite for TropoMetrics web application. Tests both API endpoin
 
 ## Quick Start
 
-### Linux/macOS One-Liner
+### Linux/macOS One-Liner (with branch selection)
 ```bash
-cd /tmp && rm -rf tests && git clone --depth 1 --filter=blob:none --sparse https://github.com/TomTheLEGEND23/HHS-TropoMetrics.git && cd HHS-TropoMetrics && git sparse-checkout set tests && cd tests && python3 run-tests.py
+read -p "Select branch (main/dev): " BRANCH && cd /tmp && rm -rf tropometrics-tests && mkdir -p tropometrics-tests && cd tropometrics-tests && curl -L "https://github.com/TomTheLEGEND23/HHS-TropoMetrics/archive/refs/heads/${BRANCH}.tar.gz" | tar xz --strip=2 "HHS-TropoMetrics-${BRANCH}/tests" && cd tests && python3 run-tests.py
 ```
 
-### Windows PowerShell One-Liner
+### Windows PowerShell One-Liner (with branch selection)
 ```powershell
-cd $env:TEMP; if (Test-Path tests) { Remove-Item -Recurse -Force tests }; git clone --depth 1 --filter=blob:none --sparse https://github.com/TomTheLEGEND23/HHS-TropoMetrics.git; cd HHS-TropoMetrics; git sparse-checkout set tests; cd tests; python run-tests.py
+$BRANCH = Read-Host "Select branch (main/dev)"; cd $env:TEMP; if (Test-Path tropometrics-tests) { Remove-Item -Recurse -Force tropometrics-tests }; New-Item -ItemType Directory -Path tropometrics-tests | Out-Null; cd tropometrics-tests; Invoke-WebRequest -Uri "https://github.com/TomTheLEGEND23/HHS-TropoMetrics/archive/refs/heads/$BRANCH.zip" -OutFile "repo.zip"; Expand-Archive -Path "repo.zip" -DestinationPath .; cd "HHS-TropoMetrics-$BRANCH/tests"; python run-tests.py
 ```
 
-### Windows Command Prompt One-Liner
+### Windows Command Prompt One-Liner (with branch selection)
 ```cmd
-cd %TEMP% && rmdir /s /q tests 2>nul && git clone --depth 1 --filter=blob:none --sparse https://github.com/TomTheLEGEND23/HHS-TropoMetrics.git && cd HHS-TropoMetrics && git sparse-checkout set tests && cd tests && python run-tests.py
+set /p BRANCH="Select branch (main/dev): " && cd %TEMP% && rmdir /s /q tropometrics-tests 2>nul && mkdir tropometrics-tests && cd tropometrics-tests && curl -L "https://github.com/TomTheLEGEND23/HHS-TropoMetrics/archive/refs/heads/%BRANCH%.zip" -o repo.zip && tar -xf repo.zip && cd HHS-TropoMetrics-%BRANCH%\tests && python run-tests.py
+```
+
+### Alternative: Direct Download (No Branch Selection)
+
+**Linux/macOS - Main Branch:**
+```bash
+cd /tmp && rm -rf tropometrics-tests && mkdir -p tropometrics-tests && cd tropometrics-tests && curl -L "https://github.com/TomTheLEGEND23/HHS-TropoMetrics/archive/refs/heads/main.tar.gz" | tar xz --strip=2 "HHS-TropoMetrics-main/tests" && cd tests && python3 run-tests.py
+```
+
+**Linux/macOS - Dev Branch:**
+```bash
+cd /tmp && rm -rf tropometrics-tests && mkdir -p tropometrics-tests && cd tropometrics-tests && curl -L "https://github.com/TomTheLEGEND23/HHS-TropoMetrics/archive/refs/heads/dev.tar.gz" | tar xz --strip=2 "HHS-TropoMetrics-dev/tests" && cd tests && python3 run-tests.py
+```
+
+**Windows PowerShell - Main Branch:**
+```powershell
+cd $env:TEMP; if (Test-Path tropometrics-tests) { Remove-Item -Recurse -Force tropometrics-tests }; New-Item -ItemType Directory -Path tropometrics-tests | Out-Null; cd tropometrics-tests; Invoke-WebRequest -Uri "https://github.com/TomTheLEGEND23/HHS-TropoMetrics/archive/refs/heads/main.zip" -OutFile "repo.zip"; Expand-Archive -Path "repo.zip" -DestinationPath .; cd "HHS-TropoMetrics-main/tests"; python run-tests.py
+```
+
+**Windows PowerShell - Dev Branch:**
+```powershell
+cd $env:TEMP; if (Test-Path tropometrics-tests) { Remove-Item -Recurse -Force tropometrics-tests }; New-Item -ItemType Directory -Path tropometrics-tests | Out-Null; cd tropometrics-tests; Invoke-WebRequest -Uri "https://github.com/TomTheLEGEND23/HHS-TropoMetrics/archive/refs/heads/dev.zip" -OutFile "repo.zip"; Expand-Archive -Path "repo.zip" -DestinationPath .; cd "HHS-TropoMetrics-dev/tests"; python run-tests.py
 ```
 
 ## Prerequisites
 
 - Python 3.7 or higher
-- Git
+- curl (Linux/macOS) or PowerShell/CMD with curl support (Windows 10+)
 - Chrome/Chromium browser
 - Required Python packages:
   ```bash
   pip install selenium requests beautifulsoup4
   ```
+
+**Note:** Git is NOT required for the one-liner commands - they use curl/Invoke-WebRequest to download the tests directly.
 
 ## Manual Installation
 
