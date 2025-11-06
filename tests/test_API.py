@@ -1,11 +1,16 @@
 import requests
 from bs4 import BeautifulSoup
 import time
+import os
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+
+# Get base URL and API key from environment variables or use defaults
+BASE_URL = os.environ.get("TEST_BASE_URL")
+API_KEY = os.environ.get("TEST_API_KEY", "demo")
 
 lijst_zonder_error = []
 lijst_met_error = []
@@ -23,10 +28,11 @@ options.add_argument("--no-sandbox")
 options.add_argument("--disable-dev-shm-usage")
 options.add_experimental_option('excludeSwitches', ['enable-logging'])
 driver = webdriver.Chrome(options=options)
+print(f"Testing API endpoint: {BASE_URL}/api?api_key={API_KEY}")
 while teller <= aantal:
     teller += 1
     tijd_start = time.time()
-    driver.get("http://10.0.0.101:30081/api?api_key='demo'")
+    driver.get(f"{BASE_URL}/api?api_key={API_KEY}")
     
     try:    
         WebDriverWait(driver, 20).until(
