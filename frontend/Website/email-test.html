@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Email Service Test - TropoMetrics</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container email-test-container">
+        <div class="header">
+            <div class="logo-container">
+                <h1>🌾 TropoMetrics</h1>
+            </div>
+            <p class="tagline">Email Service Test Panel</p>
+        </div>
+
+        <div class="test-card">
+            <h2>
+                <span>🔐</span>
+                Secure Email Test
+            </h2>
+            <p class="subtitle">Test de backend email API (credentials worden nooit blootgesteld aan de browser)</p>
+            
+            <form onsubmit="testEmail(event)">
+                <div class="form-group">
+                    <label for="to">Ontvanger Email *</label>
+                    <input type="email" id="to" placeholder="naam@voorbeeld.nl" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="subject">Onderwerp *</label>
+                    <input type="text" id="subject" placeholder="Email onderwerp" value="Test van TropoMetrics" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="body">Bericht *</label>
+                    <textarea id="body" placeholder="Email inhoud..." required>Dit is een test email verstuurd via de beveiligde backend API!</textarea>
+                </div>
+                
+                <div class="button-group">
+                    <button type="submit" class="btn btn-primary">
+                        <span>📧</span>
+                        <span>Verstuur Email</span>
+                    </button>
+                    <button type="button" onclick="checkHealth()" class="btn btn-secondary">
+                        <span>🏥</span>
+                        <span>Check Status</span>
+                    </button>
+                </div>
+            </form>
+            
+            <div id="result"></div>
+        </div>
+        
+        <footer>
+            <p class="footer-text">© 2025 TropoMetrics | Professionele Weerdata voor Landbouw</p>
+        </footer>
+    </div>
+
+    <!-- Load email configuration and service -->
+    <script src="code/email-config.js"></script>
+    <script src="code/email-service.js"></script>
+    
+    <script>
+        async function testEmail(event) {
+            event.preventDefault();
+            
+            const to = document.getElementById('to').value;
+            const subject = document.getElementById('subject').value;
+            const body = document.getElementById('body').value;
+            const result = document.getElementById('result');
+            
+            if (!to || !subject || !body) {
+                result.className = 'error show';
+                result.innerHTML = '❌ Vul alle velden in';
+                return;
+            }
+            
+            result.className = 'loading show';
+            result.innerHTML = '⏳ Email wordt verstuurd...';
+            
+            const response = await sendEmail(to, subject, body, false);
+            
+            if (response.success) {
+                result.className = 'success show';
+                result.innerHTML = `✅ Email succesvol verstuurd naar ${to}`;
+            } else {
+                result.className = 'error show';
+                result.innerHTML = `❌ Fout bij versturen: ${response.error}`;
+            }
+        }
+        
+        async function checkHealth() {
+            const result = document.getElementById('result');
+            result.className = 'loading show';
+            result.innerHTML = '⏳ Service status wordt gecontroleerd...';
+            
+            const isHealthy = await checkEmailService();
+            
+            if (isHealthy) {
+                result.className = 'success show';
+                result.innerHTML = '✅ Email service is online en gereed!';
+            } else {
+                result.className = 'error show';
+                result.innerHTML = '❌ Email service is niet beschikbaar';
+            }
+        }
+        
+        // Check health on page load
+        window.addEventListener('load', checkHealth);
+    </script>
+</body>
+</html>

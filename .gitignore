@@ -16,6 +16,10 @@ _site/
 .env.test.local
 .env.production.local
 
+# Email configuration (auto-generated at runtime)
+Website/code/email-config.js
+frontend/Website/code/email-config.js
+
 # IDE files
 .vscode/
 .idea/
@@ -73,3 +77,8 @@ temp/
 
 # GitHub Pages
 Gemfile.lock
+
+# Kubernetes Secrets (never commit!)
+k8s/secrets.yaml
+k8s/*-secrets.yaml
+**/secrets.yaml

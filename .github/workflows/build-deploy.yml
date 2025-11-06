@@ -2,9 +2,9 @@ name: Build and Deploy Container
 
 on:
   push:
-    branches: [ main, dev, test ]
+    branches: [ main, dev ]
   pull_request:
-    branches: [ main, dev, test ]
+    branches: [ main, dev]
 
 env:
   REGISTRY: ghcr.io
@@ -14,7 +14,7 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       packages: write
 
     steps:
@@ -28,11 +28,11 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Extract metadata (tags, labels) for Docker
-      id: meta
+    - name: Extract metadata (tags, labels) for Frontend
+      id: meta-frontend
       uses: docker/metadata-action@v5
       with:
-        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-frontend
         tags: |
           type=ref,event=branch
           type=ref,event=pr
@@ -40,15 +40,37 @@ jobs:
           type=raw,value=latest,enable={{is_default_branch}}
           type=raw,value=main,enable=${{ github.ref == 'refs/heads/main' }}
           type=raw,value=dev,enable=${{ github.ref == 'refs/heads/dev' }}
-          type=raw,value=test,enable=${{ github.ref == 'refs/heads/test' }}
 
-    - name: Build and push Docker image
+    - name: Build and push Frontend Docker image
       uses: docker/build-push-action@v5
       with:
-        context: .
+        context: ./frontend
+        file: ./frontend/Dockerfile
         push: true
-        tags: ${{ steps.meta.outputs.tags }}
-        labels: ${{ steps.meta.outputs.labels }}
+        tags: ${{ steps.meta-frontend.outputs.tags }}
+        labels: ${{ steps.meta-frontend.outputs.labels }}
+
+    - name: Extract metadata for Backend
+      id: meta-backend
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-backend
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=sha
+          type=raw,value=latest,enable={{is_default_branch}}
+          type=raw,value=main,enable=${{ github.ref == 'refs/heads/main' }}
+          type=raw,value=dev,enable=${{ github.ref == 'refs/heads/dev' }}
+
+    - name: Build and push Backend Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: ./backend
+        file: ./backend/Dockerfile
+        push: true
+        tags: ${{ steps.meta-backend.outputs.tags }}
+        labels: ${{ steps.meta-backend.outputs.labels }}
 
     - name: Set environment info
       id: env-info
@@ -63,20 +85,45 @@ jobs:
           dev)
             echo "environment=Development" >> $GITHUB_OUTPUT
             echo "namespace=tropometrics" >> $GITHUB_OUTPUT
-            echo "port=30082" >> $GITHUB_OUTPUT
-            ;;
-          test)
-            echo "environment=Testing" >> $GITHUB_OUTPUT
-            echo "namespace=tropometrics" >> $GITHUB_OUTPUT
             echo "port=30081" >> $GITHUB_OUTPUT
             ;;
           *)
             echo "environment=Feature" >> $GITHUB_OUTPUT
             echo "namespace=tropometrics" >> $GITHUB_OUTPUT
-            echo "port=30083" >> $GITHUB_OUTPUT
+            echo "port=30082" >> $GITHUB_OUTPUT
             ;;
         esac
         echo "branch=$BRANCH_NAME" >> $GITHUB_OUTPUT
+
+    - name: Update manifest timestamp (Production)
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      run: |
+        TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+        sed -i "s|kubectl.kubernetes.io/restartedAt:.*|kubectl.kubernetes.io/restartedAt: \"$TIMESTAMP\"|g" k8s/main-env.yaml
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git add k8s/main-env.yaml
+        if git diff-index --quiet HEAD; then
+          echo "No changes to commit"
+        else
+          git commit -m "🔄 Update deployment timestamp [skip ci]"
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
+        fi
+
+    - name: Update manifest timestamp (Development)
+      if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
+      run: |
+        TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+        sed -i "s|kubectl.kubernetes.io/restartedAt:.*|kubectl.kubernetes.io/restartedAt: \"$TIMESTAMP\"|g" k8s/dev-env.yaml
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git add k8s/dev-env.yaml
+        if git diff-index --quiet HEAD; then
+          echo "No changes to commit"
+        else
+          git commit -m "🔄 Update deployment timestamp [skip ci]"
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:dev
+        fi
 
     - name: Deployment notification
       if: github.event_name == 'push'
@@ -86,8 +133,3 @@ jobs:
         echo "🌍 Environment: ${{ steps.env-info.outputs.environment }}"
         echo "🐳 Image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.env-info.outputs.branch }}"
         echo "📦 Namespace: ${{ steps.env-info.outputs.namespace }}"
-        echo "🚀 Portainer will automatically detect changes and redeploy"
-        echo "📍 Access via http://YOUR_NODE_IP:${{ steps.env-info.outputs.port }}"
-        echo ""
-        echo "� Deploy Command:"
-        echo "kubectl apply -f k8s/portainer-${{ steps.env-info.outputs.branch }}.yaml"

@@ -1,0 +1,4 @@
+# Exclude Files and Directories
+Dockerfile
+EMAIL-BACKEND-SETUP.md
+README.md
