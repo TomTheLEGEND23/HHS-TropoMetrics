@@ -13,7 +13,7 @@ ENVIRONMENTS = [
     {"name": "Production From TailNet", "ip": "10.0.0.101", "port": "30080"},
     {"name": "Development From TailNet", "ip": "10.0.0.101", "port": "30081"},
     {"name": "Production From Lab PC", "ip": "192.168.20.27", "port": "980"},
-    {"name": "Development From Lab PC", "ip": "192.168.20.27", "port": "3981"},
+    {"name": "Development From Lab PC", "ip": "192.168.20.27", "port": "981"},
 ]
 
 
