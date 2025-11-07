@@ -21,6 +21,12 @@ import subprocess
 import sys
 import re
 
+# Set UTF-8 encoding for stdout to handle emoji and special characters
+if sys.platform == 'win32':
+    import io
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
+
 # Configuration: Available environments
 ENVIRONMENTS = [
     {"name": "Production From TailNet", "ip": "10.0.0.101", "port": "30080"},
