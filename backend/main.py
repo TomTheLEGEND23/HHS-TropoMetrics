@@ -254,6 +254,8 @@ async def weather_data_api(request: Request, api_key: Optional[str] = None):
     
     # Fetch weather data from Open-Meteo API (for "demo" key)
     try:
+        logger.info("🌍 Calling Open-Meteo API")
+        
         async with httpx.AsyncClient() as client:
             api_request = (
                 f"https://api.open-meteo.com/v1/forecast"

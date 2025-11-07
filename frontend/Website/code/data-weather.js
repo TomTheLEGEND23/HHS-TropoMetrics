@@ -30,6 +30,8 @@ async function getData(location) {
 
     const api_request = `https://api.open-meteo.com/v1/forecast?latitude=${encodeURIComponent(coordinates.latitude)}&longitude=${encodeURIComponent(coordinates.longitude)}&daily=temperature_2m_max,temperature_2m_min,daylight_duration&hourly=precipitation,relative_humidity_2m,soil_moisture_27_to_81cm&current=temperature_2m&timezone=Europe%2FAmsterdam`;
 
+    console.log("🌍 Calling Open-Meteo API");
+    
     // Get the data from the api
     const weather_response = await fetch(api_request);
 
