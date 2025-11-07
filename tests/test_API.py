@@ -19,7 +19,7 @@ lijst_zonder_error = []
 lijst_met_error = []
 lijst_tijden = []
 teller = 0 
-aantal = 20
+aantal = 2000
 
 print(f"Testing API endpoint: {TEST_URL}")
 print(f"Number of requests: {aantal}")
