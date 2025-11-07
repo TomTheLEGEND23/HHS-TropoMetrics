@@ -34,9 +34,17 @@ options.add_argument("--window-size=1920,1080")
 options.add_argument("--disable-gpu")
 options.add_argument("--no-sandbox")
 options.add_argument("--disable-dev-shm-usage")
+options.add_argument("--disable-blink-features=AutomationControlled")
+# Disable caching to ensure fresh requests
+options.add_argument("--disk-cache-size=0")
+options.add_argument("--disable-application-cache")
 options.add_experimental_option('excludeSwitches', ['enable-logging'])
 
+# Set page load timeout
+options.page_load_strategy = 'normal'
+
 driver = webdriver.Chrome(options=options)
+driver.set_page_load_timeout(30)
 
 print(f"Testing HTML page: {TEST_URL}")
 print(f"Number of requests: {aantal}")
@@ -47,11 +55,19 @@ while teller < aantal:
     tijd_start = time.time()
     
     try:
+        # Clear cookies and cache between iterations
+        driver.delete_all_cookies()
+        
         driver.get(TEST_URL)
         
-        # Wait for expected content to appear
-        WebDriverWait(driver, 20).until(
-            EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'geef water') or contains(text(), 'Water geven is nu niet nodig')]"))
+        # Wait for page to be fully loaded
+        WebDriverWait(driver, 5).until(
+            lambda d: d.execute_script('return document.readyState') == 'complete'
+        )
+        
+        # Wait for expected content to appear (case-insensitive)
+        WebDriverWait(driver, 25).until(
+            EC.presence_of_element_located((By.XPATH, "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'geef water') or contains(text(), 'Water geven is nu niet nodig')]"))
         )
         
         tijd_eind = time.time()
@@ -63,7 +79,7 @@ while teller < aantal:
         tijd_eind = time.time()
         tijd_verschil = tijd_eind - tijd_start
         lijst_met_error.append(tijd_verschil)
-        print(f"✗ Request {teller}: Failed - {tijd_verschil:.3f}s - {str(e)[:50]}")
+        print(f"✗ Request {teller}: Failed - {tijd_verschil:.3f}s - Error: {str(e)}")
 
 driver.quit()
 
