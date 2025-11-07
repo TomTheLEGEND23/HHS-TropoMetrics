@@ -90,7 +90,6 @@ else:
 if lijst_met_error:
     print(f"\nFailed requests average time: {sum(lijst_met_error)/len(lijst_met_error):.3f}s")
     print(f"Failed requests min time: {min(lijst_met_error):.3f}s")
-    print("Failed requests: " + str(len(lijst_met_error)) + "s")
 
 print("=" * 60)
 
