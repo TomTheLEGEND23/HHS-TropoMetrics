@@ -13,9 +13,8 @@ const test_user = {
 // lijst API keys
 
 const VALID_API_KEYS = [
-    "f7fdaa2c-d204-4083-9ca9-34d7bdec25ac",  //Test user key
-    "demo",
-                            //Demo key
+    "demo",                       // Demo key
+    "test"                        // Test key
 ]
 
 const test_userAPI = [
