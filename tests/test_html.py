@@ -80,14 +80,6 @@ while teller < aantal:
         tijd_verschil = tijd_eind - tijd_start
         lijst_met_error.append(tijd_verschil)
         print(f"✗ Request {teller}: Failed - {tijd_verschil:.3f}s - Error: {str(e)}")
-        
-        # Take screenshot on failure for debugging
-        try:
-            screenshot_path = f"/tmp/test_failure_{teller}.png"
-            driver.save_screenshot(screenshot_path)
-            print(f"  Screenshot saved: {screenshot_path}")
-        except:
-            pass
 
 driver.quit()
 
