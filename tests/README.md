@@ -29,6 +29,21 @@ set /p BRANCH="Select branch (main/dev): " && cd %TEMP% && rmdir /s /q tropometr
 - Git is NOT required - one-liners use curl/web download
 - Python packages (selenium, requests, beautifulsoup4) are automatically installed by the one-liner
 
+### Installing OpenSSH Client on Windows (if needed)
+
+If you need SSH functionality on Windows, install OpenSSH Client using winget:
+
+```powershell
+# Install OpenSSH Client
+winget install Microsoft.OpenSSH.Beta
+
+# Verify installation
+ssh -V
+```
+
+Alternatively, you can install via Windows Settings:
+- Settings → Apps → Optional Features → Add a feature → OpenSSH Client
+
 ## Manual Installation
 
 1. Clone the repository (or download the tests folder):
@@ -45,9 +60,116 @@ set /p BRANCH="Select branch (main/dev): " && cd %TEMP% && rmdir /s /q tropometr
    ```
 
 3. Run the test suite:
+   
+   **Interactive Mode (default):**
    ```bash
    python3 run-tests.py
    ```
+   
+   **Direct Mode (with arguments):**
+   ```bash
+   # Run both tests on dev environment with local data
+   python3 run-tests.py --env 2 --api-key test --test both
+   
+   # Run API test on production with demo API key
+   python3 run-tests.py -e 1 -k demo -t api
+   
+   # Run HTML test with no API key
+   python3 run-tests.py --env 3 --api-key none --test html
+   
+   # Show help and all options
+   python3 run-tests.py --help
+   ```
+
+## Command-Line Arguments
+
+The test runner supports both **interactive mode** (default) and **direct mode** (with arguments).
+
+### Arguments
+
+- `-e`, `--env <1-4>` - Environment number:
+  - `1` - Production From TailNet (10.0.0.101:30080)
+  - `2` - Development From TailNet (10.0.0.101:30081)
+  - `3` - Production From Lab PC (192.168.20.27:980)
+  - `4` - Development From Lab PC (192.168.20.27:981)
+
+- `-k`, `--api-key <test|demo|none>` - API key selection:
+  - `test` - Local Data (?api_key=test)
+  - `demo` - API Data (?api_key=demo)
+  - `none` - No API Key (no parameter)
+
+- `-t`, `--test <api|html|both>` - Which test(s) to run:
+  - `api` - API Test only
+  - `html` - HTML Test only
+  - `both` - Run both tests
+
+**Note:** All three arguments must be provided to use direct mode. If any are missing, the script will fall back to interactive mode.
+
+## Automated Testing with Ansible
+
+Run tests across multiple machines automatically using Ansible.
+
+### Prerequisites for Ansible
+- Ansible installed on control machine: `pip install ansible` or `sudo apt install ansible`
+- SSH access to Linux/macOS hosts
+- WinRM configured on Windows hosts
+
+### Quick Start with Ansible
+
+1. **Edit the inventory file** (`inventory.ini`) to add your test hosts:
+   ```ini
+   [linux_hosts]
+   lab-pc-1 ansible_host=192.168.20.10 ansible_user=user
+   
+   [windows_hosts]
+   lab-pc-2 ansible_host=192.168.20.11 ansible_user=user ansible_connection=winrm
+   ```
+
+2. **Run the playbook**:
+   ```bash
+   # Run with default settings (dev branch, env 2, test api_key, both tests)
+   ansible-playbook run-tests.yml
+   
+   # Run with custom settings
+   ansible-playbook run-tests.yml -e "branch=main test_env=1 api_key=demo test_type=both"
+   
+   # Run on specific host group
+   ansible-playbook run-tests.yml --limit windows_hosts
+   
+   # Run on specific host
+   ansible-playbook run-tests.yml --limit lab-pc-1
+   ```
+
+### Ansible Variables
+
+Override these with `-e` flag:
+- `branch`: Git branch (default: `dev`)
+- `test_env`: Environment number 1-4 (default: `2`)
+- `api_key`: API key type - test|demo|none (default: `test`)
+- `test_type`: Test type - api|html|both (default: `both`)
+
+### Example Ansible Commands
+
+```bash
+# Test production environment with demo API on all hosts
+ansible-playbook run-tests.yml -e "test_env=1 api_key=demo"
+
+# Test main branch on Windows hosts only
+ansible-playbook run-tests.yml -e "branch=main" --limit windows_hosts
+
+# Run HTML test with no API key on specific host
+ansible-playbook run-tests.yml -e "api_key=none test_type=html" --limit lab-pc-1
+
+# Dry run to see what will execute
+ansible-playbook run-tests.yml --check
+```
+
+### Ansible Files
+
+- **`run-tests.yml`** - Main Ansible playbook
+- **`inventory.ini`** - Host inventory (edit to add your hosts)
+- **`ansible.cfg`** - Ansible configuration
+- **`ansible-test.log`** - Log file (created when tests run)
 
 ## Usage
 
