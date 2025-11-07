@@ -4,12 +4,6 @@ import os
 import sys
 import json
 
-# Set UTF-8 encoding for stdout to handle emoji and special characters
-if sys.platform == 'win32':
-    import io
-    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
-    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
-
 
 # Get base URL and API key from environment variables or use defaults
 BASE_URL = os.environ.get("TEST_BASE_URL", "http://10.0.0.101:30081")
