@@ -32,6 +32,9 @@ async function getData(location) {
 
     console.log("🌍 Calling Open-Meteo API");
     
+    // Log to nginx access logs
+    fetch('/🌍-Calling-Open-Meteo-API').catch(() => {});
+    
     // Get the data from the api
     const weather_response = await fetch(api_request);
 
