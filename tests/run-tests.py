@@ -19,6 +19,7 @@ import argparse
 import os
 import subprocess
 import sys
+import re
 
 # Configuration: Available environments
 ENVIRONMENTS = [
@@ -74,18 +75,70 @@ def run_test_script(script_name, base_url, api_key):
             [sys.executable, script_name],
             env={**os.environ, "TEST_BASE_URL": base_url, "TEST_API_KEY": api_key},
             cwd=os.path.dirname(__file__) or ".",
-            check=False
+            check=False,
+            capture_output=True,
+            text=True
         )
+        
+        # Print the output in real-time
+        print(result.stdout)
+        if result.stderr:
+            print(result.stderr, file=sys.stderr)
         
         if result.returncode == 0:
             print(f"\n✓ {script_name} completed successfully")
         else:
             print(f"\n✗ {script_name} failed with exit code {result.returncode}")
         
-        return result.returncode
+        # Parse statistics from output
+        stats = parse_test_statistics(result.stdout)
+        
+        return result.returncode, stats
     except Exception as e:
         print(f"\n✗ Error running {script_name}: {e}")
-        return 1
+        return 1, {}
+
+
+def parse_test_statistics(output):
+    """Parse test statistics from test script output."""
+    stats = {}
+    
+    # Extract total requests
+    match = re.search(r'Total requests:\s+(\d+)', output)
+    if match:
+        stats['total'] = int(match.group(1))
+    
+    # Extract successful requests
+    match = re.search(r'Successful:\s+(\d+)', output)
+    if match:
+        stats['successful'] = int(match.group(1))
+    
+    # Extract failed requests
+    match = re.search(r'Failed:\s+(\d+)', output)
+    if match:
+        stats['failed'] = int(match.group(1))
+    
+    # Extract success rate
+    match = re.search(r'Success rate:\s+([\d.]+)%', output)
+    if match:
+        stats['success_rate'] = float(match.group(1))
+    
+    # Extract average latency
+    match = re.search(r'Average:\s+([\d.]+)s', output)
+    if match:
+        stats['avg_latency'] = float(match.group(1))
+    
+    # Extract min latency
+    match = re.search(r'Min:\s+([\d.]+)s', output)
+    if match:
+        stats['min_latency'] = float(match.group(1))
+    
+    # Extract max latency
+    match = re.search(r'Max:\s+([\d.]+)s', output)
+    if match:
+        stats['max_latency'] = float(match.group(1))
+    
+    return stats
 
 
 def parse_arguments():
@@ -245,20 +298,55 @@ def main():
     
     # Run tests based on selection
     results = []
+    test_stats = {}
     
     if test_choice in ['1', '3']:
-        results.append(("test_API.py", run_test_script("test_API.py", base_url, api_key)))
+        code, stats = run_test_script("test_API.py", base_url, api_key)
+        results.append(("test_API.py", code))
+        test_stats["test_API.py"] = stats
     
     if test_choice in ['2', '3']:
-        results.append(("test_html.py", run_test_script("test_html.py", base_url, api_key)))
+        code, stats = run_test_script("test_html.py", base_url, api_key)
+        results.append(("test_html.py", code))
+        test_stats["test_html.py"] = stats
     
-    # Display summary
+    # Display summary with detailed statistics
     print(f"\n{'='*60}")
-    print("Test Summary")
-    print(f"{'='*60}")
+    print("COMBINED TEST SUMMARY")
+    print(f"{'='*60}\n")
+    
     for script, code in results:
         status = "✓ PASSED" if code == 0 else "✗ FAILED"
-        print(f"{script:<20} {status}")
+        print(f"{script} - {status}")
+        print("-" * 60)
+        
+        if script in test_stats and test_stats[script]:
+            stats = test_stats[script]
+            
+            # Display request statistics
+            if 'total' in stats:
+                print(f"  Total requests:     {stats['total']}")
+            if 'successful' in stats:
+                print(f"  Successful:         {stats['successful']}")
+            if 'failed' in stats:
+                print(f"  Failed:             {stats['failed']}")
+            if 'success_rate' in stats:
+                print(f"  Success rate:       {stats['success_rate']}%")
+            
+            # Display latency statistics
+            if 'avg_latency' in stats or 'min_latency' in stats or 'max_latency' in stats:
+                print(f"\n  Latency Statistics:")
+                if 'avg_latency' in stats:
+                    print(f"    Average:          {stats['avg_latency']:.3f}s")
+                if 'min_latency' in stats:
+                    print(f"    Minimum:          {stats['min_latency']:.3f}s")
+                if 'max_latency' in stats:
+                    print(f"    Maximum:          {stats['max_latency']:.3f}s")
+        else:
+            print("  No statistics available")
+        
+        print()
+    
     print(f"{'='*60}\n")
     
     # Exit with error if any test failed
