@@ -18,6 +18,7 @@ import os
 import logging
 import httpx
 from datetime import datetime
+import random
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -55,7 +56,8 @@ else:
 
 # Valid API keys for weather data endpoint
 VALID_API_KEYS = [
-    "demo",                         # Demo key
+    "demo",                         # Demo key - uses real Open-Meteo API
+    "test",                         # Test key - returns random data
 ]
 
 # Weather data configuration
@@ -156,7 +158,101 @@ async def weather_data_api(request: Request, api_key: Optional[str] = None):
             status_code=401
         )
     
-    # Fetch weather data from Open-Meteo API
+    # Check if using test API key (return random data)
+    if api_key == "test":
+        # Generate random weather data
+        current_temp = round(random.uniform(15.0, 30.0), 1)
+        soil_moisture = round(random.uniform(0.10, 0.20), 4)
+        needs_water = soil_moisture <= 0.14
+        
+        # Generate 5 random precipitation periods
+        precipitation_5days = []
+        for i in range(5):
+            precipitation_5days.append({
+                "period_hours": 6,
+                "precipitation_mm": round(random.uniform(0.0, 15.0), 2)
+            })
+        
+        api_response = {
+            "metadata": {
+                "service": "TropoMetrics Weather API",
+                "version": "1.0.0",
+                "timestamp": datetime.utcnow().isoformat() + "Z",
+                "location": {
+                    "latitude": WEATHER_LOCATION['latitude'],
+                    "longitude": WEATHER_LOCATION['longitude'],
+                    "timezone": "Europe/Amsterdam"
+                },
+                "source": "Random Test Data (test API key)",
+                "endpoint": "/api"
+            },
+            "current": {
+                "temperature_celsius": current_temp,
+                "temperature_fahrenheit": round(current_temp * 9/5 + 32, 1),
+                "timestamp": datetime.utcnow().isoformat() + "Z"
+            },
+            "daily": {
+                "temperature_min_celsius": round(random.uniform(10.0, 18.0), 1),
+                "temperature_max_celsius": round(random.uniform(20.0, 35.0), 1),
+                "daylight_duration_seconds": random.randint(43200, 54000),
+                "daylight_hours": random.randint(12, 15),
+                "daylight_minutes": random.randint(0, 59),
+                "daylight_formatted": f"{random.randint(12, 15)}h {random.randint(0, 59)}m"
+            },
+            "moisture": {
+                "soil_moisture_27_to_81cm_percentage": round(soil_moisture * 100, 2),
+                "soil_moisture_raw": soil_moisture,
+                "relative_humidity_percentage": random.randint(40, 80),
+                "timestamp": datetime.utcnow().isoformat() + "Z"
+            },
+            "irrigation": {
+                "advice": "Geef water" if needs_water else "Water geven is nu niet nodig",
+                "advice_english": "Give water" if needs_water else "Watering not needed now",
+                "needs_water": needs_water,
+                "threshold": 0.14,
+                "current_level": soil_moisture
+            },
+            "forecast": {
+                "precipitation_5day": precipitation_5days,
+                "total_precipitation_mm": round(sum(p['precipitation_mm'] for p in precipitation_5days), 2),
+                "forecast_periods": len(precipitation_5days)
+            },
+            "raw_data": {
+                "note": "Random test data - not real measurements"
+            }
+        }
+        
+        # Return as formatted HTML with JSON
+        import json
+        json_str = json.dumps(api_response, indent=2)
+        
+        return HTMLResponse(
+            content=f"""
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <title>TropoMetrics Weather API (Test Mode)</title>
+                <style>
+                    body {{ font-family: 'Monaco', monospace; background: #1e1e1e; color: #d4d4d4; padding: 20px; }}
+                    pre {{ background: #252526; padding: 20px; border-radius: 8px; border: 1px solid #3e3e42; overflow-x: auto; }}
+                    .header {{ color: #ce9178; margin-bottom: 20px; padding: 10px; background: #252526; border-radius: 8px; border-left: 4px solid #ce9178; }}
+                    .test-mode {{ color: #ce9178; font-weight: bold; }}
+                </style>
+            </head>
+            <body>
+                <div class="header">
+                    <h2>🌾 TropoMetrics Weather Data API</h2>
+                    <p class="test-mode">⚠️ TEST MODE - Random Generated Data</p>
+                </div>
+                <pre>{json_str}</pre>
+            </body>
+            </html>
+            """,
+            status_code=200
+        )
+    
+    # Fetch weather data from Open-Meteo API (for "demo" key)
     try:
         async with httpx.AsyncClient() as client:
             api_request = (
