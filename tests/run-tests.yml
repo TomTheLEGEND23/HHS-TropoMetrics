@@ -1,0 +1,161 @@
+---
+# Ansible Playbook for TropoMetrics Testing
+# 
+# Usage:
+#   ansible-playbook run-tests.yml
+#   ansible-playbook run-tests.yml --limit windows_hosts
+#   ansible-playbook run-tests.yml -e "branch=main test_env=1 api_key=demo test_type=both"
+#
+# Variables:
+#   branch: Git branch to use (default: dev)
+#   test_env: Environment number 1-4 (default: 2)
+#   api_key: API key type - test|demo|none (default: test)
+#   test_type: Test to run - api|html|both (default: both)
+
+- name: TropoMetrics Test Runner
+  hosts: all
+  gather_facts: yes
+  
+  vars:
+    # Default test configuration - can be overridden with -e flag
+    branch: "dev"
+    test_env: "2"
+    api_key: "test"
+    test_type: "both"
+    
+    # Environment descriptions for reporting
+    env_names:
+      "1": "Production From TailNet"
+      "2": "Development From TailNet"
+      "3": "Production From Lab PC"
+      "4": "Development From Lab PC"
+    
+  tasks:
+    - name: Display test configuration
+      debug:
+        msg:
+          - "=========================================="
+          - "TropoMetrics Test Configuration"
+          - "=========================================="
+          - "Target Host: {{ inventory_hostname }}"
+          - "OS Family: {{ ansible_os_family }}"
+          - "Branch: {{ branch }}"
+          - "Environment: {{ env_names[test_env] }} ({{ test_env }})"
+          - "API Key: {{ api_key }}"
+          - "Test Type: {{ test_type }}"
+          - "=========================================="
+    
+    # Linux/macOS Tasks
+    - name: Run tests on Linux/macOS
+      when: ansible_os_family in ['Debian', 'RedHat', 'Darwin']
+      block:
+        - name: Check if Python3 is installed (Linux/macOS)
+          command: python3 --version
+          register: python_check
+          changed_when: false
+          failed_when: false
+        
+        - name: Fail if Python3 not found (Linux/macOS)
+          fail:
+            msg: "Python 3 is not installed. Please install Python 3.7 or higher."
+          when: python_check.rc != 0
+        
+        - name: Check if pip3 is installed (Linux/macOS)
+          command: pip3 --version
+          register: pip_check
+          changed_when: false
+          failed_when: false
+        
+        - name: Fail if pip3 not found (Linux/macOS)
+          fail:
+            msg: "pip3 is not installed. Please install pip for Python 3."
+          when: pip_check.rc != 0
+        
+        - name: Run TropoMetrics tests (Linux/macOS)
+          shell: |
+            cd /tmp && \
+            rm -rf tropometrics-tests && \
+            mkdir -p tropometrics-tests && \
+            cd tropometrics-tests && \
+            curl -L "https://github.com/TomTheLEGEND23/HHS-TropoMetrics/archive/refs/heads/{{ branch }}.tar.gz" | tar xz --strip=2 "HHS-TropoMetrics-{{ branch }}/tests" && \
+            cd tests && \
+            pip3 install -q -r requirements.txt && \
+            python3 run-tests.py --env {{ test_env }} --api-key {{ api_key }} --test {{ test_type }}
+          args:
+            executable: /bin/bash
+          register: test_results_linux
+          failed_when: false
+        
+        - name: Display test results (Linux/macOS)
+          debug:
+            msg: "{{ test_results_linux.stdout_lines }}"
+        
+        - name: Set test status (Linux/macOS)
+          set_fact:
+            test_exit_code: "{{ test_results_linux.rc }}"
+            test_status: "{{ 'PASSED' if test_results_linux.rc == 0 else 'FAILED' }}"
+    
+    # Windows Tasks
+    - name: Run tests on Windows
+      when: ansible_os_family == 'Windows'
+      block:
+        - name: Check if Python is installed (Windows)
+          win_command: python --version
+          register: python_check_win
+          changed_when: false
+          failed_when: false
+        
+        - name: Fail if Python not found (Windows)
+          fail:
+            msg: "Python is not installed. Please install Python 3.7 or higher."
+          when: python_check_win.rc != 0
+        
+        - name: Check if pip is installed (Windows)
+          win_command: pip --version
+          register: pip_check_win
+          changed_when: false
+          failed_when: false
+        
+        - name: Fail if pip not found (Windows)
+          fail:
+            msg: "pip is not installed. Please install pip for Python."
+          when: pip_check_win.rc != 0
+        
+        - name: Run TropoMetrics tests (Windows PowerShell)
+          win_shell: |
+            cd $env:TEMP
+            if (Test-Path tropometrics-tests) { Remove-Item -Recurse -Force tropometrics-tests }
+            New-Item -ItemType Directory -Path tropometrics-tests | Out-Null
+            cd tropometrics-tests
+            Invoke-WebRequest -Uri "https://github.com/TomTheLEGEND23/HHS-TropoMetrics/archive/refs/heads/{{ branch }}.zip" -OutFile "repo.zip"
+            Expand-Archive -Path "repo.zip" -DestinationPath .
+            cd "HHS-TropoMetrics-{{ branch }}/tests"
+            pip install -q -r requirements.txt
+            python run-tests.py --env {{ test_env }} --api-key {{ api_key }} --test {{ test_type }}
+          register: test_results_windows
+          failed_when: false
+        
+        - name: Display test results (Windows)
+          debug:
+            msg: "{{ test_results_windows.stdout_lines }}"
+        
+        - name: Set test status (Windows)
+          set_fact:
+            test_exit_code: "{{ test_results_windows.rc }}"
+            test_status: "{{ 'PASSED' if test_results_windows.rc == 0 else 'FAILED' }}"
+    
+    # Final reporting
+    - name: Display final test status
+      debug:
+        msg:
+          - "=========================================="
+          - "Test Results for {{ inventory_hostname }}"
+          - "=========================================="
+          - "Status: {{ test_status }}"
+          - "Exit Code: {{ test_exit_code }}"
+          - "=========================================="
+    
+    - name: Fail if tests failed
+      fail:
+        msg: "Tests FAILED on {{ inventory_hostname }} with exit code {{ test_exit_code }}"
+      when: test_exit_code != "0"
