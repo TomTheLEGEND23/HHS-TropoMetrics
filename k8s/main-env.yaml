@@ -15,6 +15,9 @@ metadata:
     environment: production
 spec:
   replicas: 3
+  # Ensures pods are automatically replaced when deleted or crashed
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 300
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -33,6 +36,10 @@ spec:
         # This annotation forces redeployment when updated
         kubectl.kubernetes.io/restartedAt: "2025-11-03T00:00:00Z"
     spec:
+      # Restart policy ensures pods are automatically restarted on failure
+      restartPolicy: Always
+      # Termination grace period for clean shutdown
+      terminationGracePeriodSeconds: 30
       containers:
       - name: tropometrics
         image: ghcr.io/tomthelegend23/hhs-tropometrics-frontend:main
@@ -52,12 +59,18 @@ spec:
             port: 80
           initialDelaySeconds: 30
           periodSeconds: 30
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
         readinessProbe:
           httpGet:
             path: /
             port: 80
           initialDelaySeconds: 5
           periodSeconds: 10
+          timeoutSeconds: 3
+          successThreshold: 1
+          failureThreshold: 3
         env:
         - name: ENVIRONMENT
           value: "production"
@@ -134,6 +147,9 @@ metadata:
     environment: production
 spec:
   replicas: 2
+  # Ensures pods are automatically replaced when deleted or crashed
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -151,6 +167,10 @@ spec:
       annotations:
         kubectl.kubernetes.io/restartedAt: "2025-11-03T00:00:00Z"
     spec:
+      # Restart policy ensures pods are automatically restarted on failure
+      restartPolicy: Always
+      # Termination grace period for clean shutdown
+      terminationGracePeriodSeconds: 30
       containers:
       - name: backend
         image: ghcr.io/tomthelegend23/hhs-tropometrics-backend:main
@@ -170,12 +190,18 @@ spec:
             port: 8000
           initialDelaySeconds: 30
           periodSeconds: 30
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
         readinessProbe:
           httpGet:
             path: /health
             port: 8000
           initialDelaySeconds: 5
           periodSeconds: 10
+          timeoutSeconds: 3
+          successThreshold: 1
+          failureThreshold: 3
         env:
         - name: ENVIRONMENT
           value: "production"
