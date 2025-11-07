@@ -114,4 +114,3 @@ if lijst_met_error:
     sys.exit(1)
 else:
     sys.exit(0)
-

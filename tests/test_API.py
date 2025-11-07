@@ -15,6 +15,12 @@ if API_KEY:
 else:
     TEST_URL = f"{BASE_URL}/api"
 
+# Debug output to show the actual URL being called
+print(f"DEBUG: API_KEY value = {API_KEY}")
+print(f"DEBUG: API_KEY type = {type(API_KEY)}")
+print(f"DEBUG: Full URL = {TEST_URL}")
+print()
+
 lijst_zonder_error = []
 lijst_met_error = []
 lijst_tijden = []
@@ -110,4 +116,3 @@ if lijst_met_error:
     sys.exit(1)
 else:
     sys.exit(0)
-

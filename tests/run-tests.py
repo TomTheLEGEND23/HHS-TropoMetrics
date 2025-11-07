@@ -74,25 +74,18 @@ def run_test_script(script_name, base_url, api_key):
             [sys.executable, script_name],
             env={**os.environ, "TEST_BASE_URL": base_url, "TEST_API_KEY": api_key},
             cwd=os.path.dirname(__file__) or ".",
-            check=False,
-            capture_output=True,
-            text=True
+            check=False
         )
-        
-        # Print the output from the test script
-        print(result.stdout)
-        if result.stderr:
-            print(result.stderr, file=sys.stderr)
         
         if result.returncode == 0:
             print(f"\n✓ {script_name} completed successfully")
         else:
             print(f"\n✗ {script_name} failed with exit code {result.returncode}")
         
-        return result.returncode, result.stdout
+        return result.returncode
     except Exception as e:
         print(f"\n✗ Error running {script_name}: {e}")
-        return 1, ""
+        return 1
 
 
 def parse_arguments():
@@ -252,49 +245,16 @@ def main():
     
     # Run tests based on selection
     results = []
-    test_outputs = {}
     
     if test_choice in ['1', '3']:
-        code, output = run_test_script("test_API.py", base_url, api_key)
-        results.append(("test_API.py", code))
-        test_outputs["test_API.py"] = output
+        results.append(("test_API.py", run_test_script("test_API.py", base_url, api_key)))
     
     if test_choice in ['2', '3']:
-        code, output = run_test_script("test_html.py", base_url, api_key)
-        results.append(("test_html.py", code))
-        test_outputs["test_html.py"] = output
+        results.append(("test_html.py", run_test_script("test_html.py", base_url, api_key)))
     
-    # Display combined summary if both tests were run
-    if test_choice == '3':
-        print(f"\n{'='*60}")
-        print("COMBINED TEST SUMMARY")
-        print(f"{'='*60}\n")
-        
-        # Extract and display API test summary
-        if "test_API.py" in test_outputs:
-            api_output = test_outputs["test_API.py"]
-            # Find the summary section in the output
-            if "API Test Summary" in api_output:
-                summary_start = api_output.find("=" * 60, api_output.find("API Test Summary"))
-                summary_end = api_output.find("=" * 60, summary_start + 60) + 60
-                if summary_start != -1 and summary_end != -1:
-                    print(api_output[summary_start:summary_end])
-                    print()
-        
-        # Extract and display HTML test summary
-        if "test_html.py" in test_outputs:
-            html_output = test_outputs["test_html.py"]
-            # Find the summary section in the output
-            if "HTML Test Summary" in html_output:
-                summary_start = html_output.find("=" * 60, html_output.find("HTML Test Summary"))
-                summary_end = html_output.find("=" * 60, summary_start + 60) + 60
-                if summary_start != -1 and summary_end != -1:
-                    print(html_output[summary_start:summary_end])
-                    print()
-    
-    # Display overall summary
+    # Display summary
     print(f"\n{'='*60}")
-    print("Overall Test Status")
+    print("Test Summary")
     print(f"{'='*60}")
     for script, code in results:
         status = "✓ PASSED" if code == 0 else "✗ FAILED"
