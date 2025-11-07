@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import time
 import os
+import sys
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -9,7 +10,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 
 # Get base URL and API key from environment variables or use defaults
-BASE_URL = os.environ.get("TEST_BASE_URL")
+BASE_URL = os.environ.get("TEST_BASE_URL", "http://10.0.0.101:30081")
 API_KEY = os.environ.get("TEST_API_KEY", "test")
 
 # Build URL with or without API key parameter
@@ -22,7 +23,8 @@ lijst_zonder_error = []
 lijst_met_error = []
 lijst_tijden = []
 teller = 0 
-aantal = 5
+aantal = 20
+
 # Configure Chrome to run headless. Options are created once and reused for each iteration.
 options = webdriver.ChromeOptions()
 # Use the modern headless mode where available. Fallback to legacy --headless if needed.
@@ -33,28 +35,66 @@ options.add_argument("--disable-gpu")
 options.add_argument("--no-sandbox")
 options.add_argument("--disable-dev-shm-usage")
 options.add_experimental_option('excludeSwitches', ['enable-logging'])
+
 driver = webdriver.Chrome(options=options)
+
 print(f"Testing HTML page: {TEST_URL}")
-while teller <= aantal:
+print(f"Number of requests: {aantal}")
+print("-" * 60)
+
+while teller < aantal:
     teller += 1
     tijd_start = time.time()
-    driver.get(TEST_URL)
     
-    try:    
+    try:
+        driver.get(TEST_URL)
+        
+        # Wait for expected content to appear
         WebDriverWait(driver, 20).until(
-        EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'geef water') or contains(text(), 'Water geven is nu niet nodig')]")))
+            EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'geef water') or contains(text(), 'Water geven is nu niet nodig')]"))
+        )
         
         tijd_eind = time.time()
         tijd_verschil = tijd_eind - tijd_start
         lijst_zonder_error.append(tijd_verschil)
-        print("Succesvolle poging ", teller)   
-    except: 
+        print(f"✓ Request {teller}: Success - {tijd_verschil:.3f}s")
+        
+    except Exception as e:
         tijd_eind = time.time()
         tijd_verschil = tijd_eind - tijd_start
         lijst_met_error.append(tijd_verschil)
-        print("Mislukte poging ", teller)
+        print(f"✗ Request {teller}: Failed - {tijd_verschil:.3f}s - {str(e)[:50]}")
+
 driver.quit()
-        
-average = sum (lijst_zonder_error) / len(lijst_zonder_error)
-print("Latency succesvolle aanvragen: ", str (average) + "s")
+
+# Print summary
+print("\n" + "=" * 60)
+print("HTML Test Summary")
+print("=" * 60)
+print(f"Total requests: {aantal}")
+print(f"Successful: {len(lijst_zonder_error)}")
+print(f"Failed: {len(lijst_met_error)}")
+print(f"Success rate: {(len(lijst_zonder_error)/aantal)*100:.1f}%")
+
+if lijst_zonder_error:
+    average = sum(lijst_zonder_error) / len(lijst_zonder_error)
+    min_time = min(lijst_zonder_error)
+    max_time = max(lijst_zonder_error)
+    print(f"\nLatency Statistics (Successful requests):")
+    print(f"  Average: {average:.3f}s")
+    print(f"  Min: {min_time:.3f}s")
+    print(f"  Max: {max_time:.3f}s")
+else:
+    print("\nNo successful requests to calculate latency.")
+
+if lijst_met_error:
+    print(f"\nFailed requests average time: {sum(lijst_met_error)/len(lijst_met_error):.3f}s")
+
+print("=" * 60)
+
+# Exit with error code if any requests failed
+if lijst_met_error:
+    sys.exit(1)
+else:
+    sys.exit(0)
 

@@ -252,20 +252,6 @@ def main():
     if test_choice in ['2', '3']:
         results.append(("test_html.py", run_test_script("test_html.py", base_url, api_key)))
     
-    while True:
-        test_choice = input("\nSelect test(s) to run (1-3): ").strip()
-        if test_choice in ['1', '2', '3']:
-            break
-        print("Invalid choice. Please enter 1, 2, or 3.")
-    
-    results = []
-    
-    if test_choice in ['1', '3']:
-        results.append(("test_API.py", run_test_script("test_API.py", base_url, api_key)))
-    
-    if test_choice in ['2', '3']:
-        results.append(("test_html.py", run_test_script("test_html.py", base_url, api_key)))
-    
     # Display summary
     print(f"\n{'='*60}")
     print("Test Summary")
