@@ -98,7 +98,7 @@ function displayRightColumn(weather_data){
     // TODO
     soil_moisture_text = document.getElementById("soil-mosture");
     const soil_moisture_27_to_81cm = weather_data.hourly.soil_moisture_27_to_81cm;
-    soil_moisture_text.textContent = soil_moisture_27_to_81cm[0]*100 + "%";
+    soil_moisture_text.textContent = Math.round(soil_moisture_27_to_81cm[0] * 100) + "%";
     // Humidity
     humidity_text = document.getElementById("humidity");
     const humidity_data = weather_data.hourly.relative_humidity_2m;
