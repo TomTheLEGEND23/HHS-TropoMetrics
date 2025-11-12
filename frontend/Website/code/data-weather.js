@@ -5,8 +5,10 @@ const test_user = {
     //longitude: 25.6628   // Sarhara
     //latitude: 52.012,    // Amsterdam
     //longitude: 4.380     // Amsterdam
-    latitude: -5.013,    // Guyana
-    longitude: -58.381   // Guyana
+    //latitude: -5.013,    // Guyana
+    //longitude: -58.381   // Guyana
+    latitude: 52.0115769,   // Delft
+    longitude: 4.3570677  // Delft
 } 
 
 
