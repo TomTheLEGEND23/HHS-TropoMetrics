@@ -24,7 +24,7 @@ lijst_zonder_error = []
 lijst_met_error = []
 lijst_tijden = []
 teller = 0 
-aantal = 2000
+aantal = 20
 
 # Configure Chrome to run headless. Options are created once and reused for each iteration.
 options = webdriver.ChromeOptions()
