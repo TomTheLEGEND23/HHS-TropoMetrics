@@ -1,4 +1,5 @@
 import requests
+import pandas as pd
 import time
 import os
 import sys
@@ -25,7 +26,7 @@ lijst_zonder_error = []
 lijst_met_error = []
 lijst_tijden = []
 teller = 0 
-aantal = 2000
+aantal = 20
 
 print(f"Testing API endpoint: {TEST_URL}")
 print(f"Number of requests: {aantal}")
@@ -94,6 +95,9 @@ print(f"Total requests: {aantal}")
 print(f"Successful: {len(lijst_zonder_error)}")
 print(f"Failed: {len(lijst_met_error)}")
 print(f"Success rate: {(len(lijst_zonder_error)/aantal)*100:.1f}%")
+
+df = pd.DataFrame(lijst_zonder_error, columns=["data"])
+df.to_csv('resultatenAPI.csv', index=False)
 
 if lijst_zonder_error:
     average = sum(lijst_zonder_error) / len(lijst_zonder_error)
