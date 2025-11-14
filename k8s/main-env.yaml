@@ -31,7 +31,7 @@ spec:
         environment: production
       annotations:
         # This annotation forces redeployment when updated
-        kubectl.kubernetes.io/restartedAt: "2025-11-14T09:32:56Z"
+        kubectl.kubernetes.io/restartedAt: "2025-11-14T09:35:54Z"
     spec:
       containers:
       - name: tropometrics
@@ -149,7 +149,7 @@ spec:
         app: tropometrics-main-backend
         environment: production
       annotations:
-        kubectl.kubernetes.io/restartedAt: "2025-11-14T09:32:56Z"
+        kubectl.kubernetes.io/restartedAt: "2025-11-14T09:35:54Z"
     spec:
       containers:
       - name: backend
