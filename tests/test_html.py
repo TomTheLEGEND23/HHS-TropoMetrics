@@ -1,4 +1,5 @@
 import requests
+import pandas as pd
 from bs4 import BeautifulSoup
 import time
 import os
@@ -23,7 +24,7 @@ lijst_zonder_error = []
 lijst_met_error = []
 lijst_tijden = []
 teller = 0 
-aantal = 20
+aantal = 2000
 
 # Configure Chrome to run headless. Options are created once and reused for each iteration.
 options = webdriver.ChromeOptions()
@@ -92,6 +93,10 @@ print(f"Successful: {len(lijst_zonder_error)}")
 print(f"Failed: {len(lijst_met_error)}")
 print(f"Success rate: {(len(lijst_zonder_error)/aantal)*100:.1f}%")
 
+
+df = pd.DataFrame(lijst_zonder_error, columns=["data"])
+df.to_csv('resultatenHTML.csv', index=False)
+
 if lijst_zonder_error:
     average = sum(lijst_zonder_error) / len(lijst_zonder_error)
     min_time = min(lijst_zonder_error)
@@ -114,4 +119,3 @@ if lijst_met_error:
     sys.exit(1)
 else:
     sys.exit(0)
-

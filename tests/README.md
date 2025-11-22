@@ -6,7 +6,7 @@ Automated testing suite for TropoMetrics web application. Tests both API endpoin
 
 ### Linux/macOS One-Liner
 ```bash
-read -p "Select branch (main/dev): " BRANCH && cd /tmp && rm -rf tropometrics-tests && mkdir -p tropometrics-tests && cd tropometrics-tests && curl -L "https://github.com/TomTheLEGEND23/HHS-TropoMetrics/archive/refs/heads/${BRANCH}.tar.gz" | tar xz --strip=2 "HHS-TropoMetrics-${BRANCH}/tests" && cd tests && pip3 install -q -r requirements.txt && python3 run-tests.py
+read -p "Select branch (main/dev): " BRANCH && cd /tmp && rm -rf tropometrics-tests && mkdir -p tropometrics-tests && cd tropometrics-tests && curl -L "https://github.com/TomTheLEGEND23/HHS-TropoMetrics/archive/refs/heads/${BRANCH}.tar.gz" | tar xz --strip=1 && cd HHS-TropoMetrics-${BRANCH}/tests && pip3 install -q -r requirements.txt && python3 run-tests.py
 ```
 
 ### Windows PowerShell One-Liner
