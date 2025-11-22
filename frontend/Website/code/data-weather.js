@@ -1,12 +1,14 @@
 /* TEST USER */
 const test_user = {
     email: "klant@tropometrics.nl",
-    //latitude: 23.4162,
-    //longitude: 25.6628
-    //latitude: 52.012,
-    //longitude: 4.380
-    latitude: -5.013,
-    longitude: -58.381
+    //latitude: 23.4162,   //  Sahara
+    //longitude: 25.6628   // Sarhara
+    //latitude: 52.012,    // Amsterdam
+    //longitude: 4.380     // Amsterdam
+    //latitude: -5.013,    // Guyana
+    //longitude: -58.381   // Guyana
+    latitude: 52.0115769,   // Delft
+    longitude: 4.3570677  // Delft
 } 
 
 
@@ -17,7 +19,7 @@ const VALID_API_KEYS = [
 ]
 
 const test_userAPI = [
-"test"
+    "test"
 ]
 
 
@@ -102,7 +104,7 @@ function displayRightColumn(weather_data){
     // Humidity
     humidity_text = document.getElementById("humidity");
     const humidity_data = weather_data.hourly.relative_humidity_2m;
-    humidity_text.textContent = humidity_data[0] + "%";
+    humidity_text.textContent = humidity_data[0].toFixed(1) + "%";
 
     // Solar hours
     solar_text = document.getElementById("solar-hours");
@@ -266,17 +268,50 @@ Location: Lat ${test_user.latitude}, Lon ${test_user.longitude}
 }
 
 function getLocalData(){
-
+    // Generate random test data
     advice_text = document.getElementById("advice");
-
-
-    let soil_moisture_27_to_81cm = Math.random();
-
+    
+    // Random soil moisture (between 0.10 and 0.25)
+    let soil_moisture_27_to_81cm = Math.random() * 0.15 + 0.10;
+    
+    // Random temperature (between 15 and 30 degrees)
+    let current_temp = Math.random() * 15 + 15;
+    let min_temp = Math.random() * 5 + 10;
+    let max_temp = Math.random() * 10 + 25;
+    
+    // Random humidity (between 40 and 90 percent)
+    let humidity = Math.random() * 50 + 40;
+    
+    // Display temperature
+    temp_current_text = document.getElementById("temp-current");
+    temp_current_text.textContent = current_temp.toFixed(1) + " °C";
+    
+    temp_min_text = document.getElementById("temp-min");
+    temp_min_text.textContent = min_temp.toFixed(1) + " °C";
+    
+    temp_max_text = document.getElementById("temp-max");
+    temp_max_text.textContent = max_temp.toFixed(1) + " °C";
+    
+    // Display soil moisture
+    soil_moisture_text = document.getElementById("soil-mosture");
+    soil_moisture_text.textContent = (soil_moisture_27_to_81cm * 100).toFixed(1) + "%";
+    
+    // Display humidity
+    humidity_text = document.getElementById("humidity");
+    humidity_text.textContent = humidity.toFixed(1) + "%";
+    
+    // Display advice
     if (soil_moisture_27_to_81cm <= 0.14){
         advice_text.textContent = "Geef water";
     } else {
         advice_text.textContent = "Water geven is nu niet nodig";
     }
+    
+    // Display random solar hours (between 10 and 15 hours)
+    let solar_hours = Math.floor(Math.random() * 5) + 10;
+    let solar_minutes = Math.floor(Math.random() * 60);
+    solar_text = document.getElementById("solar-hours");
+    solar_text.textContent = solar_hours + " uur en " + solar_minutes + " minuten.";
 
 }
 
