@@ -1,11 +1,24 @@
-# NetConfigs — README
+# TFTP-NetConfigs — README
 
 ## Purpose
-- This repository folder stores Cisco network configuration files used for the Network portion of the proof-of-concept (PoC).
+- This folder contains the TFTP server setup for hosting Cisco network configuration files on the K3s cluster.
+- The `NetConfigs/` subfolder stores all Cisco device configuration files used for the Network portion of the proof-of-concept (PoC).
 - Git (GitHub) is used for version control to track changes, maintain history, and collaborate on config edits.
 
+## Folder Structure
+```
+TFTP-NetConfigs/
+├── Dockerfile              # TFTP server container image
+├── .dockerignore          # Excludes files from Docker build
+├── README.md              # This file
+└── NetConfigs/            # Store all device configs here
+    ├── MLS-01.txt         # Example: Multi-layer switch config
+    ├── RTR-CORE-01.cfg    # Example: Core router config
+    └── ...                # Add more device configs
+```
+
 ## How to use
-- Keep one config file per device with a clear filename (e.g., "MLS-01.txt").
+- Store one config file per device in the `NetConfigs/` subfolder with a clear filename (e.g., "MLS-01.txt").
 - Commit changes to GitHub so each revision is recorded.
 - Only use PoC passwords and secrets; they are for testing purposes only.
 - Base config files will be created by [@TomTheLEGEND23](https://github.com/TomTheLEGEND23) in a standard structure using a script and uploaded to the repository.
@@ -14,9 +27,9 @@
 
 ## Hosting a TFTP server from a Linux desktop
 
-Clone the GitHub repository and navigate to the `NetConfigs` directory.
+Clone the GitHub repository and navigate to the `TFTP-NetConfigs/NetConfigs` directory.
 
-**Install:**
+**Manual Install:**
 Installation info from https://www.baeldung.com/linux/tftp-server-install-configure-test (accessed 22-11-2025)
 
 - Install TFTP server:
@@ -33,15 +46,15 @@ sudo nano /etc/default/tftpd-hpa
 - Edit the file to contain:
 ```plaintext
 TFTP_USERNAME="tftp"
-TFTP_DIRECTORY="/home/tom/Git/HHS-TropoMetrics/NetConfigs"
+TFTP_DIRECTORY="/home/tom/Git/HHS-TropoMetrics/TFTP-NetConfigs/NetConfigs"
 TFTP_ADDRESS="0.0.0.0:69"
 TFTP_OPTIONS="--create --secure"
 ```
 
 - Verify files are world-readable:
 ```bash
-sudo chmod -R 777 /home/tom/Git/HHS-TropoMetrics/NetConfigs
-sudo chown -R nobody:nogroup /home/tom/Git/HHS-TropoMetrics/NetConfigs
+sudo chmod -R 777 /home/tom/Git/HHS-TropoMetrics/TFTP-NetConfigs/NetConfigs
+sudo chown -R nobody:nogroup /home/tom/Git/HHS-TropoMetrics/TFTP-NetConfigs/NetConfigs
 ```
 
 - Start the TFTP server:
@@ -75,21 +88,14 @@ Then reload the device if needed:
 ```cisco
 reload
 ```
+## Kubernetes TFTP Server Deployment
 
-### Alternate (IOS with configure replace)
+For easier deployment, a containerized TFTP server is available that runs on the K3s cluster.
 
+### Access the TFTP Server
+
+**From Cisco devices:**
 ```cisco
-configure replace tftp://10.0.0.20/rtr-core-01.cfg force
+copy tftp://10.0.0.101:30069/<CONFIG_FILE> running-config
 ```
 
-This replaces the running configuration with the file contents (check docs for your IOS version).
-
-## Safety and Best Practices
-- ✅ Do transfers over a trusted management network or VPN
-- ✅ Keep sensitive information (passwords, keys) out of the Git repository for production systems
-- ✅ Test config changes in a lab or maintenance window before applying to production devices
-- ✅ Record which Git commit corresponds to any config pushed to hardware for traceability
-- ✅ Always backup current config before applying changes:
-  ```cisco
-  copy running-config flash:backup-config.txt
-  ```

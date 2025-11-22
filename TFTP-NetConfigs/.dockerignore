@@ -1,0 +1,11 @@
+# Ignore documentation and git files
+README.md
+.git
+.gitignore
+
+# Ignore Docker-related files in the image
+Dockerfile
+.dockerignore
+
+# Only include the NetConfigs folder contents
+!NetConfigs/

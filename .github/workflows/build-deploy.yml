@@ -6,12 +6,14 @@ on:
     paths:
       - 'frontend/**'
       - 'backend/**'
+      - 'TFTP-NetConfigs/**'
       - '.github/workflows/build-deploy.yml'
   pull_request:
     branches: [ main, dev ]
     paths:
       - 'frontend/**'
       - 'backend/**'
+      - 'TFTP-NetConfigs/**'
       - '.github/workflows/build-deploy.yml'
 
 env:
@@ -63,9 +65,18 @@ jobs:
           echo "backend_changed=false" >> $GITHUB_OUTPUT
           echo "⏭️  No backend changes"
         fi
+        
+        # Check if TFTP-NetConfigs files changed
+        if echo "$CHANGED_FILES" | grep -q "^TFTP-NetConfigs/"; then
+          echo "tftp_changed=true" >> $GITHUB_OUTPUT
+          echo "✅ TFTP/TFTP-NetConfigs changes detected"
+        else
+          echo "tftp_changed=false" >> $GITHUB_OUTPUT
+          echo "⏭️  No TFTP-NetConfigs changes"
+        fi
 
     - name: Log in to Container Registry
-      if: steps.changes.outputs.frontend_changed == 'true' || steps.changes.outputs.backend_changed == 'true'
+      if: steps.changes.outputs.frontend_changed == 'true' || steps.changes.outputs.backend_changed == 'true' || steps.changes.outputs.tftp_changed == 'true'
       uses: docker/login-action@v3
       with:
         registry: ${{ env.REGISTRY }}
@@ -120,6 +131,25 @@ jobs:
         tags: ${{ steps.meta-backend.outputs.tags }}
         labels: ${{ steps.meta-backend.outputs.labels }}
 
+    - name: Extract metadata for TFTP Server
+      if: steps.changes.outputs.tftp_changed == 'true'
+      id: meta-tftp
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-tftp
+        tags: |
+          type=raw,value=latest
+
+    - name: Build and push TFTP Server Docker image
+      if: steps.changes.outputs.tftp_changed == 'true'
+      uses: docker/build-push-action@v5
+      with:
+        context: ./TFTP-NetConfigs
+        file: ./TFTP-NetConfigs/Dockerfile
+        push: true
+        tags: ${{ steps.meta-tftp.outputs.tags }}
+        labels: ${{ steps.meta-tftp.outputs.labels }}
+
     - name: Set environment info
       id: env-info
       run: |
@@ -144,7 +174,7 @@ jobs:
         echo "branch=$BRANCH_NAME" >> $GITHUB_OUTPUT
 
     - name: Update manifest timestamp (Production)
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main' && (steps.changes.outputs.frontend_changed == 'true' || steps.changes.outputs.backend_changed == 'true')
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main' && (steps.changes.outputs.frontend_changed == 'true' || steps.changes.outputs.backend_changed == 'true' || steps.changes.outputs.tftp_changed == 'true')
       run: |
         TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
         sed -i "s|kubectl.kubernetes.io/restartedAt:.*|kubectl.kubernetes.io/restartedAt: \"$TIMESTAMP\"|g" k8s/main-env.yaml
@@ -159,7 +189,7 @@ jobs:
         fi
 
     - name: Update manifest timestamp (Development)
-      if: github.event_name == 'push' && github.ref == 'refs/heads/dev' && (steps.changes.outputs.frontend_changed == 'true' || steps.changes.outputs.backend_changed == 'true')
+      if: github.event_name == 'push' && github.ref == 'refs/heads/dev' && (steps.changes.outputs.frontend_changed == 'true' || steps.changes.outputs.backend_changed == 'true' || steps.changes.outputs.tftp_changed == 'true')
       run: |
         TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
         sed -i "s|kubectl.kubernetes.io/restartedAt:.*|kubectl.kubernetes.io/restartedAt: \"$TIMESTAMP\"|g" k8s/dev-env.yaml
@@ -174,7 +204,7 @@ jobs:
         fi
 
     - name: Deployment notification
-      if: github.event_name == 'push' && (steps.changes.outputs.frontend_changed == 'true' || steps.changes.outputs.backend_changed == 'true')
+      if: github.event_name == 'push' && (steps.changes.outputs.frontend_changed == 'true' || steps.changes.outputs.backend_changed == 'true' || steps.changes.outputs.tftp_changed == 'true')
       run: |
         echo "✅ Docker images built and pushed successfully!"
         echo "🏷️  Branch: ${{ steps.env-info.outputs.branch }}"
@@ -183,13 +213,16 @@ jobs:
           echo "🐳 Frontend Image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-frontend:${{ steps.env-info.outputs.branch }}"
         fi
         if [ "${{ steps.changes.outputs.backend_changed }}" == "true" ]; then
-          echo "� Backend Image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-backend:${{ steps.env-info.outputs.branch }}"
+          echo "🐳 Backend Image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-backend:${{ steps.env-info.outputs.branch }}"
         fi
-        echo "�📦 Namespace: ${{ steps.env-info.outputs.namespace }}"
+        if [ "${{ steps.changes.outputs.tftp_changed }}" == "true" ]; then
+          echo "🐳 TFTP Server Image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-tftp:${{ steps.env-info.outputs.branch }}"
+        fi
+        echo "📦 Namespace: ${{ steps.env-info.outputs.namespace }}"
     
     - name: Skip notification
-      if: github.event_name == 'push' && steps.changes.outputs.frontend_changed == 'false' && steps.changes.outputs.backend_changed == 'false'
+      if: github.event_name == 'push' && steps.changes.outputs.frontend_changed == 'false' && steps.changes.outputs.backend_changed == 'false' && steps.changes.outputs.tftp_changed == 'false'
       run: |
-        echo "⏭️  No frontend or backend changes detected - skipping Docker builds"
+        echo "⏭️  No frontend, backend, or TFTP-NetConfigs changes detected - skipping Docker builds"
         echo "🏷️  Branch: ${{ steps.env-info.outputs.branch }}"
         echo "📝 Changed files were in other directories (k8s, docs, etc.)"
