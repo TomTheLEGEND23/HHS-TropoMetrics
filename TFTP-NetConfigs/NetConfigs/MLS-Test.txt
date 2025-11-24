@@ -23,8 +23,6 @@ crypto key generate rsa general-keys modulus 2024
 
 !Vlan Config
 
-!Port Config
-
 !Miscellaneous System Config
 
 !Spanning Tree Config
