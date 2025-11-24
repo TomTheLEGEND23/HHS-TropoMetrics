@@ -29,17 +29,17 @@ crypto key generate rsa general-keys modulus 2024
 
 !EtherChannels Config
 
-!Ip Config
+!Ip Configs
 
-!HSRP Config
+!HSRP Configs
 
-!OSPF Config
+!OSPF Configs
 
-!DHCP Config
+!DHCP Configs
 
-!NAT Config
+!NAT Configs
 
-!ACL Config
+!ACL Configs
 
 end
 clock set 15:22:14 22 Nov 2025
