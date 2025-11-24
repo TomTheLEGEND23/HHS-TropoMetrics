@@ -4,6 +4,10 @@ services:
   tftp-server:
     image: ghcr.io/tomthelegend23/hhs-tropometrics-tftp:latest
     container_name: tftp-server
-    ports:
-      - "69:69/udp"
+    network_mode: host
+    volumes:
+      - ./NetConfigs:/var/tftpboot
+    environment:
+      - TFTP_ADDRESS=0.0.0.0:69
+      - TFTP_OPTIONS=--secure --create --verbose
     restart: unless-stopped

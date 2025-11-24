@@ -24,6 +24,9 @@ spec:
       annotations:
         kubectl.kubernetes.io/restartedAt: "2025-11-22T00:00:00Z"
     spec:
+      # Use host network to avoid TFTP port mapping issues
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
       containers:
       - name: tftp-server
         image: ghcr.io/tomthelegend23/hhs-tropometrics-tftp:latest
@@ -32,6 +35,7 @@ spec:
         - name: tftp
           containerPort: 69
           protocol: UDP
+          hostPort: 69
         resources:
           requests:
             memory: "32Mi"
@@ -62,14 +66,15 @@ metadata:
   labels:
     app: tftp-server
 spec:
-  type: NodePort
+  # ClusterIP service for internal cluster access
+  # External access via hostNetwork on port 69
+  type: ClusterIP
   selector:
     app: tftp-server
   ports:
   - name: tftp
     port: 69
     targetPort: 69
-    nodePort: 30069
     protocol: UDP
 ---
 apiVersion: v1
@@ -82,12 +87,18 @@ data:
     TropoMetrics TFTP Server
     ========================
     
-    Access: 10.0.0.101:30069 (UDP)
+    Access: 10.0.0.101:69 (UDP) - Direct host network access
     
-    Available config files are stored in /Configs
+    Available config files are stored in /var/tftpboot
     
     To use from Cisco device:
-    copy tftp://10.0.0.101:30069/DEVICE-NAME.txt running-config
+    copy tftp://10.0.0.101/DEVICE-NAME.txt running-config
     
     Example:
-    Router# copy tftp://10.0.0.101:30069/MLS-01.txt running-config
+    Router# copy tftp://10.0.0.101/MLS-Test.txt running-config
+    
+    Troubleshooting:
+    - Pod uses hostNetwork for TFTP compatibility
+    - Direct access on port 69 (no NodePort needed)
+    - Check logs: kubectl logs -n network-services deployment/tftp-server
+    - Test: echo "get MLS-Test.txt" | tftp 10.0.0.101

@@ -92,10 +92,118 @@ reload
 
 For easier deployment, a containerized TFTP server is available that runs on the K3s cluster.
 
+### Deployment
+```bash
+# Deploy to K3s cluster
+kubectl apply -f k8s/tftp-server.yaml
+
+# Check status
+kubectl get pods -n network-services
+kubectl logs -n network-services deployment/tftp-server
+
+# Delete deployment
+kubectl delete -f k8s/tftp-server.yaml
+```
+
 ### Access the TFTP Server
 
-**From Cisco devices:**
+**From Cisco devices (using hostNetwork - port 69):**
 ```cisco
-copy tftp://10.0.0.101:30069/<CONFIG_FILE> running-config
+copy tftp://10.0.0.101/MLS-Test.txt running-config
+```
+
+**From Linux client:**
+```bash
+# Install tftp client
+sudo apt install tftp-hpa
+
+# Test connection
+echo "get MLS-Test.txt" | tftp 10.0.0.101
+```
+
+### Important Notes
+
+- The TFTP server uses `hostNetwork: true` to bind directly to the node's port 69
+- This avoids Kubernetes networking issues with TFTP's dynamic port behavior
+- Access is on standard port 69 (not NodePort 30069)
+- Files are served from `/var/tftpboot` inside the container
+
+## Troubleshooting TFTP Connection Issues
+
+### Test TFTP Connection Internally (Inside Container)
+```bash
+# Enter the container
+docker exec -it tftp-server sh
+
+# Test from inside
+tftp localhost
+tftp> get MLS-Test.txt
+tftp> quit
+```
+
+### Test TFTP Connection Externally
+```bash
+# From host machine
+tftp 127.0.0.1
+tftp> get MLS-Test.txt
+tftp> quit
+
+# Or one-liner
+echo "get MLS-Test.txt" | tftp 127.0.0.1
+```
+
+### Common Issues and Solutions
+
+**Issue 1: Connection refused from outside container**
+- **Cause**: Port mapping doesn't work well with TFTP due to UDP and dynamic ports
+- **Solution**: Use `network_mode: host` in docker-compose.yml (already configured)
+
+**Issue 2: Permission denied**
+- **Cause**: TFTP directory or files aren't readable by nobody user
+- **Solution**: Check permissions:
+```bash
+ls -la ./NetConfigs/
+# Should show: drwxr-xr-x or -rw-r--r--
+```
+
+**Issue 3: Firewall blocking UDP port 69**
+- **Solution**: Allow TFTP through firewall:
+```bash
+# On host machine
+sudo ufw allow 69/udp
+# Or
+sudo iptables -A INPUT -p udp --dport 69 -j ACCEPT
+```
+
+**Issue 4: SELinux blocking access**
+- **Solution**: If using SELinux:
+```bash
+sudo setenforce 0  # Temporary - for testing only
+```
+
+### Verify TFTP Server is Running
+```bash
+# Check container logs
+docker logs tftp-server
+
+# Check if port 69 is listening
+sudo netstat -ulnp | grep 69
+# or
+sudo ss -ulnp | grep 69
+
+# Test with verbose output
+tftp -v localhost
+```
+
+### Debug Mode
+Enable verbose logging by adding to docker-compose.yml environment:
+```yaml
+environment:
+  - TFTP_OPTIONS=--verbose --secure --create
+```
+
+Then check logs:
+```bash
+docker logs -f tftp-server
 ```
 
