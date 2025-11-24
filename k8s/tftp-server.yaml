@@ -22,7 +22,7 @@ spec:
       labels:
         app: tftp-server
       annotations:
-        kubectl.kubernetes.io/restartedAt: "2025-11-24T11:01:27Z"
+        kubectl.kubernetes.io/restartedAt: "2025-11-24T11:20:12Z"
     spec:
       # Use host network to avoid TFTP port mapping issues
       hostNetwork: true
