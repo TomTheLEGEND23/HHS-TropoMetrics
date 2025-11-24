@@ -69,7 +69,6 @@ spec:
   # ClusterIP service for internal cluster access
   # External access via hostNetwork on port 69
   type: ClusterIP
-  clusterIP: 10.0.0.50
   selector:
     app: tftp-server
   ports:
