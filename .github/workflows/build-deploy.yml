@@ -7,6 +7,7 @@ on:
       - 'frontend/**'
       - 'backend/**'
       - 'TFTP-NetConfigs/**'
+      - 'k8s/**'
       - '.github/workflows/build-deploy.yml'
   pull_request:
     branches: [ main, dev ]
@@ -14,6 +15,7 @@ on:
       - 'frontend/**'
       - 'backend/**'
       - 'TFTP-NetConfigs/**'
+      - 'k8s/**'
       - '.github/workflows/build-deploy.yml'
 
 env:
