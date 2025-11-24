@@ -25,8 +25,8 @@ spec:
         kubectl.kubernetes.io/restartedAt: "2025-11-24T11:20:12Z"
     spec:
       # Use host network to avoid TFTP port mapping issues
-      hostNetwork: true
-      dnsPolicy: ClusterFirstWithHostNet
+      hostNetwork: false
+      dnsPolicy: ClusterFirst
       containers:
       - name: tftp-server
         image: ghcr.io/tomthelegend23/hhs-tropometrics-tftp:latest
@@ -35,7 +35,6 @@ spec:
         - name: tftp
           containerPort: 69
           protocol: UDP
-          hostPort: 69
         resources:
           requests:
             memory: "32Mi"
@@ -66,10 +65,9 @@ metadata:
   labels:
     app: tftp-server
 spec:
-  # ClusterIP service for internal cluster access
-  # External access via hostNetwork on port 69
-  type: ClusterIP
-  clusterIP: 10.0.0.50
+  # LoadBalancer with MetalLB for fixed external IP
+  type: LoadBalancer
+  loadBalancerIP: 10.0.0.50
   selector:
     app: tftp-server
   ports:
@@ -88,18 +86,18 @@ data:
     TropoMetrics TFTP Server
     ========================
     
-    Access: 10.0.0.101:69 (UDP) - Direct host network access
+    Access: 10.0.0.50:69 (UDP) - LoadBalancer IP via MetalLB
     
     Available config files are stored in /var/tftpboot
     
     To use from Cisco device:
-    copy tftp://10.0.0.101/DEVICE-NAME.txt running-config
+    copy tftp://10.0.0.50/DEVICE-NAME.txt running-config
     
     Example:
-    Router# copy tftp://10.0.0.101/MLS-Test.txt running-config
+    Router# copy tftp://10.0.0.50/MLS-Test.txt running-config
     
     Troubleshooting:
-    - Pod uses hostNetwork for TFTP compatibility
-    - Direct access on port 69 (no NodePort needed)
+    - Uses MetalLB LoadBalancer for fixed external IP
+    - Check service: kubectl get svc -n network-services tftp-server
     - Check logs: kubectl logs -n network-services deployment/tftp-server
-    - Test: echo "get MLS-Test.txt" | tftp 10.0.0.101
+    - Test: echo "get MLS-Test.txt" | tftp 10.0.0.50
