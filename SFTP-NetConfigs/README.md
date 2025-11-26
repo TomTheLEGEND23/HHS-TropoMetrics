@@ -7,7 +7,7 @@ This directory contains an SFTP server setup for serving network device configur
 ```
 SFTP-NetConfigs/
 ├── Dockerfile          # SFTP server container definition
-├── docker-compose.yml  # Docker Compose configuration (if needed)
+├── .dockerignore       # Docker build exclusions
 ├── README.md          # This file (SFTP documentation)
 └── NetConfigs/        # Configuration files directory
     └── MLS-Test.txt   # Example Cisco MLS configuration
@@ -18,20 +18,6 @@ SFTP-NetConfigs/
 ### Kubernetes SFTP Server Deployment
 
 For easier deployment, a containerized SFTP server is available that runs on the K3s cluster.
-
-### Deployment
-```bash
-# Deploy to K3s cluster
-kubectl apply -f k8s/sftp-server.yaml
-
-# Check status
-kubectl get pods -n network-services
-kubectl logs -n network-services deployment/sftp-server
-
-# Delete deployment
-kubectl delete -f k8s/sftp-server.yaml
-```
-
 ### Access the SFTP Server
 
 **From Cisco devices:**
@@ -40,13 +26,6 @@ copy sftp://cisco@10.0.0.101:30022/configs/MLS-Test.txt running-config
 # Password: cisco
 ```
 
-**From Linux client:**
-```bash
-# Install ftp client
-sudo apt install ftp
-
-# Connect
-ftp 10.0.0.101
 **From Linux client:**
 ```bash
 # Install sftp client (usually pre-installed)
@@ -62,14 +41,21 @@ scp -P 30022 cisco@10.0.0.101:configs/MLS-Test.txt .
 # Password: cisco
 ```
 
+### Router Port Forwarding
+
+To access from external networks, forward only one port on your router:
+- **External Port**: 30022 (TCP)
+- **Internal IP**: 10.0.0.101
+- **Internal Port**: 30022 (TCP)
+
 ### Important Notes
 
-- The SFTP server uses NodePort 30022
-- Encrypted and secure (SSH-based)
-- Only ONE port needed for router port forwarding
-- Username: cisco / Password: cisco
-- Files are in `/home/cisco/configs/` inside the container
-- Server can run on any K3s node
+- **Port**: NodePort 30022 (accessible on any K3s node)
+- **Security**: Encrypted and secure (SSH-based)
+- **Credentials**: Username: `cisco` / Password: `cisco`
+- **File Location**: `/home/cisco/configs/` inside the container
+- **Image**: Uses `atmoz/sftp` (production-ready, 500M+ pulls)
+- **Auto-build**: GitHub Actions builds on changes to `SFTP-NetConfigs/`
 
 ## Why SFTP instead of TFTP/FTP
 
@@ -80,3 +66,9 @@ SFTP (SSH File Transfer Protocol) is superior because:
 - **Easy port forwarding** - single port makes router config trivial
 - **Firewall friendly** - works through NAT and firewalls easily
 - **Industry standard** - widely supported on network devices
+
+
+# Test connection from k3s node
+ssh root@10.0.0.101
+sftp -P 30022 cisco@localhost
+# Password: cisco
