@@ -1,0 +1,116 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: network-services
+  labels:
+    app: sftp-server
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sftp-server
+  namespace: network-services
+  labels:
+    app: sftp-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sftp-server
+  template:
+    metadata:
+      labels:
+        app: sftp-server
+      annotations:
+        kubectl.kubernetes.io/restartedAt: "2025-11-26T11:01:04Z"
+    spec:
+      # Standard pod networking with NodePort service
+      containers:
+      - name: sftp-server
+        image: ghcr.io/tomthelegend23/hhs-tropometrics-sftp:latest
+        imagePullPolicy: Always
+        args:
+          - cisco:cisco:1001:100:configs
+        ports:
+        - name: sftp
+          containerPort: 22
+          protocol: TCP
+        resources:
+          requests:
+            memory: "32Mi"
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "200m"
+        livenessProbe:
+          tcpSocket:
+            port: 22
+          initialDelaySeconds: 10
+          periodSeconds: 30
+        readinessProbe:
+          tcpSocket:
+            port: 22
+          initialDelaySeconds: 5
+          periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sftp-server
+  namespace: network-services
+  labels:
+    app: sftp-server
+spec:
+  # NodePort service for external access
+  type: NodePort
+  selector:
+    app: sftp-server
+  ports:
+  - name: sftp
+    port: 22
+    targetPort: 22
+    nodePort: 30022
+    protocol: TCP
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sftp-info
+  namespace: network-services
+data:
+  README.txt: |
+    TropoMetrics SFTP Server
+    ========================
+    
+    Access: sftp://cisco@10.0.0.101:30022
+    Login: cisco
+    Password: cisco
+    Files location: /configs/
+    
+    To use from Cisco device:
+    copy sftp://cisco:cisco@10.0.0.101:30022/configs/MLS-Test.txt running-config
+    
+    Example:
+    Router# copy sftp://cisco@10.0.0.101:30022/configs/MLS-Test.txt running-config
+    Password: cisco
+    
+    From command line:
+    sftp -P 30022 cisco@10.0.0.101
+    Password: cisco
+    cd configs
+    get MLS-Test.txt
+    
+    Or with scp:
+    scp -P 30022 cisco@10.0.0.101:configs/MLS-Test.txt .
+    
+    Advantages:
+    - Only ONE port needed (30022)
+    - Encrypted and secure (SSH-based)
+    - Easy to port forward on router
+    - No passive mode complications
+    
+    Troubleshooting:
+    - Service uses NodePort 30022
+    - Accessible on any K3s node IP
+    - Check logs: kubectl logs -n network-services deployment/sftp-server
+    - Check service: kubectl get svc -n network-services sftp-server
