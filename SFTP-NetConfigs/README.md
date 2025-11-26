@@ -79,17 +79,6 @@ To access from external networks, forward only one port on your router:
 - **Image**: Uses `atmoz/sftp` (production-ready, 500M+ pulls)
 - **Auto-build**: GitHub Actions builds on changes to `SFTP-NetConfigs/`
 
-## Why SFTP instead of TFTP/FTP
-
-SFTP (SSH File Transfer Protocol) is superior because:
-- **Encrypted** - all data is secure (vs TFTP/FTP plaintext)
-- **One port only** - no passive mode complications (port 30022 only)
-- **Reliable** - TCP-based like FTP but simpler
-- **Easy port forwarding** - single port makes router config trivial
-- **Firewall friendly** - works through NAT and firewalls easily
-- **Industry standard** - widely supported on network devices
-
-
 # Test connection from k3s node
 ssh root@10.0.0.101
 sftp -P 30022 cisco@localhost
