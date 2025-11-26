@@ -18,9 +18,31 @@ SFTP-NetConfigs/
 ### Kubernetes SFTP Server Deployment
 
 For easier deployment, a containerized SFTP server is available that runs on the K3s cluster.
+
 ### Access the SFTP Server
 
-**From Cisco devices:**
+**From Cisco devices (blank device - bootstrap):**
+```cisco
+! Enter privileged mode
+enable
+
+! Enter global configuration
+configure terminal
+
+! Configure management interface with DHCP
+interface vlan 1
+ ip address dhcp
+ no shutdown
+ exit
+
+! Exit configuration mode
+exit
+
+! Copy config from SFTP server
+copy sftp://cisco:cisco@10.0.0.101:30022/configs/MLS-Test.txt running-config
+```
+
+**From Cisco devices (already configured):**
 ```cisco
 copy sftp://cisco@10.0.0.101:30022/configs/MLS-Test.txt running-config
 # Password: cisco
