@@ -19,5 +19,7 @@ RUN chmod -R 755 /var/tftpboot && \
 # Expose TFTP port
 EXPOSE 69/udp
 
-# Run TFTP server with verbose logging
-CMD ["/usr/sbin/in.tftpd", "-L", "--verbose", "--secure", "--create", "/var/tftpboot"]
+# Run TFTP server with verbose logging and bind to all interfaces
+# -L: standalone mode, -v: verbose, -vv: extra verbose
+# --address 0.0.0.0:69 explicitly bind to all interfaces
+CMD ["/usr/sbin/in.tftpd", "-L", "-vv", "--address", "0.0.0.0:69", "--secure", "--create", "/var/tftpboot"]
