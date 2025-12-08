@@ -1,3 +1,6 @@
+### Required Extensions
+https://marketplace.visualstudio.com/items?itemName=jamiewoodio.cisco
+
 # SFTP Server for Network Device Configurations
 
 This directory contains an SFTP server setup for serving network device configuration files, primarily for Cisco equipment.
