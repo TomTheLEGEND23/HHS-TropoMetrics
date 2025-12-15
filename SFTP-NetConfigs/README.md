@@ -42,18 +42,18 @@ interface vlan 1
 exit
 
 ! Copy config from SFTP server
-copy sftp://cisco:cisco@192.168.20.27:30022/configs/MLS-Test.txt running-config
+copy sftp://cisco:cisco@192.168.20.27:922/configs/MLS-Test.txt running-config
 ```
 
 ! Copy config from SFTP server from lab network:
 ```cisco
-copy sftp://cisco:cisco@192.168.20.27:30022/configs/MLS-Test.txt running-config
+copy sftp://cisco:cisco@192.168.20.27:922/configs//MLS-Test.txt running-config
 ```
 
 **From Linux client:**
 ```bash
 # Install sftp client (usually pre-installed)
-sftp -P 30022 cisco@10.0.0.101
+sftp -P 922 cisco:cisco@192.168.20.27
 # Password: cisco
 # cd configs
 # get MLS-Test.txt
@@ -61,7 +61,7 @@ sftp -P 30022 cisco@10.0.0.101
 
 **From command line (scp):**
 ```bash
-scp -P 30022 cisco@10.0.0.101:configs/MLS-Test.txt .
+scp -P 922 cisco@192.168.20.27:configs/MLS-Test.txt .
 # Password: cisco
 ```
 
