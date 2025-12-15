@@ -38,7 +38,7 @@ spec:
         volumeMounts:
         - name: ssh-host-key
           mountPath: /etc/ssh
-          readOnly: true
+          readOnly: false
         resources:
           requests:
             memory: "32Mi"
