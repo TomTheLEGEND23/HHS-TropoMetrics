@@ -7,5 +7,9 @@ README.md
 Dockerfile
 .dockerignore
 
+# SSH host keys (mounted from K8s secret, not copied into image)
+sftp_host_key
+sftp_host_key.pub
+
 # Only include the NetConfigs folder contents
 !NetConfigs/

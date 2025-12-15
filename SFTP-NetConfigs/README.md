@@ -12,15 +12,42 @@ SFTP-NetConfigs/
 ├── Dockerfile          # SFTP server container definition
 ├── .dockerignore       # Docker build exclusions
 ├── README.md          # This file (SFTP documentation)
+├── sftp_host_key      # Private SSH host key (generated locally, mounted via K8s secret)
+├── sftp_host_key.pub  # Public SSH host key (generated locally, mounted via K8s secret)
 └── NetConfigs/        # Configuration files directory
     └── MLS-Test.txt   # Example Cisco MLS configuration
 ```
 
 ## Quick Start
 
+### 1. Generate Static SSH Host Key
+
+Generate the SSH key pair locally:
+
+```bash
+cd SFTP-NetConfigs
+ssh-keygen -t rsa -b 4096 -f sftp_host_key -N ""
+```
+
+This creates two files:
+- `sftp_host_key` (private key)
+- `sftp_host_key.pub` (public key)
+
+### 2. Create Kubernetes Secret
+
+Create the K8s secret in the `network-services` namespace (idempotent—safe to re-run):
+
+```bash
+kubectl -n network-services create secret generic sftp-host-key \
+  --from-file=ssh_host_rsa_key=sftp_host_key \
+  --from-file=ssh_host_rsa_key.pub=sftp_host_key.pub \
+  --dry-run=client -o yaml | kubectl apply -f -
+```
+
+
 ### Kubernetes SFTP Server Deployment
 
-For easier deployment, a containerized SFTP server is available that runs on the K3s cluster.
+The containerized SFTP server runs on the K3s cluster with the static SSH key mounted from the secret.
 
 ### Access the SFTP Server
 
