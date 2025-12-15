@@ -20,34 +20,6 @@ SFTP-NetConfigs/
 
 ## Quick Start
 
-### 1. Generate Static SSH Host Keys
-
-Generate both ed25519 and RSA key pairs locally (atmoz/sftp requires both):
-
-```bash
-cd SFTP-NetConfigs
-ssh-keygen -t ed25519 -f sftp_host_ed25519_key -N ""
-ssh-keygen -t rsa -b 4096 -f sftp_host_rsa_key -N ""
-```
-
-This creates four files:
-- `sftp_host_ed25519_key` (ed25519 private key)
-- `sftp_host_ed25519_key.pub` (ed25519 public key)
-- `sftp_host_rsa_key` (RSA private key)
-- `sftp_host_rsa_key.pub` (RSA public key)
-
-### 2. Create Kubernetes Secret
-
-Create the K8s secret in the `network-services` namespace with both key types (idempotent—safe to re-run):
-
-```bash
-kubectl -n network-services create secret generic sftp-host-key \
-  --from-file=ssh_host_ed25519_key=sftp_host_ed25519_key \
-  --from-file=ssh_host_rsa_key=sftp_host_rsa_key \
-  --dry-run=client -o yaml | kubectl apply -f -
-```
-
-
 ### Kubernetes SFTP Server Deployment
 
 The containerized SFTP server runs on the K3s cluster with the static SSH key mounted from the secret.
@@ -77,7 +49,7 @@ copy sftp://cisco:cisco@192.168.20.27:922/configs/MLS-Test.txt running-config
 
 ! Copy config from SFTP server from lab network:
 ```cisco
-copy sftp://cisco:cisco@192.168.20.27:922/configs//MLS-Test.txt running-config
+copy sftp://cisco:cisco@192.168.20.27:922/configs/MLS-Test.txt running-config
 ```
 
 **From Linux client:**
