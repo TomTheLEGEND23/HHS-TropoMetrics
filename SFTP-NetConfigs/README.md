@@ -9,11 +9,13 @@ This directory contains an SFTP server setup for serving network device configur
 
 ```
 SFTP-NetConfigs/
-├── Dockerfile          # SFTP server container definition
+├── Dockerfile          # SFTP server container definition (includes legacy algorithm support)
 ├── .dockerignore       # Docker build exclusions
 ├── README.md          # This file (SFTP documentation)
-├── sftp_host_key      # Private SSH host key (generated locally, mounted via K8s secret)
-├── sftp_host_key.pub  # Public SSH host key (generated locally, mounted via K8s secret)
+├── sftp_host_ed25519_key      # ed25519 private SSH host key (generated locally, mounted via K8s secret)
+├── sftp_host_ed25519_key.pub  # ed25519 public SSH host key
+├── sftp_host_rsa_key          # RSA private SSH host key (generated locally, mounted via K8s secret)
+├── sftp_host_rsa_key.pub      # RSA public SSH host key
 └── NetConfigs/        # Configuration files directory
     └── MLS-Test.txt   # Example Cisco MLS configuration
 ```
@@ -44,18 +46,13 @@ interface vlan 1
 exit
 
 ! Copy config from SFTP server
-copy sftp://cisco:cisco@192.168.20.27:922/configs/MLS-Test.txt running-config
-```
-
-! Copy config from SFTP server from lab network:
-```cisco
-copy sftp://cisco:cisco@192.168.20.27:922/configs/MLS-Test.txt running-config
+copy scp://cisco@192.168.20.27/configs/XXX.ios running-config
 ```
 
 **From Linux client:**
 ```bash
 # Install sftp client (usually pre-installed)
-sftp -P 922 cisco:cisco@192.168.20.27
+sftp cisco:cisco@192.168.20.27
 # Password: cisco
 # cd configs
 # get MLS-Test.txt
@@ -63,7 +60,7 @@ sftp -P 922 cisco:cisco@192.168.20.27
 
 **From command line (scp):**
 ```bash
-scp -P 922 cisco@192.168.20.27:configs/MLS-Test.txt .
+scp cisco@192.168.20.27:configs/MLS-Test.txt .
 # Password: cisco
 ```
 
@@ -81,6 +78,7 @@ To access from external networks, forward only one port on your router:
 - **Credentials**: Username: `cisco` / Password: `cisco`
 - **File Location**: `/home/cisco/configs/` inside the container
 - **Image**: Uses `atmoz/sftp` (production-ready, 500M+ pulls)
+- **Legacy Algorithms**: Dockerfile includes support for older Cisco devices (diffie-hellman-group1-sha1, etc.)
 - **Auto-build**: GitHub Actions builds on changes to `SFTP-NetConfigs/`
 
 # Test connection from k3s node
