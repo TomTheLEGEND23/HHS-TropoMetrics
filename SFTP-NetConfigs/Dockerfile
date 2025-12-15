@@ -11,11 +11,11 @@ RUN chmod -R 755 /home/cisco/configs && \
     mkdir -p /etc/ssh && \
     chmod 755 /etc/ssh
 
-# SSH host keys will be mounted from Kubernetes secret at runtime
+# SSH host keys will be mounted from Kubernetes secret at runtime (read-only)
 # Expected mounts:
-#   /etc/ssh/ssh_host_ed25519_key → ed25519 private key
-#   /etc/ssh/ssh_host_rsa_key → RSA private key
-# Container mounts /etc/ssh as read-write to allow key generation if needed
+#   /etc/ssh/ssh_host_ed25519_key (read-only)
+#   /etc/ssh/ssh_host_rsa_key (read-only)
+# See: https://hub.docker.com/r/atmoz/sftp/ for mounting details
 
 # User will be created via command:
 # cisco:cisco:1001:100:configs

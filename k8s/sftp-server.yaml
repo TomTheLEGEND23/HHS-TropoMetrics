@@ -36,9 +36,14 @@ spec:
           containerPort: 22
           protocol: TCP
         volumeMounts:
-        - name: ssh-host-key
-          mountPath: /etc/ssh
-          readOnly: false
+        - name: ssh-host-ed25519-key
+          mountPath: /etc/ssh/ssh_host_ed25519_key
+          subPath: ssh_host_ed25519_key
+          readOnly: true
+        - name: ssh-host-rsa-key
+          mountPath: /etc/ssh/ssh_host_rsa_key
+          subPath: ssh_host_rsa_key
+          readOnly: true
         resources:
           requests:
             memory: "32Mi"
@@ -57,10 +62,20 @@ spec:
           initialDelaySeconds: 5
           periodSeconds: 10
       volumes:
-      - name: ssh-host-key
+      - name: ssh-host-ed25519-key
         secret:
           secretName: sftp-host-key
-          defaultMode: 0600
+          items:
+          - key: ssh_host_ed25519_key
+            path: ssh_host_ed25519_key
+            mode: 0600
+      - name: ssh-host-rsa-key
+        secret:
+          secretName: sftp-host-key
+          items:
+          - key: ssh_host_rsa_key
+            path: ssh_host_rsa_key
+            mode: 0600
 ---
 apiVersion: v1
 kind: Service
