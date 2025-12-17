@@ -1,8 +1,10 @@
 enable
 !delete vlan.dat
 configure terminal
-hostname SW1
+hostname SW3
 no ip domain-lookup
+ip name-server 1.1.1.1
+ntp server time.cloudflare.com
 banner motd #Verboden toegang voor onbevoegde!#
 line console 0
  exec-timeout 60 0
@@ -43,5 +45,5 @@ crypto key generate rsa general-keys modulus 2048
 !ACL Config
 
 end
-clock set 22:07:09 14 Dec 2025
+clock set 21:14:39 17 Dec 2025
 !copy running-config startup-config
