@@ -1,5 +1,4 @@
-version: '3.8'
-
+---
 services:
   backend:
     image: ghcr.io/tomthelegend23/hhs-tropometrics-backend:dev
@@ -8,9 +7,9 @@ services:
       - "8000:8000"
     restart: unless-stopped
     environment:
-      - EMAIL_SERVER=${EMAIL_SERVER:-smtp.gmail.com:587}
-      - EMAIL_USERNAME=${EMAIL_USERNAME:-your-email@gmail.com}
-      - EMAIL_PASSWORD=${EMAIL_PASSWORD:-your-app-password}
+      - EMAIL_SERVER=${EMAIL_SERVER}
+      - EMAIL_USERNAME=${EMAIL_USERNAME}
+      - EMAIL_PASSWORD=${EMAIL_PASSWORD}
     labels:
       com.centurylinklabs.watchtower.enable: "true"
     healthcheck:
