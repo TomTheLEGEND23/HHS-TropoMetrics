@@ -1,3 +1,14 @@
+# Network Topology
+
+This document provides an overview of the network topology designed for the project. The topology is represented in the Draw.io diagram located in the same directory.
+
+## Diagrams
+### PoC Design Diagram
+- **Diagram Name**: PoC-ontwerp
+- **Description**: This diagram represents the Proof of Concept design.
+
+
+
 ### Required Extensions
 https://marketplace.visualstudio.com/items?itemName=jamiewoodio.cisco
 
