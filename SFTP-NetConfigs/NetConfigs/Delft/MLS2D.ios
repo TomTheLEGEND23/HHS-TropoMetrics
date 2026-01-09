@@ -1,7 +1,7 @@
 enable
 !delete vlan.dat
 configure terminal
-hostname SW3
+hostname MLS2D
 no ip domain-lookup
 ip name-server 1.1.1.1
 ntp server time.cloudflare.com

@@ -1,7 +1,7 @@
 enable
 !delete vlan.dat
 configure terminal
-hostname SW2
+hostname R2D
 no ip domain-lookup
 ip name-server 1.1.1.1
 ntp server time.cloudflare.com
@@ -29,7 +29,11 @@ crypto key generate rsa general-keys modulus 2048
 !Vlan Config
 
 !Port Config
-
+!R1 Se0/1/1 - ISP Se0/1/1
+int Se0/1/1
+    ip address 198.20.0.2  255.255.255.252
+    no shutdown
+    exit
 !Spanning Tree Config
 
 !EtherChannels Config
