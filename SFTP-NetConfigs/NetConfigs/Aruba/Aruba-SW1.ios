@@ -27,10 +27,54 @@ crypto key generate rsa general-keys modulus 2048
 !Miscellaneous System Config
 
 !Vlan Config
+vlan 110
+ name MARKETING
+exit
+
+vlan 800
+ name NATIVE
+exit
+
+vlan 999
+ name BLACKHOLE
+exit
+
 
 !Port Config
+int Fa0/1
+ switchport mode access
+ switchport access vlan 110
+exit
+
+int range Fa0/2-24
+ switchport mode access
+ switchport access vlan 999
+ shutdown
+exit
+
+int GE0/0/0
+ switchport mode trunk
+ switchport trunk native vlan 800
+ switchport trunk allowed vlan add 110
+ switchport trunk allowed vlan remove 800
+exit
+
+int GE0/0/1
+ switchport mode access
+ switchport access vlan 999
+ shutdown
+exit
+
 
 !Spanning Tree Config
+spanning-tree mode mst
+
+spanning-tree mst configuration
+ name ARUBA
+ revision 1
+ instance 1 vlan 110
+exit
+
 
 !EtherChannels Config
 
