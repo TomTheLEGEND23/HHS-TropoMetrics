@@ -68,6 +68,21 @@ exit
 
 
 !Spanning Tree Config
+spanning-tree mode mst
+
+spanning-tree mst configuration
+name DELFT
+revision 1
+instance 1 vlan 10, 40, 80
+instance 2 vlan 100
+exit
+
+spanning-tree mst 1 priority 4096
+spanning-tree mst 2 priority 8192
+
+
+!VRRP Config
+
 
 !EtherChannels Config
 
