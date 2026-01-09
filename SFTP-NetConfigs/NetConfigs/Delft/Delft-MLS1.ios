@@ -1,7 +1,7 @@
 enable
 !delete vlan.dat
 configure terminal
-hostname Delft-MLS1
+hostname MLS1D
 no ip domain-lookup
 ip name-server 1.1.1.1
 ntp server time.cloudflare.com
@@ -27,8 +27,45 @@ crypto key generate rsa general-keys modulus 2048
 !Miscellaneous System Config
 
 !Vlan Config
+vlan 100
+ name DMZ
+exit
+
+vlan 80
+ name WIFI
+exit
+
+vlan 40
+ name SUPPORT
+exit
+
+vlan 10
+ name ADMINISTRATIE
+exit
+
+vlan 800
+ name NATIVE
+exit
+
+vlan 999
+ name BLACKHOLE
+exit
+
 
 !Port Config
+int range Gi1/0/5-6
+ switchport mode trunk
+ switchport trunk native vlan 800
+ switchport trunk allowed vlan add 10, 40, 80, 100
+ switchport trunk allowed vlan remove 800
+exit
+
+int range Gi1/0/7-24
+ switchport mode access
+ switchport access vlan 999
+ shutdown
+exit
+
 
 !Spanning Tree Config
 
