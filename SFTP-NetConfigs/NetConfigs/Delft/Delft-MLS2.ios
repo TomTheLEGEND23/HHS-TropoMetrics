@@ -53,7 +53,23 @@ exit
 
 
 !Port Config
+int Gi1/0/1
+ description To Delft-R2 G0/0/1
+exit
+
+int Gi1/0/2
+ description To Delft-R1 G0/0/1
+exit
+
+int Gi1/0/3
+ description To Delft-MLS1 Gi1/0/3 (PortChannel 1)
+exit
+
+int Gi1/0/4
+ description To Delft-MLS1 Gi1/0/4 (PortChannel 1)
+exit
 int range Gi1/0/5-6
+ description To Delft-SW2 Ge0/1-2
  switchport mode trunk
  switchport trunk native vlan 800
  switchport trunk allowed vlan add 10, 40, 80
@@ -61,6 +77,7 @@ int range Gi1/0/5-6
 exit
 
 int range Gi1/0/7-8
+ description To Delft-SW3 Ge0/1-2
  switchport mode trunk
  switchport trunk native vlan 800
  switchport trunk allowed vlan add 100
@@ -68,6 +85,7 @@ int range Gi1/0/7-8
 exit
 
 int range Gi1/0/9-24
+ description Black Hole Vlan
  switchport mode access
  switchport access vlan 999
  shutdown

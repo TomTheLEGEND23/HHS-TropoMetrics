@@ -42,6 +42,7 @@ exit
 
 !Port Config
 int range Ge0/1-2
+
  switchport mode trunk
  switchport trunk native vlan 800
  switchport trunk allowed vlan add 100
@@ -49,11 +50,13 @@ int range Ge0/1-2
 exit
 
 int fa0/1
+ description To PC2 FA0/1 (Service Port)
  switchport mode access
  switchport access vlan 100
 exit
 
 int fa0/2-24
+ description Black Hole Vlan
  switchport mode access
  switchport access vlan 999
  shutdown

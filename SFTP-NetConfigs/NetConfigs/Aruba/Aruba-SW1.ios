@@ -42,17 +42,20 @@ exit
 
 !Port Config
 int Fa0/1
+ description To PC3 FA0/1
  switchport mode access
  switchport access vlan 110
 exit
 
 int range Fa0/2-24
+ description Black Hole Vlan
  switchport mode access
  switchport access vlan 999
  shutdown
 exit
 
 int GE0/0/0
+ description To Aruba-R1 G0/0/1
  switchport mode trunk
  switchport trunk native vlan 800
  switchport trunk allowed vlan add 110
@@ -60,6 +63,7 @@ int GE0/0/0
 exit
 
 int GE0/0/1
+ description Black Hole Vlan
  switchport mode access
  switchport access vlan 999
  shutdown

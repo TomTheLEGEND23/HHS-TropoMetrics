@@ -31,8 +31,14 @@ crypto key generate rsa general-keys modulus 2048
 !Port Config
 !Aruba-R1 G0/0/0 - ISP G0/0/0
 int G0/0/0
+    description To ISP G0/0/0
     ip address 192.0.0.2   255.255.255.252
     no shutdown
+    exit
+
+
+int G0/0/1
+    description To Aruba-SW1 GE0/0/0
     exit
 
 !Spanning Tree Config
