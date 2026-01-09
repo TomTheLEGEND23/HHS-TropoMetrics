@@ -34,8 +34,6 @@ crypto key generate rsa general-keys modulus 2048
 
 !EtherChannels Config
 
-!HSRP Config
-
 !OSPF Config
 
 !DHCP Config
