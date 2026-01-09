@@ -2,7 +2,39 @@
  * TropoMetrics Email Service
  * Secure email sending via backend API
  * Credentials never exposed to client
+ * Includes rate limiting on email sends
  */
+
+/**
+ * Email throttler - prevents rapid successive email sends
+ */
+const emailThrottler = {
+    lastSendTime: 0,
+    minIntervalMs: 60000, // Minimum 60 seconds between emails
+    
+    /**
+     * Check if enough time has passed since last email
+     * @returns {boolean} True if send is allowed, false if throttled
+     */
+    isAllowed() {
+        const now = Date.now();
+        if (now - this.lastSendTime >= this.minIntervalMs) {
+            this.lastSendTime = now;
+            return true;
+        }
+        
+        const waitSeconds = Math.ceil((this.minIntervalMs - (now - this.lastSendTime)) / 1000);
+        console.warn(`🚫 Email send throttled. Wait ${waitSeconds}s before sending another email.`);
+        return false;
+    },
+    
+    /**
+     * Reset throttle timer
+     */
+    reset() {
+        this.lastSendTime = 0;
+    }
+};
 
 /**
  * Send an email via the backend API
@@ -16,6 +48,11 @@ async function sendEmail(to, subject, body, html = false) {
     // Check if EMAIL_CONFIG is loaded
     if (typeof EMAIL_CONFIG === 'undefined') {
         throw new Error('Email API not configured. Please contact administrator.');
+    }
+    
+    // Apply rate limiting on send attempts
+    if (!emailThrottler.isAllowed()) {
+        throw new Error('Email send rate limited. Please wait before sending another email.');
     }
 
     try {
@@ -35,6 +72,10 @@ async function sendEmail(to, subject, body, html = false) {
         const data = await response.json();
 
         if (!response.ok) {
+            // Check for rate limit error from backend
+            if (response.status === 429) {
+                throw new Error('Server rate limit exceeded. Please try again later.');
+            }
             throw new Error(data.detail || 'Failed to send email');
         }
 
