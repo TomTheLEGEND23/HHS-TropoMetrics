@@ -50,6 +50,7 @@ int Se0/1/1
     no shutdown
     exit
 
+!ISP G0/0/0 - Aruba-R1 G0/0/0
 int G0/0/0
     ip address 192.0.0.1   255.255.255.252
     no shutdown
