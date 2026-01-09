@@ -120,13 +120,13 @@ router ospf 1
  network 192.168.1.0 0.0.0.3 area 0
  network 192.168.2.0 0.0.0.3 area 0
  network 192.168.3.0 0.0.0.3 area 20
- network 192.168.10.0 0.0.0.255 area 20
- network 192.168.40.0 0.0.0.255 area 20
+ network 192.168.10.0 0.0.0.63 area 20
+ network 192.168.40.0 0.0.0.31 area 20
  network 192.168.80.0 0.0.0.255 area 20
 fhrp version vrrp v3
 
 int vlan 10
- ip address 192.168.10.2
+ ip address 192.168.10.2 255.255.255.192
  vrrp 10 address-family ipv4
   address 192.168.10.1 
   priority 110
@@ -141,7 +141,7 @@ int vlan 10
 exit
 
 int vlan 40
- ip address 192.168.40.2
+ ip address 192.168.40.2 255.255.255.224
  vrrp 40 address-family ipv4
   address 192.168.40.1
   priority 110
@@ -156,7 +156,7 @@ int vlan 40
 exit
 
 int vlan 80
- ip address 192.168.80.2
+ ip address 192.168.80.2 255.255.255.0
  vrrp 80 address-family ipv4
   address 192.168.80.1
   priority 110

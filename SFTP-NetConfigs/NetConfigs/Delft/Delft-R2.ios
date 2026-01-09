@@ -103,6 +103,7 @@ router bgp 65003
 router ospf 1
  router-id 2.2.2.2
  passive-interface default
+ no passive-interface Tunnel20
  no passive-interface G0/0/0
  no passive-interface G0/0/1
  network 192.168.2.0 0.0.0.3 area 0

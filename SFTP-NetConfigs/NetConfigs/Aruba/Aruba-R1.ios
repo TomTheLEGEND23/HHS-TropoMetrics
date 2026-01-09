@@ -38,7 +38,8 @@ int G0/0/0
 
 
 int G0/0/1
-    description To Aruba-SW1 GE0/0
+    description To Aruba-SW1 Gi0/0
+    no shutdown
     exit
 
 ! Static routes for Delft WANs via ISP
@@ -112,7 +113,7 @@ router bgp 65001
 
 int G0/0/1.110
  encapsulation dot1Q 110
- ip address 192.168.110.1 255.255.255.0
+ ip address 192.168.110.1 255.255.255.224
  no shutdown
  exit
 
@@ -125,6 +126,8 @@ router ospf 1
  router-id 4.4.4.1
  passive-interface default
  no passive-interface G0/0/1
+ no passive-interface Tunnel10
+ no passive-interface Tunnel20
  network 192.0.0.0 0.0.0.3 area 0
  network 192.168.110.0 0.0.0.255 area 10
 !DHCP Config

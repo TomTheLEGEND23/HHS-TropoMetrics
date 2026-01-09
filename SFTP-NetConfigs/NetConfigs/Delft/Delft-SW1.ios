@@ -61,7 +61,7 @@ exit
 
 int fa0/2
  description To AP FA0/1
- witchport mode access
+ switchport mode access
  switchport access vlan 80
 exit
 
