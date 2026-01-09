@@ -57,11 +57,11 @@ exit
 
 !Port Config
 int Gi1/0/1
- description To Delft-R1 G0/0/0
- no switchport
- ip address 192.168.1.2  255.255.255.252
- no shutdown
- exit
+    description To Delft-R1 G0/0/0
+    no switchport
+    ip address 192.168.1.2  255.255.255.252
+    no shutdown
+    exit
 
 int Gi1/0/2
     description To Delft-R2 G0/0/0
