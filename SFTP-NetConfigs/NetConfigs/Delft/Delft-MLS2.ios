@@ -60,7 +60,10 @@ int Gi1/0/1
 exit
 
 int Gi1/0/2
+ no switchport
  description To Delft-R1 G0/0/1
+ ip address 192.168.1.6  255.255.255.252
+ no shutdown
 exit
 
 int Gi1/0/3
@@ -97,7 +100,6 @@ int vlan 100
 ip address 192.19.1.17
 ipv6 address 2001:1:1:100::1/64
 exit
-
 
 !Spanning Tree Config
 spanning-tree mode mst
