@@ -82,7 +82,34 @@ spanning-tree mst 2 priority 8192
 
 
 !VRRP Config
+fhrp version vrrp v3
 
+int vlan 10
+ ip address 192.168.10.2
+ vrrp 10 address-family ipv4
+  address 192.168.10.1 
+  priority 110
+  preempt
+ exit
+exit
+
+int vlan 40
+ ip address 192.168.40.2
+ vrrp 40 address-family ipv4
+  address 192.168.40.1
+  priority 110
+  preempt
+ exit
+exit
+
+int vlan 80
+ ip address 192.168.80.2
+ vrrp 80 address-family ipv4
+  address 192.168.80.1
+  priority 110
+  preempt
+ exit
+exit
 
 !EtherChannels Config
 
