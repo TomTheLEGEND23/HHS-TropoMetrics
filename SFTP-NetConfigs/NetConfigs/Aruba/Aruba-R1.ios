@@ -29,17 +29,86 @@ crypto key generate rsa general-keys modulus 2048
 !Vlan Config
 
 !Port Config
-!Aruba-R1 G0/0/0 - ISP G0/0/0
 int G0/0/0
     description To ISP G0/0/0
     ip address 192.0.0.2   255.255.255.252
     no shutdown
+    crypto map CMAP
     exit
 
 
 int G0/0/1
-    description To Aruba-SW1 GE0/0/0
+    description To Aruba-SW1 GE0/0
     exit
+
+! Static routes for Delft WANs via ISP
+ip route 198.19.0.0 255.255.255.252 192.0.0.1
+ip route 198.20.0.0 255.255.255.252 192.0.0.1
+
+! Crypto for GRE over IPsec
+crypto isakmp policy 10
+ encr aes 256
+ hash sha256
+ authentication pre-share
+ group 14
+ exit
+
+crypto isakmp key TROPOMETRICS address 198.19.0.2
+crypto isakmp key TROPOMETRICS address 198.20.0.2
+
+crypto ipsec transform-set TSET esp-aes 256 esp-sha256-hmac
+
+ip access-list extended GRE-R1
+ permit gre host 192.0.0.2 host 198.19.0.2
+exit
+ip access-list extended GRE-R2
+ permit gre host 192.0.0.2 host 198.20.0.2
+exit
+
+crypto map CMAP 10 ipsec-isakmp
+ set peer 198.19.0.2
+ set transform-set TSET
+ match address GRE-R1
+ exit
+crypto map CMAP 20 ipsec-isakmp
+ set peer 198.20.0.2
+ set transform-set TSET
+ match address GRE-R2
+ exit
+
+! GRE tunnels to Delft routers
+int Tunnel10
+ description GRE to Delft-R1
+ ip address 10.10.10.1 255.255.255.252
+ tunnel source G0/0/0
+ tunnel destination 198.19.0.2
+ tunnel mode gre ip
+ ip ospf 1 area 0
+ exit
+
+int Tunnel20
+ description GRE to Delft-R2
+ ip address 10.10.10.5 255.255.255.252
+ tunnel source G0/0/0
+ tunnel destination 198.20.0.2
+ tunnel mode gre ip
+ ip ospf 1 area 0
+ exit
+
+! OSPF over tunnels
+router ospf 1
+ network 10.10.10.0 0.0.0.3 area 0
+ network 10.10.10.4 0.0.0.3 area 0
+ exit
+
+! BGP peering over GRE tunnels
+router bgp 65001
+ no auto-summary
+ neighbor 10.10.10.2 remote-as 65002
+ neighbor 10.10.10.6 remote-as 65003
+ network 10.10.10.0 mask 255.255.255.252
+ network 10.10.10.4 mask 255.255.255.252
+ exit
 
 !Spanning Tree Config
 
