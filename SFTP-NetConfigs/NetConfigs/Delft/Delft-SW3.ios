@@ -27,10 +27,52 @@ crypto key generate rsa general-keys modulus 2048
 !Miscellaneous System Config
 
 !Vlan Config
+vlan 100
+ name DMZ
+exit
+
+vlan 800
+ name NATIVE
+exit
+
+vlan 999
+ name BLACKHOLE
+exit
+
 
 !Port Config
+int range Ge0/1-2
+ switchport mode trunk
+ switchport trunk native vlan 800
+ switchport trunk allowed vlan add 100
+ switchport trunk allowed vlan remove 800
+exit
+
+int fa0/1
+ switchport mode access
+ switchport access vlan 100
+exit
+
+int fa0/2-24
+ switchport mode access
+ switchport access vlan 999
+ shutdown
+exit
+
 
 !Spanning Tree Config
+spanning-tree mode mst
+
+spanning-tree mst configuration
+ name DELFT
+ revision 1
+ instance 1 vlan 10, 40, 80
+ instance 2 vlan 100
+exit
+
+spanning-tree mst 1 priority 32768
+spanning-tree mst 2 priority 32768
+
 
 !EtherChannels Config
 
