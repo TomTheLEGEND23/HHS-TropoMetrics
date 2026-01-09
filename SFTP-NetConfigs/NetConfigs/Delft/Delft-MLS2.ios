@@ -54,7 +54,6 @@ vlan 999
  name BLACKHOLE
 exit
 
-
 !Port Config
 int Gi1/0/1
  description To Delft-R2 G0/0/1
@@ -92,6 +91,11 @@ int range Gi1/0/9-24
  switchport mode access
  switchport access vlan 999
  shutdown
+exit
+
+int vlan 100
+ip address 192.19.1.17
+ipv6 address 2001:1:1:100::1/64
 exit
 
 
