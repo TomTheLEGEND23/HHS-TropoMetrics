@@ -169,7 +169,23 @@ exit
 
 
 !EtherChannels Config
-
+int range g1/0/3 - 4
+  no switchport
+  channel-group 1 mode active
+    no shutdown
+exit
+int Po1
+  ip address 192.168.3.2 255.255.255.252
+    no shutdown
+exit
+int range g1/0/7 - 8
+  switchport mode trunk
+  channel-group 2 mode active
+    no shutdown
+exit
+int Po2
+  switchport mode trunk
+    no shutdown
 !OSPF Config
 
 !DHCP Config
