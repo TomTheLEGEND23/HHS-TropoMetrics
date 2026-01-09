@@ -52,7 +52,13 @@ int G0/0/1
 !EtherChannels Config
 
 !OSPF Config
-
+router ospf 1
+ router-id 1.1.1.1
+ passive-interface default
+ no passive-interface G0/0/0
+ no passive-interface G0/0/1
+ network 192.168.1.0 0.0.0.3 area 0
+ network 192.168.1.4 0.0.0.3 area 0
 !DHCP Config
 
 !NAT Config
