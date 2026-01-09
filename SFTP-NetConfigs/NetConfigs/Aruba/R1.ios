@@ -41,6 +41,8 @@ crypto key generate rsa general-keys modulus 2048
 !DHCP Config
 
 !NAT Config
+!test
+
 
 !ACL Config
 
