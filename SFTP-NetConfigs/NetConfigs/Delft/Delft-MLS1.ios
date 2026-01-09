@@ -108,6 +108,12 @@ int vlan 10
   priority 110
   preempt
  exit
+ ipv6 address 2001:1:1:10::2/64
+ vrrp 11 address-family ipv6 
+  address 2001:1:1:10::1
+  priority 110 
+  preempt
+ exit
 exit
 
 int vlan 40
@@ -117,6 +123,12 @@ int vlan 40
   priority 110
   preempt
  exit
+ ipv6 address 2001:1:1:40::2/64
+ vrrp 44 address-family ipv6 
+  address 2001:1:1:40::1
+  priority 110 
+  preempt
+ exit
 exit
 
 int vlan 80
@@ -124,6 +136,12 @@ int vlan 80
  vrrp 80 address-family ipv4
   address 192.168.80.1
   priority 110
+  preempt
+ exit
+ ipv6 address 2001:1:1:80::2/64
+ vrrp 88 address-family ipv6 
+  address 2001:1:1:80::1
+  priority 110 
   preempt
  exit
 exit
