@@ -29,7 +29,10 @@ crypto key generate rsa general-keys modulus 2048
 !Vlan Config
 
 !Port Config
-
+int G0/0/0
+    ip address 192.0.0.2   255.255.255.252
+    no shutdown
+    exit
 
 !Spanning Tree Config
 

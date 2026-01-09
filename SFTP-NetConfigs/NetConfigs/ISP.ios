@@ -43,6 +43,17 @@ int Se0/1/1
     no shutdown
     exit
 
+!ISP Se0/1/1 - R2 Se0/1/1
+int Se0/1/1
+    clock rate 64000
+    ip address 198.20.0.1  255.255.255.252
+    no shutdown
+    exit
+
+int G0/0/0
+    ip address 192.0.0.1   255.255.255.252
+    no shutdown
+    exit
 
 !Spanning Tree Config
 
