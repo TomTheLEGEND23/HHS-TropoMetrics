@@ -1,0 +1,20 @@
+#codebase Look at all the files
+
+LAB (External Interface) - ISP(GE0/0/1)
+ISP(Se0/1/0) - Delft-R1(Se0/1/0)
+ISP(Se0/1/1) - Delft-R1(Se0/1/0)
+ISP(GE0/0/0) - Aruba-R1(GE0/0/0)
+Aruba-R1(GE0/0/1) - Aruba-SW1(GE0/0/0)
+Aruba-SW1(Fa0/1) - PC3
+Delft-R1(GE0/0/0) - Delft-MLS1(GE1/0/1)
+Delft-R1(GE0/0/1) - Delft-MLS2(GE1/0/2)
+Delft-R2(GE0/0/1) - Delft-MLS2(GE1/0/1)
+Delft-R2(GE0/0/0) - Delft-MLS1(GE1/0/2)
+Delft-MLS1(GE1/0/3) - Delft-MLS2(GE1/0/3) #Portchannel 1
+Delft-MLS1(GE1/0/4) - Delft-MLS2(GE1/0/4) #PortChannel 1
+Delft-MLS1(GE1/0/5) - Deflt-SW1()
+Delft-MLS1(GE1/0/6) -
+Delft-MLS2(GE1/0/5) - 
+Delft-MLS2(GE1/0/6) -
+Delft-MLS2(GE1/0/7) -
+Delft-MLS2(GE1/0/8) - 
