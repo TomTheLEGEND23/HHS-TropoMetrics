@@ -61,7 +61,10 @@ int Gi1/0/1
 exit
 
 int Gi1/0/2
+ no switchport
  description To Delft-R1 G0/0/1
+ ip address 192.168.1.6  255.255.255.252
+ no shutdown
 exit
 
 int Gi1/0/3
@@ -93,6 +96,13 @@ int range Gi1/0/9-24
  switchport access vlan 999
  shutdown
 exit
+
+!MlS2 G1/0/1 - R2 G1/0/1
+int G1/0/1
+    no switchport
+    ip address 192.168.2.2  255.255.255.252
+    no shutdown
+    exit
 
 
 !Spanning Tree Config
