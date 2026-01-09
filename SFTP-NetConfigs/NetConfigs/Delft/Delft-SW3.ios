@@ -78,7 +78,15 @@ spanning-tree mst 2 priority 32768
 
 
 !EtherChannels Config
-
+int range g0/1 - 2
+  switchport mode trunk
+  channel-group 2 mode active
+    no shutdown
+exit
+int Po2
+  switchport mode trunk
+    no shutdown
+exit
 !OSPF Config
 
 !DHCP Config
