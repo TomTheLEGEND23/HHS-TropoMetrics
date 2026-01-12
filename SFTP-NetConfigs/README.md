@@ -87,7 +87,6 @@ exit
 
 After Waiting a few moments for DHCP to assign an IP address, verify the assigned IP:
 ```cisco
-! Copy config from SFTP server
 copy scp://cisco@192.168.20.27/configs/XXX.ios running-config
 ```
 
