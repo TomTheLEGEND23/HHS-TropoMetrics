@@ -109,20 +109,6 @@ spanning-tree mst 2 priority 8192
 
 
 !VRRP Config
-
-!OSPF Config
-router ospf 1
- router-id 3.3.3.1
- passive-interface default
- no passive-interface Gi1/0/1
- no passive-interface Gi1/0/2
- no passive-interface Po1
- network 192.168.1.0 0.0.0.3 area 0
- network 192.168.2.0 0.0.0.3 area 0
- network 192.168.3.0 0.0.0.3 area 20
- network 192.168.10.0 0.0.0.63 area 20
- network 192.168.40.0 0.0.0.31 area 20
- network 192.168.80.0 0.0.0.255 area 20
 fhrp version vrrp v3
 
 int vlan 10
@@ -170,6 +156,21 @@ int vlan 80
  exit
 exit
 
+int vlan 100
+ ip address 198.19.1.18 255.255.255.224
+ vrrp 100 address-family ipv4
+  address 198.19.1.17
+  priority 110
+  preempt
+ exit
+ ipv6 address 2001:1:1:100::2/64
+ vrrp 104 address-family ipv6 
+  address 2001:1:1:100::1
+  priority 110
+  preempt
+ exit
+exit
+
 !EtherChannels Config
 int range Gi1/0/3 - 4
 no switchport
@@ -181,8 +182,75 @@ ip address 192.168.3.1 255.255.255.252
  no shutdown
 
 !OSPF Config
-
+router ospf 1
+ router-id 3.3.3.1
+ passive-interface default
+ no passive-interface Gi1/0/1
+ no passive-interface Gi1/0/2
+ no passive-interface Po1
+ network 192.168.1.0 0.0.0.3 area 0
+ network 192.168.2.0 0.0.0.3 area 0
+ network 192.168.3.0 0.0.0.3 area 20
+ network 192.168.10.0 0.0.0.63 area 20
+ network 192.168.40.0 0.0.0.31 area 20
+ network 192.168.80.0 0.0.0.255 area 20
+exit
 !DHCP Config
+service dhcp
+! Exclude VRRP and SVI static addresses and split-range exclusions (MLS1: lower half served here)
+ip dhcp excluded-address 192.168.10.1 192.168.10.3
+ip dhcp excluded-address 192.168.10.33 192.168.10.62
+ip dhcp excluded-address 192.168.40.1 192.168.40.3
+ip dhcp excluded-address 192.168.40.17 192.168.40.30
+ip dhcp excluded-address 192.168.80.1 192.168.80.3
+ip dhcp excluded-address 192.168.80.129 192.168.80.254
+ip dhcp excluded-address 198.19.1.17 198.19.1.19
+ip dhcp excluded-address 198.19.1.26 198.19.1.30
+
+! DHCP pools for VLANs served by the MLS (MLS1: lower halves)
+ip dhcp pool VLAN10
+ network 192.168.10.0 255.255.255.192
+ default-router 192.168.10.1
+ dns-server 1.1.1.1 8.8.8.8
+ domain-name hhs.nl
+ lease 7
+exit
+
+ip dhcp pool VLAN40
+ network 192.168.40.0 255.255.255.224
+ default-router 192.168.40.1
+ dns-server 1.1.1.1 8.8.8.8
+ domain-name hhs.nl
+ lease 7
+exit
+
+ip dhcp pool VLAN80
+ network 192.168.80.0 255.255.255.0
+ default-router 192.168.80.1
+ dns-server 1.1.1.1 8.8.8.8
+ domain-name hhs.nl
+ lease 7
+exit
+
+ip dhcp pool VLAN100
+ network 198.19.1.16 255.255.255.224
+ default-router 198.19.1.17
+ dns-server 1.1.1.1 8.8.8.8
+ domain-name hhs.nl
+ lease 7
+exit
+
+! DHCP snooping to protect the network
+ip dhcp snooping
+ip dhcp snooping vlan 10,40,80,100
+
+! Trust the uplink/trunk interfaces towards distribution/access
+interface range Gi1/0/5-6
+ ip dhcp snooping trust
+exit
+int range Gi1/0/3 - 4
+ ip dhcp snooping trust
+exit
 
 !NAT Config
 

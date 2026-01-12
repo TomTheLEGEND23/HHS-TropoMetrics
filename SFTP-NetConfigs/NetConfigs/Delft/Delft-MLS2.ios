@@ -100,8 +100,17 @@ int range Gi1/0/9-24
 exit
 
 int vlan 100
-ip address 192.19.1.17
-ipv6 address 2001:1:1:100::1/64
+ ip address 198.19.1.19 255.255.255.224
+ vrrp 100 address-family ipv4
+  address 198.19.1.17
+  priority 100
+  preempt
+ exit
+ ipv6 address 2001:1:1:100::3/64
+ vrrp 104 address-family ipv6
+  address 2001:1:1:100::1
+  priority 100
+  preempt
 exit
 
 !MlS2 G1/0/1 - R2 G1/0/1
@@ -212,6 +221,59 @@ int Po2
 !OSPF Config
 
 !DHCP Config
+service dhcp
+! Exclude VRRP and split-range exclusions (MLS2: upper halves served here)
+ip dhcp excluded-address 192.168.10.1 192.168.10.32
+ip dhcp excluded-address 192.168.40.1 192.168.40.16
+ip dhcp excluded-address 192.168.80.1 192.168.80.128
+ip dhcp excluded-address 198.19.1.17 198.19.1.25
+
+ip dhcp pool VLAN10
+ network 192.168.10.0 255.255.255.192
+ default-router 192.168.10.1
+ dns-server 1.1.1.1 8.8.8.8
+ domain-name hhs.nl
+ lease 7
+exit
+
+ip dhcp pool VLAN40
+ network 192.168.40.0 255.255.255.224
+ default-router 192.168.40.1
+ dns-server 1.1.1.1 8.8.8.8
+ domain-name hhs.nl
+ lease 7
+exit
+
+ip dhcp pool VLAN80
+ network 192.168.80.0 255.255.255.0
+ default-router 192.168.80.1
+ dns-server 1.1.1.1 8.8.8.8
+ domain-name hhs.nl
+ lease 7
+exit
+
+ip dhcp pool VLAN100
+ network 198.19.1.16 255.255.255.224
+ default-router 198.19.1.17
+ dns-server 1.1.1.1 8.8.8.8
+ domain-name hhs.nl
+ lease 7
+exit
+
+! DHCP snooping to protect the network
+ip dhcp snooping
+ip dhcp snooping vlan 10,40,80,100
+
+! Trust the uplink/trunk interfaces towards distribution/access
+int range g1/0/3 - 4
+ ip dhcp snooping trust
+exit
+int range g1/0/5-6
+ ip dhcp snooping trust
+exit
+int range g1/0/7-8
+ ip dhcp snooping trust
+exit
 
 !NAT Config
 
