@@ -40,22 +40,53 @@ The containerized SFTP server runs on the K3s cluster with the static SSH key mo
 ### Access the SFTP Server
 
 **From Cisco devices (blank device - bootstrap):**
+Switch Setup with VLAN1:
 ```cisco
 ! Enter privileged mode
 enable
-
 ! Enter global configuration
 configure terminal
-
 ! Configure management interface with DHCP
 interface vlan 1
  ip address dhcp
  no shutdown
  exit
-
 ! Exit configuration mode
 exit
+```
 
+Switch Setup with GigabitEthernet0/0:
+```cisco
+! Enter privileged mode
+enable
+! Enter global configuration
+configure terminal
+! Configure management interface with DHCP
+interface GigabitEthernet0/0
+ ip address dhcp
+ no shutdown
+ exit
+! Exit configuration mode
+exit
+```
+
+Router Setup:
+```cisco
+! Enter privileged mode
+enable
+! Enter global configuration
+configure terminal
+! Configure management interface with DHCP
+interface GigabitEthernet0/0/0
+ ip address dhcp
+ no shutdown
+ exit
+! Exit configuration mode
+exit
+```
+
+After Waiting a few moments for DHCP to assign an IP address, verify the assigned IP:
+```cisco
 ! Copy config from SFTP server
 copy scp://cisco@192.168.20.27/configs/XXX.ios running-config
 ```
