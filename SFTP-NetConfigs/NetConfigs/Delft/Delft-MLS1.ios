@@ -185,6 +185,21 @@ int Po1
 ip address 192.168.3.1 255.255.255.252
  no shutdown
 
+int range g1/0/7 - 8
+ switchport mode trunk
+ switchport trunk native vlan 800
+ switchport trunk allowed vlan add 100
+ switchport trunk allowed vlan remove 800
+  channel-group 3 mode active
+    no shutdown
+exit
+int Po3
+  switchport mode trunk
+  switchport trunk native vlan 800
+  switchport trunk allowed vlan add 100
+  switchport trunk allowed vlan remove 800
+    no shutdown
+
 !OSPF Config
 router ospf 1
  router-id 3.3.3.1

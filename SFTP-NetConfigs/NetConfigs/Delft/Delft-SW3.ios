@@ -51,7 +51,7 @@ int fa0/1
  switchport access vlan 100
 exit
 
-int fa0/2-24
+int range fa0/3 ,fa0/5-24
  description Black Hole Vlan
  switchport mode access
  switchport access vlan 999
@@ -83,6 +83,20 @@ int range g0/1 - 2
     no shutdown
 exit
 int Po2
+  switchport mode trunk
+  switchport trunk native vlan 800
+  switchport trunk allowed vlan add 100
+  switchport trunk allowed vlan remove 800
+    no shutdown
+  int range fa0/2 , fa0/4
+ switchport mode trunk
+ switchport trunk native vlan 800
+ switchport trunk allowed vlan add 100
+ switchport trunk allowed vlan remove 800
+  channel-group 3 mode active
+    no shutdown
+exit
+int Po3
   switchport mode trunk
   switchport trunk native vlan 800
   switchport trunk allowed vlan add 100
