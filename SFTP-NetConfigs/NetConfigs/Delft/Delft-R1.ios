@@ -35,19 +35,19 @@ int Se0/1/0
     ip address 198.19.0.2  255.255.255.252
     no shutdown
     crypto map CMAP
-    exit
+exit
 
 int G0/0/0
     description To Delft-MLS1 Gi1/0/1
     ip address 192.168.1.1  255.255.255.252
     no shutdown
-    exit
+exit
 
 int G0/0/1
     description To Delft-MLS2 Gi1/0/2
     ip address 192.168.1.5  255.255.255.252
     no shutdown
-    exit
+exit
     
 ! Static route to Aruba WAN via ISP
 ip route 192.0.0.0 255.255.255.252 198.19.0.1
@@ -58,7 +58,7 @@ crypto isakmp policy 10
  hash sha256
  authentication pre-share
  group 14
- exit
+exit
 
 crypto isakmp key TROPOMETRICS address 192.0.0.2
 
@@ -72,7 +72,7 @@ crypto map CMAP 10 ipsec-isakmp
  set peer 192.0.0.2
  set transform-set TSET
  match address GRE-ARUBA
- exit
+exit
 
 ! GRE tunnel to Aruba-R1
 int Tunnel10
@@ -82,23 +82,19 @@ int Tunnel10
  tunnel destination 192.0.0.2
  tunnel mode gre ip
  ip ospf 1 area 0
- exit
+exit
 
 ! OSPF over tunnel
 router ospf 1
  network 10.10.10.0 0.0.0.3 area 0
- exit
+exit
 
 ! BGP peering over GRE tunnel
 router bgp 65002
  no auto-summary
  neighbor 10.10.10.1 remote-as 65001
  network 10.10.10.0 mask 255.255.255.252
- exit
-
-!Spanning Tree Config
-
-!EtherChannels Config
+exit
 
 !OSPF Config
 router ospf 1
@@ -109,11 +105,7 @@ router ospf 1
  no passive-interface G0/0/1
  network 192.168.1.0 0.0.0.3 area 0
  network 192.168.1.4 0.0.0.3 area 0
-!DHCP Config
-
-!NAT Config
-
-!ACL Config
+exit
 
 end
 clock set 21:14:39 17 Dec 2025

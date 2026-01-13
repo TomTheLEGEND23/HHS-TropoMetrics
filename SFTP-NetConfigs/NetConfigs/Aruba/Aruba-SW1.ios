@@ -80,17 +80,6 @@ spanning-tree mst configuration
  instance 1 vlan 110
 exit
 
-
-!EtherChannels Config
-
-!OSPF Config
-
-!DHCP Config
-
-!NAT Config
-
-!ACL Config
-
 end
 clock set 21:14:39 17 Dec 2025
 !copy running-config startup-config

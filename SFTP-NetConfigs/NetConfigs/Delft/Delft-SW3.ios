@@ -24,8 +24,6 @@ ip domain-name hhs.nl
 !crypto key zeroize rsa
 crypto key generate rsa general-keys modulus 2048
 
-!Miscellaneous System Config
-
 !Vlan Config
 vlan 100
  name DMZ
@@ -38,7 +36,6 @@ exit
 vlan 999
  name BLACKHOLE
 exit
-
 
 !Port Config
 int range G0/1-2
@@ -58,7 +55,6 @@ int range fa0/3 ,fa0/5-24
  shutdown
 exit
 
-
 !Spanning Tree Config
 spanning-tree mode mst
 
@@ -71,7 +67,6 @@ exit
 
 spanning-tree mst 1 priority 32768
 spanning-tree mst 2 priority 32768
-
 
 !EtherChannels Config
 int range g0/1 - 2
@@ -91,13 +86,13 @@ int Po2
     no shutdown
 exit
 
-  int range fa0/2 , fa0/4
+int range fa0/2 , fa0/4
  switchport mode trunk
  switchport trunk native vlan 800
  switchport trunk allowed vlan add 100
  switchport trunk allowed vlan remove 800
-  channel-group 3 mode active
-    no shutdown
+ channel-group 3 mode active
+  no shutdown
 exit
 
 int Po3
@@ -107,14 +102,6 @@ int Po3
   switchport trunk allowed vlan remove 800
     no shutdown
 exit
-
-!OSPF Config
-
-!DHCP Config
-
-!NAT Config
-
-!ACL Config
 
 end
 clock set 21:14:39 17 Dec 2025

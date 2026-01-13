@@ -118,10 +118,6 @@ int G0/0/1.110
  no shutdown
  exit
 
-!Spanning Tree Config
-
-!EtherChannels Config
-
 !OSPF Config
 router ospf 1
  router-id 4.4.4.1
@@ -131,13 +127,7 @@ router ospf 1
  no passive-interface Tunnel20
  network 192.0.0.0 0.0.0.3 area 0
  network 192.168.110.0 0.0.0.255 area 10
-!DHCP Config
-
-!NAT Config
-
-
-
-!ACL Config
+ exit 
 
 end
 clock set 21:14:39 17 Dec 2025

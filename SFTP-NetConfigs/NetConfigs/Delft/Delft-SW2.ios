@@ -24,8 +24,6 @@ ip domain-name hhs.nl
 !crypto key zeroize rsa
 crypto key generate rsa general-keys modulus 2048
 
-!Miscellaneous System Config
-
 !Vlan Config
 vlan 10
  name ADMINISTRATIE
@@ -62,7 +60,6 @@ int range fa0/2-24
  shutdown
 exit
 
-
 !Spanning Tree Config
 spanning-tree mode mst
 
@@ -75,17 +72,6 @@ exit
 
 spanning-tree mst 1 priority 32768
 spanning-tree mst 2 priority 32768
-
-
-!EtherChannels Config
-
-!OSPF Config
-
-!DHCP Config
-
-!NAT Config
-
-!ACL Config
 
 end
 clock set 21:14:39 17 Dec 2025

@@ -28,7 +28,6 @@ crypto key generate rsa general-keys modulus 2048
 ip routing 
 ipv6 unicast-routing
 
-
 !Vlan Config
 vlan 100
  name DMZ
@@ -61,14 +60,14 @@ int Gi1/0/1
     no switchport
     ip address 192.168.1.2  255.255.255.252
     no shutdown
-    exit
+exit
 
 int Gi1/0/2
     description To Delft-R2 G0/0/0
     no switchport
     ip address 192.168.2.6  255.255.255.252
     no shutdown
-    exit
+exit
 
 int Gi1/0/3
  description To Delft-MLS2 Gi1/0/3 (PortChannel 1)
@@ -77,6 +76,7 @@ exit
 int Gi1/0/4
  description To Delft-MLS2 Gi1/0/4 (PortChannel 1)
 exit
+
 int range Gi1/0/5-6
 description To Delft-SW1 Ge0/1-2
  switchport mode trunk
@@ -91,8 +91,6 @@ int range Gi1/0/7-24
  switchport access vlan 999
  shutdown
 exit
-
-
 
 !Spanning Tree Config
 spanning-tree mode mst
@@ -171,7 +169,6 @@ int vlan 100
  exit
 exit
 
-
 !Miscellaneous System Config
 ipv6 unicast-routing
 
@@ -181,9 +178,11 @@ no switchport
 channel-group 1 mode active
 no shutdown
 exit
+
 int Po1
 ip address 192.168.3.1 255.255.255.252
  no shutdown
+exit
 
 int range g1/0/7 - 8
  switchport mode trunk
@@ -193,6 +192,7 @@ int range g1/0/7 - 8
   channel-group 3 mode active
     no shutdown
 exit
+
 int Po3
   switchport mode trunk
   switchport trunk native vlan 800
@@ -215,6 +215,7 @@ router ospf 1
  network 192.168.40.0 0.0.0.31 area 20
  network 192.168.80.0 0.0.0.255 area 20
 exit
+
 !DHCP Config
 service dhcp
 ! Exclude VRRP and SVI static addresses and split-range exclusions (MLS1: lower half served here)
@@ -268,13 +269,10 @@ ip dhcp snooping vlan 10,40,80,100
 interface range Gi1/0/5-6
  ip dhcp snooping trust
 exit
+
 int range Gi1/0/3 - 4
  ip dhcp snooping trust
 exit
-
-!NAT Config
-
-!ACL Config
 
 end
 clock set 21:14:39 17 Dec 2025

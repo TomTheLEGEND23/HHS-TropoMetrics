@@ -60,7 +60,7 @@ int Gi1/0/1
  no switchport
  ip address 192.168.2.2  255.255.255.252
  no shutdown
- exit
+exit
 
 int Gi1/0/2
  no switchport
@@ -76,6 +76,7 @@ exit
 int Gi1/0/4
  description To Delft-MLS1 Gi1/0/4 (PortChannel 1)
 exit
+
 int range Gi1/0/5-6
  description To Delft-SW2 Ge0/1-2
  switchport mode trunk
@@ -95,27 +96,12 @@ int range Gi1/0/9-24
  shutdown
 exit
 
-int vlan 100
- ip address 198.19.1.19 255.255.255.224
- vrrp 100 address-family ipv4
-  address 198.19.1.17
-  priority 100
-  preempt
- exit
- ipv6 address 2001:1:1:100::3/64
- vrrp 104 address-family ipv6
-  address 2001:1:1:100::1
-  priority 100
-  preempt
-exit
-
 !MlS2 G1/0/1 - R2 G1/0/1
 int G1/0/1
     no switchport
     ip address 192.168.2.2  255.255.255.252
     no shutdown
-    exit
-
+  exit
 
 !Spanning Tree Config
 spanning-tree mode mst
@@ -179,6 +165,21 @@ int vlan 80
  exit
 exit
 
+int vlan 100
+ ip address 198.19.1.19 255.255.255.224
+ vrrp 100 address-family ipv4
+  address 198.19.1.17
+  priority 100
+  preempt
+ exit
+ ipv6 address 2001:1:1:100::3/64
+ vrrp 104 address-family ipv6
+  address 2001:1:1:100::1
+  priority 100
+  preempt
+exit
+
+
 
 !EtherChannels Config
 int range g1/0/3 - 4
@@ -186,6 +187,7 @@ int range g1/0/3 - 4
   channel-group 1 mode active
     no shutdown
 exit
+
 int Po1
   ip address 192.168.3.2 255.255.255.252
     no shutdown
@@ -199,6 +201,7 @@ int range g1/0/7 - 8
   channel-group 2 mode active
     no shutdown
 exit
+
 int Po2
   switchport mode trunk
   switchport trunk native vlan 800
@@ -206,6 +209,7 @@ int Po2
   switchport trunk allowed vlan remove 800
     no shutdown
 exit
+
 !OSPF Config
 router ospf 1
  router-id 3.3.3.2
@@ -222,6 +226,7 @@ router ospf 1
  network 192.168.80.0 0.0.0.255 area 20
  network 198.19.1.0 0.0.0.31 area 20
 exit
+
 !DHCP Config
 service dhcp
 ! Exclude VRRP and split-range exclusions (MLS2: upper halves served here)
@@ -276,10 +281,6 @@ exit
 int range g1/0/7-8
  ip dhcp snooping trust
 exit
-
-!NAT Config
-
-!ACL Config
 
 end
 clock set 21:14:39 17 Dec 2025
