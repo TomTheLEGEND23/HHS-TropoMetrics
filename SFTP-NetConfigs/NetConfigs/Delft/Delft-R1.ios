@@ -33,6 +33,8 @@ ipv6 unicast-routing
 int Se0/1/0
     description To ISP Se0/1/0
     ip address 198.19.0.2  255.255.255.252
+    ipv6 address 2001:1:ffff:1::2/64
+    ipv6 enable
     no shutdown
     crypto map CMAP
 exit

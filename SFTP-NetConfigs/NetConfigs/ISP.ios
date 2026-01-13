@@ -32,6 +32,8 @@ int Se0/1/0
     description To Delft-R1 Se0/1/0
     clock rate 192000
     ip address 198.19.0.1  255.255.255.252
+    ipv6 address 2001:1:ffff:1::1/64
+    ipv6 enable
     no shutdown
 exit
 
@@ -39,12 +41,16 @@ int Se0/1/1
     description To Delft-R2 Se0/1/1
     clock rate 192000
     ip address 198.20.0.1  255.255.255.252
+    ipv6 address 2001:1:ffff:2::1/64
+    ipv6 enable
     no shutdown
 exit
 
 int G0/0/0
     description To Aruba-R1 G0/0/0
     ip address 192.0.0.1   255.255.255.252
+    ipv6 address 2001:1:ffff:3::1/64
+    ipv6 enable
     no shutdown
 exit
 
