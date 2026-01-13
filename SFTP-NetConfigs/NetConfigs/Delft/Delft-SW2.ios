@@ -55,7 +55,7 @@ int fa0/1
  switchport access vlan 10
 exit
 
-int fa0/2-24
+int range fa0/2-24
  description Black Hole Vlan
  switchport mode access
  switchport access vlan 999
