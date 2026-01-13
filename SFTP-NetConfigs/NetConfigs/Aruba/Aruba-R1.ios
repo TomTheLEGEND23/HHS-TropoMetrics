@@ -25,6 +25,7 @@ ip domain-name hhs.nl
 crypto key generate rsa general-keys modulus 2048
 
 !Miscellaneous System Config
+ipv6 unicast-routing
 
 !Vlan Config
 

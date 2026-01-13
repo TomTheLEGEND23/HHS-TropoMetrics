@@ -171,6 +171,10 @@ int vlan 100
  exit
 exit
 
+
+!Miscellaneous System Config
+ipv6 unicast-routing
+
 !EtherChannels Config
 int range Gi1/0/3 - 4
 no switchport
