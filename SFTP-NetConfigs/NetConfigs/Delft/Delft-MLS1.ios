@@ -199,6 +199,7 @@ int Po3
   switchport trunk allowed vlan add 100
   switchport trunk allowed vlan remove 800
     no shutdown
+exit
 
 !OSPF Config
 router ospf 1

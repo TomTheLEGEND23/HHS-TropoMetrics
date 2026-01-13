@@ -82,12 +82,15 @@ int range g0/1 - 2
   channel-group 2 mode active
     no shutdown
 exit
+
 int Po2
   switchport mode trunk
   switchport trunk native vlan 800
   switchport trunk allowed vlan add 100
   switchport trunk allowed vlan remove 800
     no shutdown
+exit
+
   int range fa0/2 , fa0/4
  switchport mode trunk
  switchport trunk native vlan 800
@@ -96,6 +99,7 @@ int Po2
   channel-group 3 mode active
     no shutdown
 exit
+
 int Po3
   switchport mode trunk
   switchport trunk native vlan 800
@@ -103,6 +107,7 @@ int Po3
   switchport trunk allowed vlan remove 800
     no shutdown
 exit
+
 !OSPF Config
 
 !DHCP Config
