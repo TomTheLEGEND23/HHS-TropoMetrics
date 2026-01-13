@@ -86,10 +86,6 @@ exit
 
 int range Gi1/0/7-8
  description To Delft-SW3 Ge0/1-2
- switchport mode trunk
- switchport trunk native vlan 800
- switchport trunk allowed vlan add 100
- switchport trunk allowed vlan remove 800
 exit
 
 int range Gi1/0/9-24
@@ -136,22 +132,6 @@ spanning-tree mst 2 priority 4096
 
 
 !VRRP Config
-
-!OSPF Config
-router ospf 1
- router-id 3.3.3.2
- passive-interface default
- no passive-interface Gi1/0/1
- no passive-interface Gi1/0/2
- no passive-interface Po1
- no passive-interface Po2
- network 192.168.1.4 0.0.0.3 area 0
- network 192.168.2.0 0.0.0.3 area 0
- network 192.168.3.0 0.0.0.3 area 20
- network 192.168.10.0 0.0.0.63 area 20
- network 192.168.40.0 0.0.0.31 area 20
- network 192.168.80.0 0.0.0.255 area 20
- network 198.19.1.0 0.0.0.31 area 20
 fhrp version vrrp v3
 
 int vlan 10
@@ -210,16 +190,38 @@ int Po1
   ip address 192.168.3.2 255.255.255.252
     no shutdown
 exit
+
 int range g1/0/7 - 8
-  switchport mode trunk
+ switchport mode trunk
+ switchport trunk native vlan 800
+ switchport trunk allowed vlan add 100
+ switchport trunk allowed vlan remove 800
   channel-group 2 mode active
     no shutdown
 exit
 int Po2
   switchport mode trunk
+  switchport trunk native vlan 800
+  switchport trunk allowed vlan add 100
+  switchport trunk allowed vlan remove 800
     no shutdown
+exit
 !OSPF Config
-
+router ospf 1
+ router-id 3.3.3.2
+ passive-interface default
+ no passive-interface Gi1/0/1
+ no passive-interface Gi1/0/2
+ no passive-interface Po1
+ no passive-interface Po2
+ network 192.168.1.4 0.0.0.3 area 0
+ network 192.168.2.0 0.0.0.3 area 0
+ network 192.168.3.0 0.0.0.3 area 20
+ network 192.168.10.0 0.0.0.63 area 20
+ network 192.168.40.0 0.0.0.31 area 20
+ network 192.168.80.0 0.0.0.255 area 20
+ network 198.19.1.0 0.0.0.31 area 20
+exit
 !DHCP Config
 service dhcp
 ! Exclude VRRP and split-range exclusions (MLS2: upper halves served here)

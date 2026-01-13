@@ -42,11 +42,7 @@ exit
 
 !Port Config
 int range G0/1-2
-
- switchport mode trunk
- switchport trunk native vlan 800
- switchport trunk allowed vlan add 100
- switchport trunk allowed vlan remove 800
+  description To Delft-MLS1 G1/0/1-2
 exit
 
 int fa0/1
@@ -80,11 +76,17 @@ spanning-tree mst 2 priority 32768
 !EtherChannels Config
 int range g0/1 - 2
   switchport mode trunk
+  switchport trunk native vlan 800
+  switchport trunk allowed vlan add 100
+  switchport trunk allowed vlan remove 800
   channel-group 2 mode active
     no shutdown
 exit
 int Po2
   switchport mode trunk
+  switchport trunk native vlan 800
+  switchport trunk allowed vlan add 100
+  switchport trunk allowed vlan remove 800
     no shutdown
 exit
 !OSPF Config
