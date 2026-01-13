@@ -41,7 +41,7 @@ exit
 
 
 !Port Config
-int range Ge0/1-2
+int range G0/1-2
 
  switchport mode trunk
  switchport trunk native vlan 800
