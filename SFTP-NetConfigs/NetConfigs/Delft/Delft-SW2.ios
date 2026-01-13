@@ -73,6 +73,14 @@ exit
 spanning-tree mst 1 priority 32768
 spanning-tree mst 2 priority 32768
 
+!Port Security Config
+interface fa0/1
+switchport port-security
+switchport port-security maximum 1  
+switchport port-security mac-address sticky
+switchport port-security violation restrict
+exit
+
 end
 clock set 21:14:39 17 Dec 2025
 !copy running-config startup-config

@@ -103,6 +103,14 @@ int Po3
     no shutdown
 exit
 
+!Port Security Config
+interface fa0/1
+switchport port-security
+switchport port-security maximum 1
+switchport port-security mac-address sticky
+switchport port-security violation shutdown
+exit
+
 end
 clock set 21:14:39 17 Dec 2025
 !copy running-config startup-config
