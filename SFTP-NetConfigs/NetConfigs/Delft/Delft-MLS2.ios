@@ -190,6 +190,7 @@ exit
 
 int Po1
   ip address 192.168.3.2 255.255.255.252
+  ipv6 address 2001:1:1:5::2/64
     no shutdown
 exit
 
