@@ -71,6 +71,8 @@ int G0/0/1
 exit
 
 !NAT Overload (PAT) Configuration
+!This command enables Port Address Translation (PAT) allowing multiple internal
+!hosts to share the single DHCP-assigned IP address on G0/0/1 using different port numbers
 ip nat inside source list 1 interface G0/0/1 overload
 
 end
