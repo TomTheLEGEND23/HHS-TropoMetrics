@@ -235,7 +235,7 @@ ip dhcp excluded-address 198.19.1.26 198.19.1.30
 
 ! DHCP pools for VLANs served by the MLS (MLS1: lower halves)
 ip dhcp pool VLAN10_MLS1
- network 192.168.10.0 255.255.255.192
+ network 192.168.10.0 255.255.255.128
  default-router 192.168.10.1
  dns-server 1.1.1.1 8.8.8.8
  domain-name hhs.nl
@@ -243,7 +243,7 @@ ip dhcp pool VLAN10_MLS1
 exit
 
 ip dhcp pool VLAN40_MLS1
- network 192.168.40.0 255.255.255.224
+ network 192.168.40.0 255.255.255.128
  default-router 192.168.40.1
  dns-server 1.1.1.1 8.8.8.8
  domain-name hhs.nl
@@ -251,7 +251,7 @@ ip dhcp pool VLAN40_MLS1
 exit
 
 ip dhcp pool VLAN80_MLS1
- network 192.168.80.0 255.255.255.0
+ network 192.168.80.0 255.255.255.128
  default-router 192.168.80.1
  dns-server 1.1.1.1 8.8.8.8
  domain-name hhs.nl
@@ -259,7 +259,7 @@ ip dhcp pool VLAN80_MLS1
 exit
 
 ip dhcp pool VLAN100_MLS1
- network 198.19.1.16 255.255.255.224
+ network 198.19.1.16 255.255.255.128
  default-router 198.19.1.17
  dns-server 1.1.1.1 8.8.8.8
  domain-name hhs.nl
