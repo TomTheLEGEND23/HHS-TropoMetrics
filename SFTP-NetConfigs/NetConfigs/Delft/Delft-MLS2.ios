@@ -234,6 +234,7 @@ exit
 
 !DHCP Config
 service dhcp
+ip dhcp ping timeout 100
 
 ! MLS2 serves UPPER halves of pools - Excludes VRRP gateway and lower half
 ip dhcp excluded-address 192.168.10.1 192.168.10.3
