@@ -277,7 +277,7 @@ ip dhcp snooping
 ip dhcp snooping vlan 10,40,80,100
 
 ! Trust the uplink/trunk interfaces towards distribution/access
-int range g1/0/3 - 4
+int range g1/0/3-4
  ip dhcp snooping trust
 exit
 int range g1/0/5-6
