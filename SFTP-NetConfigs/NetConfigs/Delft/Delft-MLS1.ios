@@ -59,8 +59,9 @@ int Gi1/0/1
     description To Delft-R1 G0/0/0
     no switchport
     ip address 192.168.1.2  255.255.255.252
-    ipv6 address 2001:1:1:1::2/64
+    ipv6 address 2001:1:1:1::1/64
     ipv6 enable
+    ipv6 ospf 1 area 0
     no shutdown
 exit
 
@@ -70,6 +71,7 @@ int Gi1/0/2
     ip address 192.168.2.6  255.255.255.252
     ipv6 address 2001:1:1:4::2/64 
     ipv6 enable
+    ipv6 ospf 1 area 0
     no shutdown
 exit
 
@@ -126,6 +128,7 @@ int vlan 10
   priority 110 
   preempt
  exit
+ ipv6 ospf 1 area 20
 exit
 
 int vlan 40
@@ -141,6 +144,7 @@ int vlan 40
   priority 110 
   preempt
  exit
+ ipv6 ospf 1 area 20
 exit
 
 int vlan 80
@@ -156,6 +160,7 @@ int vlan 80
   priority 110 
   preempt
  exit
+ ipv6 ospf 1 area 20
 exit
 
 int vlan 100
@@ -171,6 +176,7 @@ int vlan 100
   priority 110
   preempt
  exit
+ ipv6 ospf 1 area 20
 exit
 
 !Miscellaneous System Config
@@ -186,8 +192,7 @@ exit
 int Po1
 ip address 192.168.3.1 255.255.255.252
 ipv6 address 2001:1:1:5::1/64
- no shutdown
-exit
+  ipv6 ospf 1 area 20
 
 int range g1/0/7 - 8
  switchport mode trunk
@@ -219,6 +224,16 @@ router ospf 1
  network 192.168.10.0 0.0.0.255 area 20
  network 192.168.40.0 0.0.0.255 area 20
  network 192.168.80.0 0.0.0.255 area 20
+exit
+
+!OSPFv3 (IPv6) Config
+ipv6 router ospf 1
+ router-id 3.3.3.1
+ passive-interface default
+ no passive-interface Gi1/0/1
+ no passive-interface Gi1/0/2
+ no passive-interface Po1
+ no passive-interface Po3
 exit
 
 !DHCP Config

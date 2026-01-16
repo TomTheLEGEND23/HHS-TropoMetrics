@@ -22,6 +22,8 @@ Delft-SW3(FA0/1) - PC2(Vlan20)(FA0/1)
 Delft-MLS2(GE1/0/7) - Delft-SW3(GE0/1) #Portchannel 2
 Delft-MLS2(GE1/0/8) - Delft-SW3(GE0/2) #Portchannel 2
 Delft-SW3(FA0/1) - Service(Fast Port)
+Delft-MLS1(G1/0/7) - Delft-SW3(FA0/2) #PortChannel 3
+Delft-MLS1(G1/0/8) - Delft-SW3(FA0/4) #PortChannel 3
 
 ## IP
 ### Overzicht IPv4 ISP en VPN-adressen en ranges 
