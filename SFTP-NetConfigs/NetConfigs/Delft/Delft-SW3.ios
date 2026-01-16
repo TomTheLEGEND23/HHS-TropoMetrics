@@ -39,7 +39,7 @@ exit
 
 !Port Config
 int range G0/1-2
-  description To Delft-MLS1 G1/0/1-2
+  description To Delft-MLS2 G1/0/7-8
 exit
 
 int fa0/1
@@ -69,10 +69,11 @@ spanning-tree mst 1 priority 32768
 spanning-tree mst 2 priority 32768
 
 !Management Interface
-int vlan 10
+int vlan 100
  ip address dhcp
  no shutdown
 exit
+
 !EtherChannels Config
 int range g0/1 - 2
   switchport mode trunk
