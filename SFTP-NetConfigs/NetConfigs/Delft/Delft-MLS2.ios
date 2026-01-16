@@ -125,7 +125,7 @@ spanning-tree mst 2 priority 4096
 fhrp version vrrp v3
 
 int vlan 10
- ip address 192.168.10.3 255.255.255.192
+ ip address 192.168.10.3 255.255.255.0
  vrrp 10 address-family ipv4
   address 192.168.10.1
   priority 100
@@ -140,7 +140,7 @@ int vlan 10
 exit
 
 int vlan 40
- ip address 192.168.40.3 255.255.255.224
+ ip address 192.168.40.3 255.255.255.0
  vrrp 40 address-family ipv4
   address 192.168.40.1
   priority 100
@@ -170,7 +170,7 @@ int vlan 80
 exit
 
 int vlan 100
- ip address 198.19.1.19 255.255.255.224
+ ip address 198.19.1.19 255.255.255.0
  vrrp 100 address-family ipv4
   address 198.19.1.17
   priority 100
@@ -226,8 +226,8 @@ router ospf 1
  network 192.168.1.4 0.0.0.3 area 0
  network 192.168.2.0 0.0.0.3 area 0
  network 192.168.3.0 0.0.0.3 area 20
- network 192.168.10.0 0.0.0.63 area 20
- network 192.168.40.0 0.0.0.31 area 20
+ network 192.168.10.0 0.0.0.255 area 20
+ network 192.168.40.0 0.0.0.255 area 20
  network 192.168.80.0 0.0.0.255 area 20
  network 198.19.1.0 0.0.0.31 area 20
 exit
