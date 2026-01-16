@@ -25,12 +25,16 @@ ip domain-name hhs.nl
 crypto key generate rsa general-keys modulus 2048
 
 !Vlan Config
-vlan 80
- name WIFI
+vlan 10
+ name ADMINISTRATIE
 exit
 
 vlan 40
  name SUPPORT
+exit
+
+vlan 80
+ name WIFI
 exit
 
 vlan 800
@@ -41,12 +45,18 @@ vlan 999
  name BLACKHOLE
 exit
 
+!Management Interface
+int vlan 10
+ ip address dhcp
+ no shutdown
+exit
+
 !Port Config
 int range G0/1-2
  description To Delft-MLS1 Gi1/0/5-6
  switchport mode trunk
  switchport trunk native vlan 800
- switchport trunk allowed vlan add 40,80
+ switchport trunk allowed vlan add 10,40,80
  switchport trunk allowed vlan remove 800
 exit
 
