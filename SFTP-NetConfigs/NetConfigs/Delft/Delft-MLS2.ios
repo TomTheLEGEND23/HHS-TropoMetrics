@@ -253,8 +253,6 @@ ip dhcp pool VLAN10_MLS2
  dns-server 1.1.1.1 8.8.8.8
  domain-name hhs.nl
  lease 7
- ip dhcp excluded-address 192.168.10.1 192.168.10.32
-exit
 
 ! VLAN 40 - Support (192.168.40.0/27 = 30 usable)
 ! MLS2: Upper half (192.168.40.17-30)
@@ -264,8 +262,6 @@ ip dhcp pool VLAN40_MLS2
  dns-server 1.1.1.1 8.8.8.8
  domain-name hhs.nl
  lease 7
- ip dhcp excluded-address 192.168.40.1 192.168.40.16
-exit
 
 ! VLAN 80 - Calcnet (192.168.80.0/24 = 254 usable)
 ! MLS2: Upper half (192.168.80.129-254)
@@ -275,8 +271,6 @@ ip dhcp pool VLAN80_MLS2
  dns-server 1.1.1.1 8.8.8.8
  domain-name hhs.nl
  lease 7
- ip dhcp excluded-address 192.168.80.1 192.168.80.128
-exit
 
 ! VLAN 100 - DMZ (198.19.1.16/27 = 30 usable)
 ! MLS2: Upper half (198.19.1.26-30)
@@ -286,8 +280,6 @@ ip dhcp pool VLAN100_MLS2
  dns-server 1.1.1.1 8.8.8.8
  domain-name hhs.nl
  lease 7
- ip dhcp excluded-address 198.19.1.17 198.19.1.25
-exit
 
 ! DHCP snooping to protect the network
 ip dhcp snooping
