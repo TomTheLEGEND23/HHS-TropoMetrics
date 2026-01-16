@@ -50,7 +50,7 @@ exit
 int fa0/1
  description To PC2 FA0/1
  switchport mode access
- switchport access vlan 10
+ switchport access vlan 40
 exit
 
 int range fa0/2-24

@@ -63,7 +63,7 @@ exit
 int fa0/1
  description To PC1 FA0/1
  switchport mode access
- switchport access vlan 40
+ switchport access vlan 10
 exit
 
 int fa0/2
