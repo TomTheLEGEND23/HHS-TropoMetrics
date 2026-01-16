@@ -224,14 +224,14 @@ exit
 !DHCP Config
 service dhcp
 ! Exclude VRRP and SVI static addresses and split-range exclusions (MLS1: lower half served here)
-ip dhcp excluded-address 192.168.10.1 192.168.10.3
-ip dhcp excluded-address 192.168.10.33 192.168.10.62
-ip dhcp excluded-address 192.168.40.1 192.168.40.3
-ip dhcp excluded-address 192.168.40.17 192.168.40.30
-ip dhcp excluded-address 192.168.80.1 192.168.80.3
-ip dhcp excluded-address 192.168.80.129 192.168.80.254
-ip dhcp excluded-address 198.19.1.17 198.19.1.19
-ip dhcp excluded-address 198.19.1.26 198.19.1.30
+ip dhcp excluded-address 192.168.10.1 192.168.10.4
+ip dhcp excluded-address 192.168.10.33 192.168.10.63
+ip dhcp excluded-address 192.168.40.1 192.168.40.4
+ip dhcp excluded-address 192.168.40.17 192.168.40.31
+ip dhcp excluded-address 192.168.80.1 192.168.80.4
+ip dhcp excluded-address 192.168.80.129 192.168.80.255
+ip dhcp excluded-address 198.19.1.17 198.19.1.20
+ip dhcp excluded-address 198.19.1.26 198.19.1.31
 
 ! DHCP pools for VLANs served by the MLS (MLS1: lower halves)
 ip dhcp pool VLAN10_MLS1

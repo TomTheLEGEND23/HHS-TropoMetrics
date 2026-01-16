@@ -73,6 +73,12 @@ exit
 spanning-tree mst 1 priority 32768
 spanning-tree mst 2 priority 32768
 
+!Management Interface
+int vlan 10
+ ip address dhcp
+ no shutdown
+exit
+
 !Port Security Config
 interface fa0/1
 switchport port-security

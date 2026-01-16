@@ -25,12 +25,16 @@ ip domain-name hhs.nl
 crypto key generate rsa general-keys modulus 2048
 
 !Vlan Config
-vlan 80
- name WIFI
+vlan 10
+ name ADMINISTRATIE
 exit
 
 vlan 40
  name SUPPORT
+exit
+
+vlan 80
+ name WIFI
 exit
 
 vlan 800
@@ -39,6 +43,12 @@ exit
 
 vlan 999
  name BLACKHOLE
+exit
+
+!Management Interface
+int vlan 10
+ ip address dhcp
+ no shutdown
 exit
 
 !Port Config

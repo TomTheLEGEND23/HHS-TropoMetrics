@@ -236,14 +236,15 @@ exit
 service dhcp
 
 ! MLS2 serves UPPER halves of pools - Excludes VRRP gateway and lower half
-ip dhcp excluded-address 192.168.10.1 192.168.10.1
-ip dhcp excluded-address 192.168.10.2 192.168.10.32
-ip dhcp excluded-address 192.168.40.1 192.168.40.1
-ip dhcp excluded-address 192.168.40.2 192.168.40.16
-ip dhcp excluded-address 192.168.80.1 192.168.80.1
-ip dhcp excluded-address 192.168.80.2 192.168.80.128
-ip dhcp excluded-address 198.19.1.17 198.19.1.17
-ip dhcp excluded-address 198.19.1.18 198.19.1.25
+ip dhcp excluded-address 192.168.10.1 192.168.10.4
+ip dhcp excluded-address 192.168.10.5 192.168.10.32
+ip dhcp excluded-address 192.168.40.1 192.168.40.4
+ip dhcp excluded-address 192.168.40.5 192.168.40.16
+ip dhcp excluded-address 192.168.80.1 192.168.80.4
+ip dhcp excluded-address 192.168.80.5 192.168.80.128
+ip dhcp excluded-address 198.19.1.17 198.19.1.20
+ip dhcp excluded-address 198.19.1.21 198.19.1.25
+
 
 ! VLAN 10 - Management (192.168.10.0/26 = 62 usable)
 ! MLS2: Upper half (192.168.10.33-62)
