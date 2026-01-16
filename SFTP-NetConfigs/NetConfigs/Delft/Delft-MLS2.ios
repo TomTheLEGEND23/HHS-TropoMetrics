@@ -85,7 +85,7 @@ int range Gi1/0/5-6
  description To Delft-SW2 Ge0/1-2
  switchport mode trunk
  switchport trunk native vlan 800
- switchport trunk allowed vlan add 10, 40, 80
+ switchport trunk allowed vlan add 10,40,80
  switchport trunk allowed vlan remove 800
 exit
 
@@ -113,7 +113,7 @@ spanning-tree mode mst
 spanning-tree mst configuration
  name DELFT
  revision 1
- instance 1 vlan 10, 40, 80
+ instance 1 vlan 10,40,80
  instance 2 vlan 100
 exit
 

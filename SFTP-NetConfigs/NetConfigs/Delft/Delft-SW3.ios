@@ -61,7 +61,7 @@ spanning-tree mode mst
 spanning-tree mst configuration
  name DELFT
  revision 1
- instance 1 vlan 10, 40, 80
+ instance 1 vlan 10,40,80
  instance 2 vlan 100
 exit
 
