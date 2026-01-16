@@ -234,7 +234,7 @@ ip dhcp excluded-address 198.19.1.17 198.19.1.19
 ip dhcp excluded-address 198.19.1.26 198.19.1.30
 
 ! DHCP pools for VLANs served by the MLS (MLS1: lower halves)
-ip dhcp pool VLAN10
+ip dhcp pool VLAN10_MLS1
  network 192.168.10.0 255.255.255.192
  default-router 192.168.10.1
  dns-server 1.1.1.1 8.8.8.8
@@ -242,7 +242,7 @@ ip dhcp pool VLAN10
  lease 7
 exit
 
-ip dhcp pool VLAN40
+ip dhcp pool VLAN40_MLS1
  network 192.168.40.0 255.255.255.224
  default-router 192.168.40.1
  dns-server 1.1.1.1 8.8.8.8
@@ -250,7 +250,7 @@ ip dhcp pool VLAN40
  lease 7
 exit
 
-ip dhcp pool VLAN80
+ip dhcp pool VLAN80_MLS1
  network 192.168.80.0 255.255.255.0
  default-router 192.168.80.1
  dns-server 1.1.1.1 8.8.8.8
@@ -258,7 +258,7 @@ ip dhcp pool VLAN80
  lease 7
 exit
 
-ip dhcp pool VLAN100
+ip dhcp pool VLAN100_MLS1
  network 198.19.1.16 255.255.255.224
  default-router 198.19.1.17
  dns-server 1.1.1.1 8.8.8.8
