@@ -88,6 +88,9 @@ int Tunnel10
  tunnel destination 198.19.0.2
  tunnel mode gre ip
  ip ospf 1 area 0
+ ipv6 address 2001:1:10:10::1/64
+ ipv6 enable
+ ipv6 ospf 1 area 0
  exit
 
 int Tunnel20
@@ -97,6 +100,9 @@ int Tunnel20
  tunnel destination 198.20.0.2
  tunnel mode gre ip
  ip ospf 1 area 0
+ ipv6 address 2001:1:10:20::1/64
+ ipv6 enable
+ ipv6 ospf 1 area 0
  exit
 
 ! BGP peering over GRE tunnels
@@ -128,6 +134,15 @@ router ospf 1
  network 10.10.10.0 0.0.0.3 area 0
  network 10.10.10.4 0.0.0.3 area 0
  exit 
+
+! OSPFv3 (IPv6) configuration
+ipv6 router ospf 1
+ router-id 4.4.4.1
+ passive-interface default
+ no passive-interface Tunnel10
+ no passive-interface Tunnel20
+ no passive-interface G0/0/1
+ exit
 
 end
 clock set 21:14:39 17 Dec 2025
