@@ -51,7 +51,7 @@ exit
 int G0/0/1
     description To Delft-MLS2 Gi1/0/1
     ip address 192.168.2.5  255.255.255.252
-    ipv6 address 2001:1:1:1::1/64 
+    ipv6 address 2001:1:1:2::1/64 
     ipv6 enable
     ipv6 ospf 1 area 0
     no shutdown
