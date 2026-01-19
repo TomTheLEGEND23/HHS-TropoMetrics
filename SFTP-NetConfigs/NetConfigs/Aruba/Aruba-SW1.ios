@@ -63,7 +63,7 @@ int Gi0/1
  switchport trunk allowed vlan remove 800
 exit
 
-int Gi0/0/1
+int Gi0/1
  description Black Hole Vlan
  switchport mode access
  switchport access vlan 999
