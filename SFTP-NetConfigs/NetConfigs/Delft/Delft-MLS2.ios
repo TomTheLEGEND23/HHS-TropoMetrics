@@ -248,11 +248,11 @@ ip dhcp ping timeout 100
 
 ! MLS2 serves UPPER halves of pools - Excludes VRRP gateway and lower half
 ip dhcp excluded-address 192.168.10.1 192.168.10.3
-ip dhcp excluded-address 192.168.10.5 192.168.10.32
+ip dhcp excluded-address 192.168.10.4 192.168.10.127
 ip dhcp excluded-address 192.168.40.1 192.168.40.3
-ip dhcp excluded-address 192.168.40.5 192.168.40.16
+ip dhcp excluded-address 192.168.40.4 192.168.40.127
 ip dhcp excluded-address 192.168.80.1 192.168.80.3
-ip dhcp excluded-address 192.168.80.5 192.168.80.128
+ip dhcp excluded-address 192.168.80.4 192.168.80.127
 ip dhcp excluded-address 198.19.1.17 198.19.1.20
 ip dhcp excluded-address 198.19.1.21 198.19.1.25
 
@@ -260,7 +260,7 @@ ip dhcp excluded-address 198.19.1.21 198.19.1.25
 ! VLAN 10 - Management (192.168.10.0/26 = 62 usable)
 ! MLS2: Upper half (192.168.10.33-62)
 ip dhcp pool VLAN10_MLS2
- network 192.168.10.128 255.255.255.128
+ network 192.168.10.128 255.255.255.0
  default-router 192.168.10.1
  dns-server 1.1.1.1 8.8.8.8
  domain-name hhs.nl
@@ -269,7 +269,7 @@ ip dhcp pool VLAN10_MLS2
 ! VLAN 40 - Support (192.168.40.0/27 = 30 usable)
 ! MLS2: Upper half (192.168.40.17-30)
 ip dhcp pool VLAN40_MLS2
- network 192.168.40.128 255.255.255.128
+ network 192.168.40.128 255.255.255.0
  default-router 192.168.40.1
  dns-server 1.1.1.1 8.8.8.8
  domain-name hhs.nl
@@ -278,7 +278,7 @@ ip dhcp pool VLAN40_MLS2
 ! VLAN 80 - Calcnet (192.168.80.0/24 = 254 usable)
 ! MLS2: Upper half (192.168.80.129-254)
 ip dhcp pool VLAN80_MLS2
- network 192.168.80.128 255.255.255.128
+ network 192.168.80.128 255.255.255.0
  default-router 192.168.80.1
  dns-server 1.1.1.1 8.8.8.8
  domain-name hhs.nl
@@ -287,7 +287,7 @@ ip dhcp pool VLAN80_MLS2
 ! VLAN 100 - DMZ (198.19.1.16/27 = 30 usable)
 ! MLS2: Upper half (198.19.1.26-30)
 ip dhcp pool VLAN100_MLS2
- network 198.19.1.128 255.255.255.128
+ network 198.19.1.128 255.255.255.0
  default-router 198.19.1.17
  dns-server 1.1.1.1 8.8.8.8
  domain-name hhs.nl

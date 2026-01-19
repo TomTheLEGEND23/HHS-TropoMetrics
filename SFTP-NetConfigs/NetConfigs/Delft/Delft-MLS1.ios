@@ -240,17 +240,17 @@ exit
 service dhcp
 ! Exclude VRRP and SVI static addresses and split-range exclusions (MLS1: lower half served here)
 ip dhcp excluded-address 192.168.10.1 192.168.10.3
-ip dhcp excluded-address 192.168.10.33 192.168.10.62
+ip dhcp excluded-address 192.168.10.128 192.168.10.255
 ip dhcp excluded-address 192.168.40.1 192.168.40.3
-ip dhcp excluded-address 192.168.40.17 192.168.40.30
+ip dhcp excluded-address 192.168.40.128 192.168.40.255
 ip dhcp excluded-address 192.168.80.1 192.168.80.3
-ip dhcp excluded-address 192.168.80.129 192.168.80.254
+ip dhcp excluded-address 192.168.80.128 192.168.80.255
 ip dhcp excluded-address 198.19.1.17 198.19.1.19
 ip dhcp excluded-address 198.19.1.26 198.19.1.30
 
 ! DHCP pools for VLANs served by the MLS (MLS1: lower halves)
 ip dhcp pool VLAN10_MLS1
- network 192.168.10.0 255.255.255.128
+ network 192.168.10.0 255.255.255.0
  default-router 192.168.10.1
  dns-server 1.1.1.1 8.8.8.8
  domain-name hhs.nl
@@ -258,7 +258,7 @@ ip dhcp pool VLAN10_MLS1
 exit
 
 ip dhcp pool VLAN40_MLS1
- network 192.168.40.0 255.255.255.128
+ network 192.168.40.0 255.255.255.0
  default-router 192.168.40.1
  dns-server 1.1.1.1 8.8.8.8
  domain-name hhs.nl
@@ -266,7 +266,7 @@ ip dhcp pool VLAN40_MLS1
 exit
 
 ip dhcp pool VLAN80_MLS1
- network 192.168.80.0 255.255.255.128
+ network 192.168.80.0 255.255.255.0
  default-router 192.168.80.1
  dns-server 1.1.1.1 8.8.8.8
  domain-name hhs.nl
@@ -274,7 +274,7 @@ ip dhcp pool VLAN80_MLS1
 exit
 
 ip dhcp pool VLAN100_MLS1
- network 198.19.1.16 255.255.255.128
+ network 198.19.1.16 255.255.255.0
  default-router 198.19.1.17
  dns-server 1.1.1.1 8.8.8.8
  domain-name hhs.nl
