@@ -127,6 +127,15 @@ ipv6 router ospf 1
  no passive-interface G0/0/1
  no passive-interface Tunnel20
  exit
+ 
+!NAT Config
+ip nat pool OVERLOAD_POOL 198.20.0.2 198.20.0.2 netmask 255.255.255.255
+access-list 1 permit 192.168.10.0 0.0.0.255
+access-list 1 permit 192.168.40.0 0.0.0.255
+access-list 1 permit 192.168.80.0 0.0.0.255
+access-list 1 permit 192.168.2.0 0.0.0.3
+access-list 1 permit 192.168.2.4 0.0.0.3
+ip nat inside source list 1 pool OVERLOAD_POOL overload
 
 end
 clock set 21:14:39 17 Dec 2025

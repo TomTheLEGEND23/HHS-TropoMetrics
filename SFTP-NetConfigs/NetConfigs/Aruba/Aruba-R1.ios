@@ -37,11 +37,13 @@ int G0/0/0
     ipv6 enable
     no shutdown
     crypto map CMAP
+    ip nat outside
     exit
 
 
 int G0/0/1
     description To Aruba-SW1 Gi0/0
+    ip nat inside
     no shutdown
     exit
 
@@ -119,6 +121,7 @@ int G0/0/1.110
  ip address 192.168.110.1 255.255.255.0
  ipv6 address 2001:1:2:110::1/64 
  ipv6 enable
+ ip nat inside
  no shutdown
  exit
 
@@ -143,6 +146,12 @@ ipv6 router ospf 1
  no passive-interface Tunnel20
  no passive-interface G0/0/1
  exit
+
+!NAT Config
+ip nat pool OVERLOAD_POOL 192.0.0.2 192.0.0.2 netmask 255.255.255.255
+access-list 1 permit 192.168.110.0 0.0.0.255
+ip nat inside source list 1 pool OVERLOAD_POOL overload
+
 
 end
 clock set 21:14:39 17 Dec 2025
