@@ -278,7 +278,7 @@ ip dhcp pool VLAN80_MLS1
 exit
 
 ip dhcp pool VLAN100_MLS1
- network 198.19.1.16 255.255.255.0
+ network 198.19.1.0 255.255.255.0
  default-router 198.19.1.17
  dns-server 1.1.1.1 8.8.8.8
  domain-name hhs.nl
