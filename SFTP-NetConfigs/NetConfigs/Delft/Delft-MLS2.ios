@@ -309,6 +309,26 @@ int range g1/0/7-8
  ip dhcp snooping trust
 exit
 
+!ACL Config
+! ACL om verkeer van en naar de DMZ te blokkeren
+ip access-list extended DMZ-INKOMEND
+ ! laat opgezette TCP verbindingen door
+ permit tcp any any established
+ 
+ ! block alles van kantoor naar DMZ
+ deny ip 192.168.0.0 0.0.255.255 192.19.1.16 0.0.0.31
+ 
+ ! block alles van DMZ naar kantoor
+ deny ip 192.19.1.16 0.0.0.31 192.168.0.0 0.0.255.255
+
+ ! laat DMZ door naar het internet
+ permit ip 192.19.1.16 0.0.0.31 any
+exit
+
+interface vlan 100
+ ip access-group DMZ-INKOMEND in
+exit
+
 
 end
 clock set 21:14:39 17 Dec 2025

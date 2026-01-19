@@ -128,6 +128,19 @@ ipv6 router ospf 1
  no passive-interface Tunnel20
  exit
 
+
+! ACL Config
+! Blokkeer het verkeer vanaf het internet
+ip access-list extended BLOCK_INKOMEND_INTERNET
+  permit tcp any any established
+  permit udp any any eq 53
+  deny   ip any any
+exit
+
+interface Se0/1/1
+ ip access-group BLOCK_INKOMEND_INTERNET
+exit
+
 end
 clock set 21:14:39 17 Dec 2025
 !copy running-config startup-config
