@@ -127,6 +127,7 @@ int vlan 10
   address 2001:1:1:10::1
   priority 110 
   preempt
+  no shutdown
  exit
  ipv6 ospf 1 area 20
 exit
@@ -143,6 +144,7 @@ int vlan 40
   address 2001:1:1:40::1
   priority 110 
   preempt
+  no shutdown
  exit
  ipv6 ospf 1 area 20
 exit
@@ -159,6 +161,7 @@ int vlan 80
   address 2001:1:1:80::1
   priority 110 
   preempt
+  no shutdown
  exit
  ipv6 ospf 1 area 20
 exit
@@ -175,6 +178,7 @@ int vlan 100
   address 2001:1:1:100::1
   priority 110
   preempt
+  no shutdown
  exit
  ipv6 ospf 1 area 20
 exit
