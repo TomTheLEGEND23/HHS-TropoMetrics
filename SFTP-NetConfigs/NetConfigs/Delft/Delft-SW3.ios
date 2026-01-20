@@ -5,7 +5,7 @@ delete vlan.dat
 configure terminal
 hostname Delft-SW3
 no ip domain-lookup
-ip name-server 1.1.1.1
+ip name-server  10.0.0.1
 ntp server time.cloudflare.com
 banner motd #Verboden toegang voor onbevoegde!#
 line console 0
