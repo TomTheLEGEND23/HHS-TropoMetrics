@@ -128,6 +128,15 @@ ipv6 router ospf 1
  no passive-interface Tunnel10
  exit
 
+
+! DNS Config
+ip dns server
+ip host webserver 192.168.20.27
+ip name-server 1.1.1.1
+ip name-server 8.8.8.8
+exit
+
+
 end
 clock set 21:14:39 17 Dec 2025
 !copy running-config startup-config
