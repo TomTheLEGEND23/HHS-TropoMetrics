@@ -137,8 +137,15 @@ ip access-list extended BLOCK_INKOMEND_INTERNET
   deny   ip any any
 exit
 
+ipv6 access-list BLOCK_INKOMEND_INTERNET_V6
+  permit tcp any any established
+  permit udp any any eq 53
+  deny   ipv6 any any
+exit
+
 interface Se0/1/0
  ip access-group BLOCK_INKOMEND_INTERNET
+ ipv6 traffic-filter BLOCK_INKOMEND_INTERNET_V6 in
 exit
 
 
