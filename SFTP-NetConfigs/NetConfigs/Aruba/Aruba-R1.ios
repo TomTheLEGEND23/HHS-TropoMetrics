@@ -160,7 +160,7 @@ router ospf 1
 
 ! OSPFv3 (IPv6) configuration
 ipv6 router ospf 1
- router-id 4.4.4.2
+ router-id 4.4.4.1
  passive-interface default
  no passive-interface Tunnel10
  no passive-interface Tunnel20

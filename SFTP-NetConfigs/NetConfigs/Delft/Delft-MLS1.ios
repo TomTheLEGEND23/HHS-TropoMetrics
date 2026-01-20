@@ -236,7 +236,7 @@ exit
 
 !OSPFv3 (IPv6) Config
 ipv6 router ospf 1
- router-id 3.3.3.2
+ router-id 3.3.3.1
  passive-interface default
  no passive-interface Gi1/0/1
  no passive-interface Gi1/0/2
