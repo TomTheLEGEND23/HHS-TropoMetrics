@@ -5,7 +5,7 @@ delete vlan.dat
 configure terminal
 hostname Delft-SW2
 no ip domain-lookup
-ip name-server  10.0.0.1
+ip name-server 1.1.1.1
 ntp server time.cloudflare.com
 banner motd #Verboden toegang voor onbevoegde!#
 line console 0
@@ -27,6 +27,18 @@ ip domain-name hhs.nl
 crypto key generate rsa general-keys modulus 2048
 
 !Vlan Config
+vlan 100
+ name DMZ
+exit
+
+vlan 80
+ name WIFI
+exit
+
+vlan 40
+ name SUPPORT
+exit
+
 vlan 10
  name ADMINISTRATIE
 exit
@@ -45,7 +57,7 @@ int range G0/1-2
 description To Delft-MLS2 Gi1/0/5-6
  switchport mode trunk
  switchport trunk native vlan 800
- switchport trunk allowed vlan add 10
+ switchport trunk allowed vlan add 10,40,80
  switchport trunk allowed vlan remove 800
 exit
 
