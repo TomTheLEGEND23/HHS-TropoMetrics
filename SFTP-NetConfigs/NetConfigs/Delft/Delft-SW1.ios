@@ -70,6 +70,8 @@ int fa0/1
  switchport port-security maximum 1
  switchport port-security mac-address sticky
  switchport port-security violation restrict
+ spanning-tree portfast 
+ spanning-tree bpduguard enable
  no shutdown
 exit
 int fa0/2
@@ -80,6 +82,8 @@ int fa0/2
  switchport port-security maximum 1
  switchport port-security mac-address sticky
  switchport port-security violation restrict
+ spanning-tree portfast 
+ spanning-tree bpduguard enable
  no shutdown
 exit
 int fa0/3
@@ -147,6 +151,8 @@ int range fa0/13-24
  description Black Hole Vlan
  switchport mode access
  switchport access vlan 999
+ spanning-tree portfast 
+ spanning-tree bpduguard enable
  shutdown
 exit
 

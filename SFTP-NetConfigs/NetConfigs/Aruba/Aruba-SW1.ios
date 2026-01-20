@@ -45,12 +45,16 @@ int Fa0/1
  description To PC3 FA0/1
  switchport mode access
  switchport access vlan 110
+ spanning-tree portfast 
+ spanning-tree bpduguard enable
 exit
 
 int range Fa0/2-24
  description Black Hole Vlan
  switchport mode access
  switchport access vlan 999
+ spanning-tree portfast 
+ spanning-tree bpduguard enable
  shutdown
 exit
 
