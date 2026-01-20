@@ -55,6 +55,9 @@ exit
 vlan 999
  name BLACKHOLE
 exit
+vlan 900
+ name DIST-TRANSIT
+exit
 
 !Port Config
 int Gi1/0/1
@@ -79,10 +82,18 @@ exit
 
 int Gi1/0/3
  description To Delft-MLS1 Gi1/0/3 (PortChannel 1)
+ switchport mode trunk
+ switchport trunk native vlan 800
+ switchport trunk allowed vlan add 10,40,80,100,900
+ switchport trunk allowed vlan remove 800
 exit
 
 int Gi1/0/4
  description To Delft-MLS1 Gi1/0/4 (PortChannel 1)
+ switchport mode trunk
+ switchport trunk native vlan 800
+ switchport trunk allowed vlan add 10,40,80,100,900
+ switchport trunk allowed vlan remove 800
 exit
 
 int range Gi1/0/5-6
@@ -194,16 +205,28 @@ exit
 
 !EtherChannels Config
 int range g1/0/3 - 4
-  no switchport
+  switchport mode trunk
+  switchport trunk native vlan 800
+  switchport trunk allowed vlan add 10,40,80,100,900
+  switchport trunk allowed vlan remove 800
   channel-group 1 mode active
-    no shutdown
+  no shutdown
 exit
 
 int Po1
-  ip address 192.168.3.2 255.255.255.252
-  ipv6 address 2001:1:1:5::2/64
-  ipv6 ospf 1 area 20
-    no shutdown
+  switchport mode trunk
+  switchport trunk native vlan 800
+  switchport trunk allowed vlan add 10,40,80,100,900
+  switchport trunk allowed vlan remove 800
+  no shutdown
+exit
+
+int vlan 900
+ description DIST-TRANSIT
+ ip address 192.168.3.2 255.255.255.252
+ ipv6 address 2001:1:1:5::2/64
+ ipv6 ospf 1 area 20
+ no shutdown
 exit
 
 int range g1/0/7 - 8
