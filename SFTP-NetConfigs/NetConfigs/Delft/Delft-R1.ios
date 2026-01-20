@@ -59,6 +59,8 @@ exit
     
 ! Static route to Aruba WAN via ISP
 ip route 192.0.0.0 255.255.255.252 198.19.0.1
+! Default route to ISP for internet
+ip route 0.0.0.0 0.0.0.0 198.19.0.1
 
 ! Crypto for GRE over IPsec
 crypto isakmp policy 10
@@ -114,6 +116,7 @@ router ospf 1
  no passive-interface Tunnel10
  no passive-interface G0/0/0
  no passive-interface G0/0/1
+ default-information originate
  network 192.168.1.0 0.0.0.3 area 0
  network 192.168.1.4 0.0.0.3 area 0
  network 10.10.10.0 0.0.0.3 area 0
@@ -121,7 +124,7 @@ exit
 
 ! OSPFv3 (IPv6) configuration
 ipv6 router ospf 1
- router-id 1.1.1.1
+ router-id 1.1.1.2
  passive-interface default
  no passive-interface G0/0/0
  no passive-interface G0/0/1

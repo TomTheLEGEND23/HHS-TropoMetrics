@@ -1,5 +1,7 @@
 enable
-!delete vlan.dat
+delete vlan.dat
+
+
 configure terminal
 hostname Aruba-R1
 no ip domain-lookup
@@ -137,7 +139,7 @@ router ospf 1
 
 ! OSPFv3 (IPv6) configuration
 ipv6 router ospf 1
- router-id 4.4.4.1
+ router-id 4.4.4.2
  passive-interface default
  no passive-interface Tunnel10
  no passive-interface Tunnel20

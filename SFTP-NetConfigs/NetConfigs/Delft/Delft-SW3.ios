@@ -1,5 +1,7 @@
 enable
-!delete vlan.dat
+delete vlan.dat
+
+
 configure terminal
 hostname Delft-SW3
 no ip domain-lookup
@@ -46,9 +48,26 @@ int fa0/1
  description To PC2 FA0/1 (Service Port)
  switchport mode access
  switchport access vlan 100
+ switchport port-security
+ switchport port-security maximum 1
+ switchport port-security mac-address sticky
+ switchport port-security violation shutdown
+ no shutdown
 exit
 
-int range fa0/3 ,fa0/5-24
+int fa0/3
+ description To PC FA0/3 (Service Port)
+ switchport mode access
+ switchport access vlan 100
+ no shutdown
+exit
+int fa0/5
+ description To PC2 FA0/5 (Service Port)
+ switchport mode access
+ switchport access vlan 100
+ no shutdown
+exit
+int range fa0/6-24
  description Black Hole Vlan
  switchport mode access
  switchport access vlan 999
@@ -107,14 +126,6 @@ int Po3
   switchport trunk allowed vlan add 100
   switchport trunk allowed vlan remove 800
     no shutdown
-exit
-
-!Port Security Config
-interface fa0/1
-switchport port-security
-switchport port-security maximum 1
-switchport port-security mac-address sticky
-switchport port-security violation shutdown
 exit
 
 end
