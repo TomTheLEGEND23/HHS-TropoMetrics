@@ -138,6 +138,7 @@ int G0/0/1.110
  ip address 192.168.110.1 255.255.255.0
  ipv6 address 2001:1:2:110::1/64 
  ipv6 enable
+ ipv6 ospf 1 area 10
  ip nat inside
  no shutdown
  exit
@@ -162,6 +163,7 @@ ipv6 router ospf 1
  no passive-interface Tunnel10
  no passive-interface Tunnel20
  no passive-interface G0/0/1
+ no passive-interface G0/0/1.110
  exit
 
 !NAT Config

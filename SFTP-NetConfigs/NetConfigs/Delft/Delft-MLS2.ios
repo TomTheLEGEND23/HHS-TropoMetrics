@@ -222,7 +222,6 @@ int Po2
   switchport trunk allowed vlan add 100
   switchport trunk allowed vlan remove 800
   ip dhcp snooping trust
-  ipv6 ospf 1 area 20
     no shutdown
 exit
 
