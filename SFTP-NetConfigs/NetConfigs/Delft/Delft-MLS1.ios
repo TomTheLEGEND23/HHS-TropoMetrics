@@ -1,5 +1,8 @@
 enable
-!delete vlan.dat
+delete vlan.dat
+
+
+
 configure terminal
 hostname Delft-MLS1
 no ip domain-lookup
@@ -232,7 +235,7 @@ exit
 
 !OSPFv3 (IPv6) Config
 ipv6 router ospf 1
- router-id 3.3.3.1
+ router-id 3.3.3.2
  passive-interface default
  no passive-interface Gi1/0/1
  no passive-interface Gi1/0/2
@@ -242,6 +245,7 @@ exit
 
 !DHCP Config
 service dhcp
+ip dhcp ping timeout 100
 ! Exclude VRRP and SVI static addresses and split-range exclusions (MLS1: lower half served here)
 ip dhcp excluded-address 192.168.10.1 192.168.10.3
 ip dhcp excluded-address 192.168.10.128 192.168.10.255

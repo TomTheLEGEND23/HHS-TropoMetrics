@@ -1,5 +1,7 @@
 enable
-!delete vlan.dat
+delete vlan.dat
+
+
 configure terminal
 hostname Delft-SW1
 no ip domain-lookup
@@ -64,18 +66,93 @@ int fa0/1
  description To PC1 FA0/1
  switchport mode access
  switchport access vlan 10
+ switchport port-security
+ switchport port-security maximum 1
+ switchport port-security mac-address sticky
+ switchport port-security violation restrict
+ spanning-tree portfast 
+ spanning-tree bpduguard enable
+ no shutdown
 exit
-
 int fa0/2
- description To AP FA0/1
+ description To PC1 FA0/2
  switchport mode access
  switchport access vlan 80
+ switchport port-security
+ switchport port-security maximum 1
+ switchport port-security mac-address sticky
+ switchport port-security violation restrict
+ spanning-tree portfast 
+ spanning-tree bpduguard enable
+ no shutdown
+exit
+int fa0/3
+ description To PC1 FA0/3
+ switchport mode access
+ switchport access vlan 10
+ no shutdown
+exit
+int fa0/4
+ description To PC1 FA0/4
+ switchport mode access
+ switchport access vlan 80
+ no shutdown
+exit
+int fa0/5
+ description To PC1 FA0/5
+ switchport mode access
+ switchport access vlan 10
+ no shutdown
+exit
+int fa0/6
+ description To PC1 FA0/6
+ switchport mode access
+ switchport access vlan 80
+ no shutdown
+exit
+int fa0/7
+ description To PC1 FA0/7
+ switchport mode access
+ switchport access vlan 80
+ no shutdown
+exit
+int fa0/8
+ description To PC1 FA0/8
+ switchport mode access
+ switchport access vlan 80
+ no shutdown
+exit
+int fa0/9
+ description To PC1 FA0/9
+ switchport mode access
+ switchport access vlan 10
+ no shutdown
+exit
+int fa0/10
+ description To PC1 FA0/10
+ switchport mode access
+ switchport access vlan 80
+ no shutdown
+exit
+int fa0/11
+ description To PC1 FA0/11
+ switchport mode access
+ switchport access vlan 10
+ no shutdown
+exit
+int fa0/12
+ description To PC1 FA0/12
+ switchport mode access
+ switchport access vlan 80
+ no shutdown
 exit
 
-int range fa0/3-24
+int range fa0/13-24
  description Black Hole Vlan
  switchport mode access
  switchport access vlan 999
+ spanning-tree portfast 
+ spanning-tree bpduguard enable
  shutdown
 exit
 
@@ -93,13 +170,6 @@ exit
 spanning-tree mst 1 priority 32768
 spanning-tree mst 2 priority 32768
 
-!Port Security Config
-interface fa0/1 
-switchport port-security
-switchport port-security maximum 1
-switchport port-security mac-address sticky
-switchport port-security violation restrict
-exit
 
 end
 clock set 21:14:39 17 Dec 2025

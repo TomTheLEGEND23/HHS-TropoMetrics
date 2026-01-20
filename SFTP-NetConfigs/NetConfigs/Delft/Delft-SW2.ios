@@ -1,5 +1,7 @@
 enable
-!delete vlan.dat
+delete vlan.dat
+
+
 configure terminal
 hostname Delft-SW2
 no ip domain-lookup
@@ -47,16 +49,34 @@ description To Delft-MLS2 Gi1/0/5-6
  switchport trunk allowed vlan remove 800
 exit
 
-int fa0/1
+!Port Security Config
+interface fa0/1
+ switchport mode access
+ switchport access vlan 40
+ switchport port-security
+ switchport port-security maximum 1  
+ switchport port-security mac-address sticky
+ switchport port-security violation restrict
+ spanning-tree portfast 
+ spanning-tree bpduguard enable
+ no shutdown
+exit
+
+int range fa0/2-12
  description To PC2 FA0/1
  switchport mode access
  switchport access vlan 40
+ spanning-tree portfast 
+ spanning-tree bpduguard enable
+ no shutdown
 exit
 
-int range fa0/2-24
+int range fa0/13-24
  description Black Hole Vlan
  switchport mode access
  switchport access vlan 999
+ spanning-tree portfast 
+ spanning-tree bpduguard enable
  shutdown
 exit
 
@@ -79,13 +99,6 @@ int vlan 10
  no shutdown
 exit
 
-!Port Security Config
-interface fa0/1
-switchport port-security
-switchport port-security maximum 1  
-switchport port-security mac-address sticky
-switchport port-security violation restrict
-exit
 
 end
 clock set 21:14:39 17 Dec 2025

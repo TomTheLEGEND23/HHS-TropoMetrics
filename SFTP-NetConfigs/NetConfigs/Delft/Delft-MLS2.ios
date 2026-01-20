@@ -1,5 +1,7 @@
 enable
-!delete vlan.dat
+delete vlan.dat
+
+
 configure terminal
 hostname Delft-MLS2
 no ip domain-lookup
@@ -89,6 +91,7 @@ int range Gi1/0/5-6
  switchport trunk native vlan 800
  switchport trunk allowed vlan add 10,40,80
  switchport trunk allowed vlan remove 800
+ ip dhcp snooping trust
 exit
 
 int range Gi1/0/7-8
@@ -208,8 +211,9 @@ int range g1/0/7 - 8
  switchport trunk native vlan 800
  switchport trunk allowed vlan add 100
  switchport trunk allowed vlan remove 800
-  channel-group 2 mode active
-    no shutdown
+ ip dhcp snooping trust
+ channel-group 2 mode active
+ no shutdown
 exit
 
 int Po2
@@ -217,13 +221,14 @@ int Po2
   switchport trunk native vlan 800
   switchport trunk allowed vlan add 100
   switchport trunk allowed vlan remove 800
+  ip dhcp snooping trust
   ipv6 ospf 1 area 20
     no shutdown
 exit
 
 !OSPF Config
 router ospf 1
- router-id 3.3.3.2
+ router-id 3.3.3.3
  passive-interface default
  no passive-interface Gi1/0/1
  no passive-interface Gi1/0/2
@@ -239,7 +244,7 @@ router ospf 1
 exit
 !OSPFv3 (IPv6) Config
 ipv6 router ospf 1
- router-id 3.3.3.2
+ router-id 3.3.3.4
  passive-interface default
  no passive-interface Gi1/0/1
  no passive-interface Gi1/0/2
@@ -248,7 +253,8 @@ ipv6 router ospf 1
 exit
 !DHCP Config
 service dhcp
-ip dhcp ping timeout 100
+ip dhcp ping timeout 1000
+ip dhcp ping packets 3
 
 ! MLS2 serves UPPER halves of pools - Excludes VRRP gateway and lower half
 ip dhcp excluded-address 192.168.10.1 192.168.10.3

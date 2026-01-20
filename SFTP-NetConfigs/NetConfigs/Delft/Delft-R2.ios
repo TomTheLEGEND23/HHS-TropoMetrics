@@ -59,6 +59,8 @@ exit
     
 ! Static route to Aruba WAN via ISP
 ip route 192.0.0.0 255.255.255.252 198.20.0.1
+! Default route to ISP for internet
+ip route 0.0.0.0 0.0.0.0 198.20.0.1
 
 ! Crypto for GRE over IPsec
 crypto isakmp policy 10
@@ -122,12 +124,21 @@ exit
 
 ! OSPFv3 (IPv6) configuration
 ipv6 router ospf 1
- router-id 2.2.2.2
+ router-id 2.2.2.3
  passive-interface default
  no passive-interface G0/0/0
  no passive-interface G0/0/1
  no passive-interface Tunnel20
  exit
+ 
+!NAT Config
+ip nat pool OVERLOAD_POOL 198.20.0.2 198.20.0.2 netmask 255.255.255.255
+access-list 1 permit 192.168.10.0 0.0.0.255
+access-list 1 permit 192.168.40.0 0.0.0.255
+access-list 1 permit 192.168.80.0 0.0.0.255
+access-list 1 permit 192.168.2.0 0.0.0.3
+access-list 1 permit 192.168.2.4 0.0.0.3
+ip nat inside source list 1 pool OVERLOAD_POOL overload
 
 end
 clock set 21:14:39 17 Dec 2025
