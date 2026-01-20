@@ -41,15 +41,16 @@ exit
 
 
 !Port Config
-int Fa0/1
+int range Fa0/1 - 4 
  description To PC3 FA0/1
  switchport mode access
  switchport access vlan 110
  spanning-tree portfast 
  spanning-tree bpduguard enable
+ no shutdown
 exit
 
-int range Fa0/2-24
+int range Fa0/5-24
  description Black Hole Vlan
  switchport mode access
  switchport access vlan 999
@@ -64,13 +65,6 @@ int Gi0/1
  switchport trunk native vlan 800
  switchport trunk allowed vlan add 110
  switchport trunk allowed vlan remove 800
-exit
-
-int Gi0/1
- description Black Hole Vlan
- switchport mode access
- switchport access vlan 999
- shutdown
 exit
  
 !Spanning Tree Config

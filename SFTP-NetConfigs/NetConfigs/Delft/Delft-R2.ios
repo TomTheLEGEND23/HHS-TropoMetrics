@@ -35,6 +35,7 @@ int Se0/1/1
     ip address 198.20.0.2  255.255.255.252
     ipv6 address 2001:1:ffff:2::2/64
     ipv6 enable
+    ip nat outside
     no shutdown
     crypto map CMAP
 exit
@@ -45,6 +46,7 @@ int G0/0/0
     ipv6 address 2001:1:1:4::1/64 
     ipv6 enable
     ipv6 ospf 1 area 0
+    ip nat inside
     no shutdown
 exit
 
@@ -54,6 +56,7 @@ int G0/0/1
     ipv6 address 2001:1:1:2::1/64 
     ipv6 enable
     ipv6 ospf 1 area 0
+    ip nat inside
     no shutdown
 exit
     
