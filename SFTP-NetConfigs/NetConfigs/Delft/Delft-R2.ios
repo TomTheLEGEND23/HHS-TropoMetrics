@@ -114,6 +114,7 @@ router ospf 1
  no passive-interface Tunnel20
  no passive-interface G0/0/0
  no passive-interface G0/0/1
+ default-information originate
  network 192.168.2.0 0.0.0.3 area 0
  network 192.168.2.4 0.0.0.3 area 0
  network 10.10.10.4 0.0.0.3 area 0
