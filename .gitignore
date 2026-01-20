@@ -82,3 +82,6 @@ Gemfile.lock
 k8s/secrets.yaml
 k8s/*-secrets.yaml
 **/secrets.yaml
+
+##DrawIO
+.$netwerkontwerp.drawio
