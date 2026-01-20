@@ -65,8 +65,18 @@ int Gi0/1
  switchport trunk native vlan 800
  switchport trunk allowed vlan add 110
  switchport trunk allowed vlan remove 800
+ no shutdown
 exit
  
+int Gi0/2
+ description Black Hole Vlan
+ switchport mode access
+ switchport access vlan 999
+ spanning-tree portfast 
+ spanning-tree bpduguard enable
+ shutdown
+exit
+
 !Spanning Tree Config
 spanning-tree mode mst
 
