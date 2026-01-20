@@ -3,7 +3,7 @@ enable
 configure terminal
 hostname Delft-MLS2
 no ip domain-lookup
-ip name-server 1.1.1.1
+ip name-server  10.0.0.1
 ntp server time.cloudflare.com
 banner motd #Verboden toegang voor onbevoegde!#
 line console 0
@@ -266,7 +266,7 @@ ip dhcp excluded-address 198.19.1.21 198.19.1.25
 ip dhcp pool VLAN10_MLS2
  network 192.168.10.0 255.255.255.0
  default-router 192.168.10.1
- dns-server 1.1.1.1 8.8.8.8
+ dns-server 10.0.0.1 1.1.1.1
  domain-name hhs.nl
  lease 7
 
@@ -275,7 +275,7 @@ ip dhcp pool VLAN10_MLS2
 ip dhcp pool VLAN40_MLS2
  network 192.168.40.0 255.255.255.0
  default-router 192.168.40.1
- dns-server 1.1.1.1 8.8.8.8
+ dns-server 10.0.0.1 1.1.1.1
  domain-name hhs.nl
  lease 7
 
@@ -284,7 +284,7 @@ ip dhcp pool VLAN40_MLS2
 ip dhcp pool VLAN80_MLS2
  network 192.168.80.0 255.255.255.0
  default-router 192.168.80.1
- dns-server 1.1.1.1 8.8.8.8
+ dns-server 10.0.0.1 1.1.1.1
  domain-name hhs.nl
  lease 7
 
@@ -293,7 +293,7 @@ ip dhcp pool VLAN80_MLS2
 ip dhcp pool VLAN100_MLS2
  network 198.19.1.0 255.255.255.0
  default-router 198.19.1.17
- dns-server 1.1.1.1 8.8.8.8
+ dns-server 10.0.0.1 1.1.1.1
  domain-name hhs.nl
  lease 7
 

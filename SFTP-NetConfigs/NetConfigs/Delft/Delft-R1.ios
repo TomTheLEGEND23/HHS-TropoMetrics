@@ -3,7 +3,6 @@ enable
 configure terminal
 hostname Delft-R1
 no ip domain-lookup
-ip name-server 1.1.1.1
 ntp server time.cloudflare.com
 banner motd #Verboden toegang voor onbevoegde!#
 line console 0
@@ -114,6 +113,7 @@ router ospf 1
  no passive-interface Tunnel10
  no passive-interface G0/0/0
  no passive-interface G0/0/1
+ network 10.0.0.1 0.0.0.0 area 0
  network 192.168.1.0 0.0.0.3 area 0
  network 192.168.1.4 0.0.0.3 area 0
  network 10.10.10.0 0.0.0.3 area 0
@@ -128,14 +128,18 @@ ipv6 router ospf 1
  no passive-interface Tunnel10
  exit
 
+!interface for DNS querys
+interface loopback0
+ ip address 10.0.0.1 255.255.255.255
+ description DNS Server Interface
+ no shut
+exit
 
 ! DNS Config
 ip dns server
+ip dns forwarder 1.1.1.1
+ip dns forwarder 8.8.8.8
 ip host webserver 192.168.20.27
-ip name-server 1.1.1.1
-ip name-server 8.8.8.8
-exit
-
 
 end
 clock set 21:14:39 17 Dec 2025

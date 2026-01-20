@@ -3,7 +3,7 @@ enable
 configure terminal
 hostname Aruba-R1
 no ip domain-lookup
-ip name-server 1.1.1.1
+ip name-server  10.0.0.1
 ntp server time.cloudflare.com
 banner motd #Verboden toegang voor onbevoegde!#
 line console 0
@@ -113,6 +113,21 @@ router bgp 65001
  network 10.10.10.0 mask 255.255.255.252
  network 10.10.10.4 mask 255.255.255.252
  exit
+
+!DHCP Config
+service dhcp
+ip dhcp ping timeout 100
+
+ip dhcp excluded-address 192.168.110.1 192.168.110.9
+ip dhcp excluded-address 192.168.110.251 192.168.110.255
+
+ip dhcp pool VLAN110
+ network 192.168.110.0 255.255.255.0
+ default-router 192.168.110.1
+ dns-server 10.0.0.1 1.1.1.1
+ domain-name hhs.nl
+ lease 7
+exit
 
 int G0/0/1.110
  encapsulation dot1Q 110
