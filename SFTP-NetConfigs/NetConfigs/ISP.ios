@@ -70,6 +70,12 @@ int G0/0/1
     no shutdown
 exit
 
+int loopback1
+    ip address 25.25.25.25 255.255.255.255
+    ipv6 address 2001:db8:25::25/128
+    ipv6 enable
+exit
+
 !NAT Overload (PAT) Configuration
 !This command enables Port Address Translation (PAT) allowing multiple internal
 !hosts to share the single DHCP-assigned IP address on G0/0/1 using different port numbers
