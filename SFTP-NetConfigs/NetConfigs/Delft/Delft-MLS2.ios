@@ -240,7 +240,7 @@ router ospf 1
  network 192.168.10.0 0.0.0.255 area 20
  network 192.168.40.0 0.0.0.255 area 20
  network 192.168.80.0 0.0.0.255 area 20
- network 198.19.1.0 0.0.0.31 area 20
+ network 198.19.1.0 0.0.0.255 area 20
 exit
 !OSPFv3 (IPv6) Config
 ipv6 router ospf 1
