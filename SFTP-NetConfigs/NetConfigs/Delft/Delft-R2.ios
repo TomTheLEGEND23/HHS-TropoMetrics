@@ -148,8 +148,8 @@ ipv6 access-list NATV6
  permit ipv6 2001:1:1:2::/64 any
  permit ipv6 2001:1:10:10::/64 any
  permit ipv6 2001:1:10:20::/64 any
-! Perform NAT66 overload using external interface Se0/1/1
-ipv6 nat source list NATV6 interface Se0/1/1 overload
+! Perform NAT66 overload using external interface Serial0/1/1
+ipv6 nat source list NATV6 interface Serial0/1/1 overload
 
 
 end
