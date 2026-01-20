@@ -222,7 +222,6 @@ int Po2
   switchport trunk allowed vlan add 100
   switchport trunk allowed vlan remove 800
   ip dhcp snooping trust
-  ipv6 ospf 1 area 20
     no shutdown
 exit
 
@@ -240,7 +239,7 @@ router ospf 1
  network 192.168.10.0 0.0.0.255 area 20
  network 192.168.40.0 0.0.0.255 area 20
  network 192.168.80.0 0.0.0.255 area 20
- network 198.19.1.0 0.0.0.31 area 20
+ network 198.19.1.0 0.0.0.255 area 20
 exit
 !OSPFv3 (IPv6) Config
 ipv6 router ospf 1
@@ -263,8 +262,6 @@ ip dhcp excluded-address 192.168.40.1 192.168.40.3
 ip dhcp excluded-address 192.168.40.4 192.168.40.127
 ip dhcp excluded-address 192.168.80.1 192.168.80.3
 ip dhcp excluded-address 192.168.80.4 192.168.80.127
-ip dhcp excluded-address 198.19.1.17 198.19.1.20
-ip dhcp excluded-address 198.19.1.21 198.19.1.25
 
 
 ! VLAN 10 - Management (192.168.10.0/26 = 62 usable)
@@ -290,15 +287,6 @@ ip dhcp pool VLAN40_MLS2
 ip dhcp pool VLAN80_MLS2
  network 192.168.80.0 255.255.255.0
  default-router 192.168.80.1
- dns-server 10.0.0.1 1.1.1.1
- domain-name hhs.nl
- lease 7
-
-! VLAN 100 - DMZ (198.19.1.16/27 = 30 usable)
-! MLS2: Upper half (198.19.1.26-30)
-ip dhcp pool VLAN100_MLS2
- network 198.19.1.0 255.255.255.0
- default-router 198.19.1.17
  dns-server 10.0.0.1 1.1.1.1
  domain-name hhs.nl
  lease 7
