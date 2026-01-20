@@ -24,9 +24,6 @@ ip domain-name hhs.nl
 !crypto key zeroize rsa
 crypto key generate rsa general-keys modulus 2048
 
-!Miscellaneous System Config
-ipv6 unicast-routing
-
 !Vlan Config
 vlan 110
  name MARKETING
@@ -55,8 +52,8 @@ int range Fa0/2-24
  shutdown
 exit
 
-int Gi0/0
- description To Aruba-R1 Gi0/0
+int Gi0/1
+ description To Aruba-R1 Gi0/0/1
  switchport mode trunk
  switchport trunk native vlan 800
  switchport trunk allowed vlan add 110
