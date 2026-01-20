@@ -144,7 +144,7 @@ ipv6 access-list BLOCK_INKOMEND_INTERNET_V6
 exit
 
 interface Se0/1/0
- ip access-group BLOCK_INKOMEND_INTERNET
+ ip access-group BLOCK_INKOMEND_INTERNET in
  ipv6 traffic-filter BLOCK_INKOMEND_INTERNET_V6 in
 exit
 
