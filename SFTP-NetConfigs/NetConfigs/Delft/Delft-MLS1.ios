@@ -197,9 +197,10 @@ no shutdown
 exit
 
 int Po1
-ip address 192.168.3.1 255.255.255.252
-ipv6 address 2001:1:1:5::1/64
-  ipv6 ospf 1 area 20
+ ip address 192.168.3.1 255.255.255.252
+ ipv6 address 2001:1:1:5::1/64
+ ipv6 enable
+ ipv6 ospf 1 area 20
 
 int range g1/0/7 - 8
  switchport mode trunk
