@@ -245,7 +245,7 @@ exit
 
 !DHCP Config
 service dhcp
-ip dhcp ping timeout 50
+ip dhcp ping timeout 100
 ! Exclude VRRP and SVI static addresses and split-range exclusions (MLS1: lower half served here)
 ip dhcp excluded-address 192.168.10.1 192.168.10.3
 ip dhcp excluded-address 192.168.10.128 192.168.10.255
