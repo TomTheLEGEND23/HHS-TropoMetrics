@@ -22,7 +22,7 @@ spec:
       labels:
         app: sftp-server
       annotations:
-        kubectl.kubernetes.io/restartedAt: "2026-01-20T13:24:36Z"
+        kubectl.kubernetes.io/restartedAt: "2026-01-20T13:34:25Z"
     spec:
       # Standard pod networking with NodePort service
       containers:
