@@ -156,12 +156,19 @@ ip name-server 8.8.8.8
 ip host webserver.web 198.19.1.20
 
 !NAT Config
+! Route map to prevent NATing between internal networks
+route-map NONAT permit 10
+ match ip address 2
+exit
+
 ip nat pool OVERLOAD_POOL 198.19.0.2 198.19.0.2 netmask 255.255.255.255
 access-list 1 permit 192.168.10.0 0.0.0.255
 access-list 1 permit 192.168.40.0 0.0.0.255
 access-list 1 permit 192.168.80.0 0.0.0.255
+access-list 1 permit 198.19.1.0 0.0.0.255
 access-list 1 permit 192.168.1.0 0.0.0.3
 access-list 1 permit 192.168.1.4 0.0.0.3
+ip nat inside source route-map NONAT permit 10
 ip nat inside source list 1 pool OVERLOAD_POOL overload
 
 end
