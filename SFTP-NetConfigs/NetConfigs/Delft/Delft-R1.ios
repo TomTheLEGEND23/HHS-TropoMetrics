@@ -73,6 +73,9 @@ ipv6 route 2001:1:2:110::/64 2001:1:10:10::1
 ! IPv6 Default route to ISP for internet
 ipv6 route ::/0 2001:1:ffff:1::1
 
+!static route to loopback ISP
+ip route 25.25.25.25 255.255.255.255 198.19.0.1
+
 ! Crypto for GRE over IPsec
 crypto isakmp policy 10
  encr aes 256
