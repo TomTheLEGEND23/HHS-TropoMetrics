@@ -38,7 +38,7 @@ SFTP-NetConfigs/
 The ISP router configuration includes:
 - **NAT/PAT (Port Address Translation)**: Configured on Gi0/0/1 (external interface with DHCP)
 - **Inside Interfaces**: Se0/1/0, Se0/1/1, G0/0/0 (to Delft-R1, Delft-R2, Aruba-R1)
-- **Outside Interface**: Gi0/0/1 (LAB uplink)
+- **Outside Interface**: Gi0/0/1 (TO LAB uplink)
 - **ACL 1**: Permits internal networks (198.19.0.0/30, 198.20.0.0/30, 192.0.0.0/30)
 - **NAT Overload**: Translates all internal addresses to the dynamic IP on Gi0/0/1
 
