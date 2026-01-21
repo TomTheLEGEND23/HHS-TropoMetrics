@@ -160,9 +160,12 @@ router ospf 1
 ipv6 router ospf 1
  router-id 4.4.4.1
  passive-interface default
+ no passive-interface G0/0/0
  no passive-interface Tunnel10
  no passive-interface Tunnel20
  no passive-interface G0/0/1.110
+ redistribute connected
+ area 10 range 2001:1:2:110::/64
  exit
 
 !NAT Config
