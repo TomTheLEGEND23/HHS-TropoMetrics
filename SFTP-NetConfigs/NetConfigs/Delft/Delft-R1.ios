@@ -64,6 +64,15 @@ ip route 192.0.0.0 255.255.255.252 198.19.0.1
 ! Default route to ISP for internet
 ip route 0.0.0.0 0.0.0.0 198.19.0.1
 
+! IPv6 Static routes to Delft-R2 WAN
+ipv6 route 2001:1:ffff:2::/64 2001:1:ffff:1::1
+! IPv6 Static routes to Aruba
+ipv6 route 2001:1:ffff:3::/64 2001:1:ffff:1::1
+! IPv6 Static route to Aruba VLAN 110
+ipv6 route 2001:1:2:110::/64 2001:1:10:10::1
+! IPv6 Default route to ISP for internet
+ipv6 route ::/0 2001:1:ffff:1::1
+
 ! Crypto for GRE over IPsec
 crypto isakmp policy 10
  encr aes 256

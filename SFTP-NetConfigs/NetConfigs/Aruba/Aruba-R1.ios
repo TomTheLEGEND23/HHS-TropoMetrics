@@ -35,6 +35,26 @@ ipv6 unicast-routing
 ip route 198.19.0.0 255.255.255.252 192.0.0.1
 ip route 198.20.0.0 255.255.255.252 192.0.0.1
 
+! IPv6 Static routes to Delft WAN interfaces
+ipv6 route 2001:1:ffff:1::/64 2001:1:ffff:3::1
+ipv6 route 2001:1:ffff:2::/64 2001:1:ffff:3::1
+! IPv6 Static routes to all Delft VLANs via GRE tunnels
+ipv6 route 2001:1:1:10::/64 2001:1:10:10::2
+ipv6 route 2001:1:1:20::/64 2001:1:10:10::2
+ipv6 route 2001:1:1:30::/64 2001:1:10:10::2
+ipv6 route 2001:1:1:40::/64 2001:1:10:10::2
+ipv6 route 2001:1:1:50::/64 2001:1:10:10::2
+ipv6 route 2001:1:1:60::/64 2001:1:10:10::2
+ipv6 route 2001:1:1:70::/64 2001:1:10:10::2
+ipv6 route 2001:1:1:80::/64 2001:1:10:10::2
+ipv6 route 2001:1:1:90::/64 2001:1:10:10::2
+ipv6 route 2001:1:1:100::/64 2001:1:10:10::2
+! IPv6 Static routes to Delft router-to-router links
+ipv6 route 2001:1:1:1::/64 2001:1:10:10::2
+ipv6 route 2001:1:1:2::/64 2001:1:10:20::1
+! IPv6 Default route to ISP
+ipv6 route ::/0 2001:1:ffff:3::1
+
 ! Crypto for GRE over IPsec
 crypto isakmp policy 10
  encr aes 256

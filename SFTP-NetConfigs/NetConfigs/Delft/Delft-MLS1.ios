@@ -56,6 +56,11 @@ vlan 999
  name BLACKHOLE
 exit
 
+! IPv6 Static routes to remote networks
+ipv6 route 2001:1:ffff:2::/64 2001:1:1:1::1
+ipv6 route 2001:1:ffff:3::/64 2001:1:1:1::1
+ipv6 route 2001:1:2:110::/64 2001:1:1:1::1
+ipv6 route ::/0 2001:1:1:1::1
 
 !Port Config
 int Gi1/0/1
