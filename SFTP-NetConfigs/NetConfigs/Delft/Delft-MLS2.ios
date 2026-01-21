@@ -60,7 +60,7 @@ exit
 int Gi1/0/1
  description To Delft-R2 G0/0/1
  no switchport
- ip address 192.168.2.2  255.255.255.252
+ ip address 192.168.2.6  255.255.255.252
  ipv6 address 2001:1:1:2::2/64 
  ipv6 enable
  ipv6 ospf 1 area 0
@@ -250,6 +250,11 @@ ipv6 router ospf 1
  no passive-interface Gi1/0/2
  no passive-interface Po1
  no passive-interface Po2
+ no passive-interface Po3
+ no passive-interface vlan 10
+ no passive-interface vlan 40
+ no passive-interface vlan 80
+ no passive-interface vlan 100
 exit
 !DHCP Config
 service dhcp

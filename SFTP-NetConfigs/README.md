@@ -17,7 +17,6 @@ https://marketplace.visualstudio.com/items?itemName=jamiewoodio.cisco
 This directory contains an SFTP server setup for serving network device configuration files, primarily for Cisco equipment.
 
 ## Directory Structure
-
 ```
 SFTP-NetConfigs/
 ├── Dockerfile          # SFTP server container definition (includes legacy algorithm support)
