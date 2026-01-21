@@ -34,7 +34,7 @@ spec:
         environment: production
       annotations:
         # This annotation forces redeployment when updated
-        kubectl.kubernetes.io/restartedAt: "2025-11-22T13:41:34Z"
+        kubectl.kubernetes.io/restartedAt: "2026-01-21T15:28:31Z"
     spec:
       # Restart policy ensures pods are automatically restarted on failure
       restartPolicy: Always
@@ -165,7 +165,7 @@ spec:
         app: tropometrics-main-backend
         environment: production
       annotations:
-        kubectl.kubernetes.io/restartedAt: "2025-11-22T13:41:34Z"
+        kubectl.kubernetes.io/restartedAt: "2026-01-21T15:28:31Z"
     spec:
       # Restart policy ensures pods are automatically restarted on failure
       restartPolicy: Always
