@@ -136,6 +136,7 @@ ipv6 router ospf 1
 !interface for DNS querys
 interface loopback0
  ip address 10.0.0.1 255.255.255.255
+ ipv6 address 2001:1:1:1::127/128
  description DNS Server Interface
  no shut
 exit

@@ -249,7 +249,10 @@ ipv6 router ospf 1
  no passive-interface Gi1/0/1
  no passive-interface Gi1/0/2
  no passive-interface Po1
- no passive-interface Po2
+ no passive-interface vlan 10
+ no passive-interface vlan 40
+ no passive-interface vlan 80
+ no passive-interface vlan 100
 exit
 !DHCP Config
 service dhcp
