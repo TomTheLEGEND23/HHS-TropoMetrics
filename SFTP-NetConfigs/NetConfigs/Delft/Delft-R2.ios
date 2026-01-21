@@ -35,7 +35,6 @@ int Se0/1/1
     ip address 198.20.0.2  255.255.255.252
     ipv6 address 2001:1:ffff:2::2/64
     ipv6 enable
-    ipv6 nat outside
     ip nat outside
     no shutdown
     crypto map CMAP
@@ -46,7 +45,6 @@ int G0/0/0
     ip address 192.168.2.1  255.255.255.252
     ipv6 address 2001:1:1:4::1/64 
     ipv6 enable
-    ipv6 nat inside
     ipv6 ospf 1 area 0
     ip nat inside
     no shutdown
@@ -57,7 +55,6 @@ int G0/0/1
     ip address 192.168.2.5  255.255.255.252
     ipv6 address 2001:1:1:2::1/64 
     ipv6 enable
-    ipv6 nat inside
     ipv6 ospf 1 area 0
     ip nat inside
     no shutdown
@@ -144,16 +141,6 @@ access-list 1 permit 192.168.80.0 0.0.0.255
 access-list 1 permit 192.168.2.0 0.0.0.3
 access-list 1 permit 192.168.2.4 0.0.0.3
 ip nat inside source list 1 pool OVERLOAD_POOL overload
-
-! IPv6 access-list and NAT66 (overload) for internal IPv6 subnets
-ipv6 access-list NATV6
- permit ipv6 2001:1:1:4::/64 any
- permit ipv6 2001:1:1:2::/64 any
- permit ipv6 2001:1:10:10::/64 any
- permit ipv6 2001:1:10:20::/64 any
-! Perform NAT66 overload using external interface Serial0/1/1
-ipv6 nat source list NATV6 interface Serial0/1/1 overload
-
 
 end
 clock set 21:14:39 17 Dec 2025
