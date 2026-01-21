@@ -144,7 +144,7 @@ exit
 ip dns server
 ip name-server 1.1.1.1
 ip name-server 8.8.8.8
-ip host webserver 198.19.1.20
+ip host webserver.web 198.19.1.20
 
 !NAT Config
 ip nat pool OVERLOAD_POOL 198.19.0.2 198.19.0.2 netmask 255.255.255.255
