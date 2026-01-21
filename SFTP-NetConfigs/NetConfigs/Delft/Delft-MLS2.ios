@@ -316,7 +316,7 @@ ip access-list extended DMZ-INKOMEND
  deny ip 192.168.10.0 0.0.0.255 198.19.1.16 0.0.0.31
  
  ! block alles van DMZ naar kantoor 
- deny ip 198.19.1.16 0.0.0.31 198.168.10.0 0.0.0.255
+ deny ip 198.19.1.16 0.0.0.31 192.168.10.0 0.0.0.255
 
  ! laat DMZ door naar het internet
  permit ip 198.19.1.16 0.0.0.31 any
