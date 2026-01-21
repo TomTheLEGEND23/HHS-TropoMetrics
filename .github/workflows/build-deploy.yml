@@ -6,12 +6,16 @@ on:
     paths:
       - 'frontend/**'
       - 'backend/**'
+      - 'SFTP-NetConfigs/**'
+      - 'k8s/**'
       - '.github/workflows/build-deploy.yml'
   pull_request:
     branches: [ main, dev ]
     paths:
       - 'frontend/**'
       - 'backend/**'
+      - 'SFTP-NetConfigs/**'
+      - 'k8s/**'
       - '.github/workflows/build-deploy.yml'
 
 env:
@@ -63,9 +67,18 @@ jobs:
           echo "backend_changed=false" >> $GITHUB_OUTPUT
           echo "⏭️  No backend changes"
         fi
+        
+        # Check if SFTP-NetConfigs files changed
+        if echo "$CHANGED_FILES" | grep -q "^SFTP-NetConfigs/"; then
+          echo "sftp_changed=true" >> $GITHUB_OUTPUT
+          echo "✅ SFTP/SFTP-NetConfigs changes detected"
+        else
+          echo "sftp_changed=false" >> $GITHUB_OUTPUT
+          echo "⏭️  No SFTP-NetConfigs changes"
+        fi
 
     - name: Log in to Container Registry
-      if: steps.changes.outputs.frontend_changed == 'true' || steps.changes.outputs.backend_changed == 'true'
+      if: steps.changes.outputs.frontend_changed == 'true' || steps.changes.outputs.backend_changed == 'true' || steps.changes.outputs.sftp_changed == 'true'
       uses: docker/login-action@v3
       with:
         registry: ${{ env.REGISTRY }}
@@ -120,6 +133,25 @@ jobs:
         tags: ${{ steps.meta-backend.outputs.tags }}
         labels: ${{ steps.meta-backend.outputs.labels }}
 
+    - name: Extract metadata for SFTP Server
+      if: steps.changes.outputs.sftp_changed == 'true'
+      id: meta-sftp
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-sftp
+        tags: |
+          type=raw,value=latest
+
+    - name: Build and push SFTP Server Docker image
+      if: steps.changes.outputs.sftp_changed == 'true'
+      uses: docker/build-push-action@v5
+      with:
+        context: ./SFTP-NetConfigs
+        file: ./SFTP-NetConfigs/Dockerfile
+        push: true
+        tags: ${{ steps.meta-sftp.outputs.tags }}
+        labels: ${{ steps.meta-sftp.outputs.labels }}
+
     - name: Set environment info
       id: env-info
       run: |
@@ -142,6 +174,21 @@ jobs:
             ;;
         esac
         echo "branch=$BRANCH_NAME" >> $GITHUB_OUTPUT
+
+    - name: Update SFTP manifest timestamp
+      if: github.event_name == 'push' && steps.changes.outputs.sftp_changed == 'true'
+      run: |
+        TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+        sed -i "s|kubectl.kubernetes.io/restartedAt:.*|kubectl.kubernetes.io/restartedAt: \"$TIMESTAMP\"|g" k8s/sftp-server.yaml
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git add k8s/sftp-server.yaml
+        if git diff-index --quiet HEAD; then
+          echo "No SFTP manifest changes to commit"
+        else
+          git commit -m "🔄 Update SFTP server timestamp [skip ci]"
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:${{ github.ref_name }}
+        fi
 
     - name: Update manifest timestamp (Production)
       if: github.event_name == 'push' && github.ref == 'refs/heads/main' && (steps.changes.outputs.frontend_changed == 'true' || steps.changes.outputs.backend_changed == 'true')
@@ -174,7 +221,7 @@ jobs:
         fi
 
     - name: Deployment notification
-      if: github.event_name == 'push' && (steps.changes.outputs.frontend_changed == 'true' || steps.changes.outputs.backend_changed == 'true')
+      if: github.event_name == 'push' && (steps.changes.outputs.frontend_changed == 'true' || steps.changes.outputs.backend_changed == 'true' || steps.changes.outputs.sftp_changed == 'true')
       run: |
         echo "✅ Docker images built and pushed successfully!"
         echo "🏷️  Branch: ${{ steps.env-info.outputs.branch }}"
@@ -183,13 +230,16 @@ jobs:
           echo "🐳 Frontend Image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-frontend:${{ steps.env-info.outputs.branch }}"
         fi
         if [ "${{ steps.changes.outputs.backend_changed }}" == "true" ]; then
-          echo "� Backend Image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-backend:${{ steps.env-info.outputs.branch }}"
+          echo "🐳 Backend Image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-backend:${{ steps.env-info.outputs.branch }}"
         fi
-        echo "�📦 Namespace: ${{ steps.env-info.outputs.namespace }}"
+        if [ "${{ steps.changes.outputs.sftp_changed }}" == "true" ]; then
+          echo "🐳 SFTP Server Image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-sftp:latest"
+        fi
+        echo "📦 Namespace: ${{ steps.env-info.outputs.namespace }}"
     
     - name: Skip notification
-      if: github.event_name == 'push' && steps.changes.outputs.frontend_changed == 'false' && steps.changes.outputs.backend_changed == 'false'
+      if: github.event_name == 'push' && steps.changes.outputs.frontend_changed == 'false' && steps.changes.outputs.backend_changed == 'false' && steps.changes.outputs.sftp_changed == 'false'
       run: |
-        echo "⏭️  No frontend or backend changes detected - skipping Docker builds"
+        echo "⏭️  No frontend, backend, or SFTP-NetConfigs changes detected - skipping Docker builds"
         echo "🏷️  Branch: ${{ steps.env-info.outputs.branch }}"
         echo "📝 Changed files were in other directories (k8s, docs, etc.)"

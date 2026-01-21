@@ -1,0 +1,99 @@
+enable
+delete vlan.dat
+
+
+configure terminal
+hostname Aruba-SW1
+no ip domain-lookup
+ip name-server  10.0.0.1
+ntp server time.cloudflare.com
+banner motd #Verboden toegang voor onbevoegde!#
+line console 0
+ exec-timeout 60 0
+ logging synchronous
+ exit
+enable secret class
+username user priv 15 password cisco
+aaa new-model
+aaa authentication login MGT local
+line vty 0 4
+ transport input ssh
+ login authentication MGT
+ exec-timeout 60
+ logging synchronous
+ exit
+ip domain-name hhs.nl
+!crypto key zeroize rsa
+crypto key generate rsa general-keys modulus 2048
+
+!Vlan Config
+vlan 110
+ name MARKETING
+exit
+
+vlan 800
+ name NATIVE
+exit
+
+vlan 999
+ name BLACKHOLE
+exit
+
+
+!Port Config
+int range Fa0/1 - 4 
+ description To PC3 FA0/1
+ switchport mode access
+ switchport access vlan 110
+ spanning-tree portfast 
+ spanning-tree bpduguard enable
+ no shutdown
+exit
+
+int range Fa0/5-24
+ description Black Hole Vlan
+ switchport mode access
+ switchport access vlan 999
+ spanning-tree portfast 
+ spanning-tree bpduguard enable
+ shutdown
+exit
+
+int Gi0/1
+ description To Aruba-R1 Gi0/0/1
+ switchport mode trunk
+ switchport trunk native vlan 800
+ switchport trunk allowed vlan add 110
+ switchport trunk allowed vlan remove 800
+ no shutdown
+exit
+ 
+int Gi0/2
+ description Black Hole Vlan
+ switchport mode access
+ switchport access vlan 999
+ spanning-tree portfast 
+ spanning-tree bpduguard enable
+ shutdown
+exit
+
+!Spanning Tree Config
+spanning-tree mode mst
+
+spanning-tree mst configuration
+ name ARUBA
+ revision 1
+ instance 1 vlan 110
+exit
+
+!port security Config
+interface Fa0/1
+switchport port-security
+switchport port-security maximum 1
+switchport port-security mac-address sticky
+switchport port-security violation restrict
+exit
+
+end
+clock set 21:14:39 17 Dec 2025
+!copy running-config startup-config

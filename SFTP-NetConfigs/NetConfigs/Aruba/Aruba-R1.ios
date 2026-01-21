@@ -1,0 +1,198 @@
+enable
+delete vlan.dat
+
+
+configure terminal
+hostname Aruba-R1
+no ip domain-lookup
+ip name-server  10.0.0.1
+ntp server time.cloudflare.com
+banner motd #Verboden toegang voor onbevoegde!#
+line console 0
+ exec-timeout 60 0
+ logging synchronous
+ exit
+enable secret class
+username user priv 15 password cisco
+aaa new-model
+aaa authentication login MGT local
+line vty 0 4
+ transport input ssh
+ login authentication MGT
+ exec-timeout 60
+ logging synchronous
+ exit
+ip domain-name hhs.nl
+!crypto key zeroize rsa
+crypto key generate rsa general-keys modulus 2048
+
+!Miscellaneous System Config
+ipv6 unicast-routing
+
+!Vlan Config
+
+! Static routes for Delft WANs via ISP
+ip route 198.19.0.0 255.255.255.252 192.0.0.1
+ip route 198.20.0.0 255.255.255.252 192.0.0.1
+
+! IPv6 Static routes to Delft WAN interfaces
+ipv6 route 2001:1:ffff:1::/64 2001:1:ffff:3::1
+ipv6 route 2001:1:ffff:2::/64 2001:1:ffff:3::1
+! IPv6 Static routes to all Delft VLANs via GRE tunnels
+ipv6 route 2001:1:1:10::/64 2001:1:10:10::2
+ipv6 route 2001:1:1:20::/64 2001:1:10:10::2
+ipv6 route 2001:1:1:30::/64 2001:1:10:10::2
+ipv6 route 2001:1:1:40::/64 2001:1:10:10::2
+ipv6 route 2001:1:1:50::/64 2001:1:10:10::2
+ipv6 route 2001:1:1:60::/64 2001:1:10:10::2
+ipv6 route 2001:1:1:70::/64 2001:1:10:10::2
+ipv6 route 2001:1:1:80::/64 2001:1:10:10::2
+ipv6 route 2001:1:1:90::/64 2001:1:10:10::2
+ipv6 route 2001:1:1:100::/64 2001:1:10:10::2
+! IPv6 Static routes to Delft router-to-router links
+ipv6 route 2001:1:1:1::/64 2001:1:10:10::2
+ipv6 route 2001:1:1:2::/64 2001:1:10:20::1
+! IPv6 Default route to ISP
+ipv6 route ::/0 2001:1:ffff:3::1
+
+! Crypto for GRE over IPsec
+crypto isakmp policy 10
+ encr aes 256
+ hash sha256
+ authentication pre-share
+ group 14
+ exit
+
+crypto isakmp key TROPOMETRICS address 198.19.0.2
+crypto isakmp key TROPOMETRICS address 198.20.0.2
+
+crypto ipsec transform-set TSET esp-aes 256 esp-sha256-hmac
+
+ip access-list extended GRE-R1
+ permit gre host 192.0.0.2 host 198.19.0.2
+exit
+ip access-list extended GRE-R2
+ permit gre host 192.0.0.2 host 198.20.0.2
+exit
+
+crypto map CMAP 10 ipsec-isakmp
+ set peer 198.19.0.2
+ set transform-set TSET
+ match address GRE-R1
+ exit
+crypto map CMAP 20 ipsec-isakmp
+ set peer 198.20.0.2
+ set transform-set TSET
+ match address GRE-R2
+ exit
+ 
+!Port Config
+int G0/0/0
+    description To ISP G0/0/0
+    ip address 192.0.0.2   255.255.255.252
+    ipv6 address 2001:1:ffff:3::2/64
+    ipv6 enable
+    no shutdown
+    crypto map CMAP
+    ip nat outside
+    exit
+
+
+int G0/0/1
+    description To Aruba-SW1 Gi0/0
+    ip nat inside
+    no shutdown
+    exit
+
+! GRE tunnels to Delft routers
+int Tunnel10
+ description GRE to Delft-R1
+ ip address 10.10.10.1 255.255.255.252
+ tunnel source G0/0/0
+ tunnel destination 198.19.0.2
+ tunnel mode gre ip
+ ip ospf 1 area 0
+ ipv6 address 2001:1:10:10::1/64
+ ipv6 enable
+ ipv6 ospf 1 area 0
+ exit
+
+int Tunnel20
+ description GRE to Delft-R2
+ ip address 10.10.10.5 255.255.255.252
+ tunnel source G0/0/0
+ tunnel destination 198.20.0.2
+ tunnel mode gre ip
+ ip ospf 1 area 0
+ ipv6 address 2001:1:10:20::1/64
+ ipv6 enable
+ ipv6 ospf 1 area 0
+ exit
+
+! BGP peering over GRE tunnels
+router bgp 65001
+ no auto-summary
+ neighbor 10.10.10.2 remote-as 65002
+ neighbor 10.10.10.6 remote-as 65003
+ network 10.10.10.0 mask 255.255.255.252
+ network 10.10.10.4 mask 255.255.255.252
+ exit
+
+!DHCP Config
+service dhcp
+ip dhcp ping timeout 100
+
+ip dhcp excluded-address 192.168.110.1 192.168.110.9
+ip dhcp excluded-address 192.168.110.251 192.168.110.255
+
+ip dhcp pool VLAN110
+ network 192.168.110.0 255.255.255.0
+ default-router 192.168.110.1
+ dns-server 10.0.0.1 1.1.1.1
+ domain-name hhs.nl
+ lease 7
+exit
+
+int G0/0/1.110
+ encapsulation dot1Q 110
+ ip address 192.168.110.1 255.255.255.0
+ ipv6 address 2001:1:2:110::1/64 
+ ipv6 enable
+ ipv6 ospf 1 area 10
+ ip nat inside
+ no shutdown
+ exit
+
+!OSPF Config
+router ospf 1
+ router-id 4.4.4.1
+ passive-interface default
+ no passive-interface G0/0/1
+ no passive-interface Tunnel10
+ no passive-interface Tunnel20
+ network 192.0.0.0 0.0.0.3 area 0
+ network 192.168.110.0 0.0.0.255 area 10
+ network 10.10.10.0 0.0.0.3 area 0
+ network 10.10.10.4 0.0.0.3 area 0
+ exit 
+
+! OSPFv3 (IPv6) configuration
+ipv6 router ospf 1
+ router-id 4.4.4.1
+ passive-interface default
+ no passive-interface G0/0/0
+ no passive-interface Tunnel10
+ no passive-interface Tunnel20
+ no passive-interface G0/0/1.110
+ redistribute connected
+ area 10 range 2001:1:2:110::/64
+ exit
+
+!NAT Config
+ip nat pool OVERLOAD_POOL 192.0.0.2 192.0.0.2 netmask 255.255.255.255
+access-list 1 permit 192.168.110.0 0.0.0.255
+ip nat inside source list 1 pool OVERLOAD_POOL overload
+
+end
+clock set 21:14:39 17 Dec 2025
+!copy running-config startup-config

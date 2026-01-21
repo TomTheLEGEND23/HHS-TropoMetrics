@@ -22,12 +22,52 @@ const test_userAPI = [
     "test"
 ]
 
-
+/**
+ * Request throttler - prevents rapid successive API calls
+ * Stores last call timestamp per endpoint
+ */
+const requestThrottler = {
+    lastCalls: {},
+    
+    /**
+     * Check if enough time has passed since last call
+     * @param {string} endpoint - API endpoint identifier
+     * @param {number} minIntervalMs - Minimum milliseconds between calls (default: 5000ms)
+     * @returns {boolean} True if call is allowed, false if throttled
+     */
+    isAllowed(endpoint, minIntervalMs = 5000) {
+        const now = Date.now();
+        const lastCall = this.lastCalls[endpoint] || 0;
+        
+        if (now - lastCall >= minIntervalMs) {
+            this.lastCalls[endpoint] = now;
+            return true;
+        }
+        
+        const waitMs = minIntervalMs - (now - lastCall);
+        console.warn(`🚫 Request to ${endpoint} throttled. Wait ${waitMs.toFixed(0)}ms before retry.`);
+        return false;
+    },
+    
+    /**
+     * Reset throttle timer for an endpoint
+     * @param {string} endpoint - API endpoint identifier
+     */
+    reset(endpoint) {
+        delete this.lastCalls[endpoint];
+    }
+};
 
 
 /* Get the data */
 //The request to the API
 async function getData(location) {
+    // Apply client-side throttling (min 5 seconds between calls)
+    if (!requestThrottler.isAllowed('weather-api', 5000)) {
+        console.warn('⏱️ Weather API call throttled - please wait before retrying');
+        return;
+    }
+    
     const coordinates = getCoordinates();
 
     const api_request = `https://api.open-meteo.com/v1/forecast?latitude=${encodeURIComponent(coordinates.latitude)}&longitude=${encodeURIComponent(coordinates.longitude)}&daily=temperature_2m_max,temperature_2m_min,daylight_duration&hourly=precipitation,relative_humidity_2m,soil_moisture_27_to_81cm&current=temperature_2m&timezone=Europe%2FAmsterdam`;
@@ -37,17 +77,22 @@ async function getData(location) {
     // Log to nginx access logs
     fetch('/🌍-Calling-Open-Meteo-API').catch(() => {});
     
-    // Get the data from the api
-    const weather_response = await fetch(api_request);
+    try {
+        // Get the data from the api
+        const weather_response = await fetch(api_request);
 
-    // Extract the data out of the reply
-    if (!weather_response.ok) {
-        // Throw error
+        // Extract the data out of the reply
+        if (!weather_response.ok) {
+            console.error('⚠️ Failed to fetch weather data:', weather_response.status);
+            return;
+        }
+
+        const weather_data = await weather_response.json();
+        console.log(weather_data);
+        displayData(weather_data);
+    } catch (error) {
+        console.error('❌ Error fetching weather data:', error);
     }
-
-    const weather_data = await weather_response.json();
-    console.log(weather_data);
-    displayData(weather_data);
 }
 
 

@@ -1,0 +1,93 @@
+# Network Design
+## Cabling
+LAB (External Interface) - ISP(GE0/0/1)
+ISP(Se0/1/0) - Delft-R1(Se0/1/0)
+ISP(Se0/1/1) - Delft-R2(Se0/1/1)
+ISP(GE0/0/0) - Aruba-R1(GE0/0/0)
+Aruba-R1(GE0/0/1) - Aruba-SW1(GE0/0/0)
+Aruba-SW1(Fa0/1) - PC3(VLan210)(FA0/1)
+Delft-R1(GE0/0/0) - Delft-MLS1(GE1/0/1)
+Delft-R1(GE0/0/1) - Delft-MLS2(GE1/0/2)
+Delft-R2(GE0/0/1) - Delft-MLS2(GE1/0/1)
+Delft-R2(GE0/0/0) - Delft-MLS1(GE1/0/2)
+Delft-MLS1(GE1/0/3) - Delft-MLS2(GE1/0/3) #Portchannel 1
+Delft-MLS1(GE1/0/4) - Delft-MLS2(GE1/0/4) #PortChannel 1
+Delft-MLS1(GE1/0/5) - Delft-SW1(GE0/1)
+Delft-MLS2(GE1/0/5) - Delft-SW2(GE0/1)
+Delft-MLS1(GE1/0/6) - Delft-SW2(GE0/2)
+Delft-MLS2(GE1/0/6) - Delft-SW1(GE0/2)
+Delft-SW1(FA0/1) - PC1(Vlan10)(FA0/1)
+Delft-SW1(FA0/2) - AP(Vlan80)(FA0/1)
+Delft-SW3(FA0/1) - PC2(Vlan20)(FA0/1)
+Delft-MLS2(GE1/0/7) - Delft-SW3(GE0/1) #Portchannel 2
+Delft-MLS2(GE1/0/8) - Delft-SW3(GE0/2) #Portchannel 2
+Delft-SW3(FA0/1) - Service(Fast Port)
+Delft-MLS1(G1/0/7) - Delft-SW3(FA0/2) #PortChannel 3
+Delft-MLS1(G1/0/8) - Delft-SW3(FA0/4) #PortChannel 3
+
+## IP
+### Overzicht IPv4 ISP en VPN-adressen en ranges 
+| Locatie           | IPv4 WAN-prefix | Locatie-router     | ISP-router             |
+| ----------------- | --------------- | ------------------ | ---------------------- |
+| Delft Router 1    | 198.19.0.0/30   | 198.19.0.2         | 198.19.0.1             |
+| Delft Router 2    | 198.20.0.0/30   | 198.20.0.2         | 198.20.0.1             |
+| Aruba             | 192.0.0.0/30    | 192.0.0.2          | 192.0.0.1              |
+| Melbourne         | 192.0.2.0/30    | 192.0.2.2          | 192.0.2.1              |
+| Delft ↔ Aruba     | 10.255.0.0/30   | 10.255.0.1 (Delft) | 10.255.0.2 (Aruba)     |
+| Delft ↔ Melbourne | 10.255.0.4/30   | 10.255.0.5 (Delft) | 10.255.0.6 (Melbourne) |
+
+### IPv4-adressering 
+| Locatie            | VLAN                                 | Subnet           | Hosts bruikbaar | Verwachte aantal hosts | Default Gateway           |
+| ------------------ | ------------------------------------ | ---------------- | --------------- | ---------------------- | ------------------------- |
+| Delft R1 <> MLS1   | x                                    | 192.168.1.0/30   | 2               | –                      | 192.168.1.1 / 192.168.1.2 |
+| Delft R1 <> MLS2   | x                                    | 192.168.1.4/30   | 2               | –                      | 192.168.1.5 / 192.168.1.6 |
+| Delft R2 <> MLS2   | x                                    | 192.168.2.0/30   | 2               | –                      | 192.168.2.1 / 192.168.2.2 |
+| Delft R2 <> MLS1   | x                                    | 192.168.2.4/30   | 2               | –                      | 192.168.2.5 / 192.168.2.6 |
+| Delft MLS1 <> MLS2 | x                                    | 192.168.3.0/30   | 2               | –                      | 192.168.3.1 / 192.168.3.2 |
+| Delft              | VLAN 10 – Management & Administratie | 192.168.10.0/26  | 62              | 24                     | 192.168.10.1              |
+| Delft              | VLAN 20 – Marketing & Sales          | 192.168.20.0/27  | 30              | 16                     | 192.168.20.1              |
+| Delft              | VLAN 30 – IT                         | 192.168.30.0/28  | 14              | 8                      | 192.168.30.1              |
+| Delft              | VLAN 40 – Support                    | 192.168.40.0/27  | 30              | 16                     | 192.168.40.1              |
+| Delft              | VLAN 50 – Development                | 192.168.50.0/28  | 14              | 8                      | 192.168.50.1              |
+| Delft              | VLAN 60 – Meteo Expertise            | 192.168.60.0/28  | 14              | 8                      | 192.168.60.1              |
+| Delft              | VLAN 70 – WiFi                       | 192.168.70.0/25  | 126             | 80                     | 192.168.70.1              |
+| Delft              | VLAN 80 – Calcnet                    | 192.168.80.0/24  | 254             | –                      | 192.168.80.1              |
+| Delft              | VLAN 90 – Intranet                   | 198.19.1.0/28    | 14              | –                      | 198.19.1.1                |
+| Delft              | VLAN 100 – DMZ                       | 198.19.1.16/27   | 30              | –                      | 198.19.1.17               |
+| Aruba              | VLAN 110 – Marketing & Sales         | 192.168.110.0/27 | 30              | –                      | 192.168.110.1             |
+| Melbourne          | VLAN 210 – Marketing & Sales         | 192.168.210.0/27 | 30              | –                      | 192.168.210.1             |
+
+### Overzicht IPv6 ISP en VPN-adressen en ranges 
+| Locatie           | IPv6 WAN-prefix       | Locatie-router            | ISP-router                |
+| ----------------- | --------------------- | ------------------------- | ------------------------- |
+| Delft Router 1    | 2001:1:ffff:1::/64    | 2001:1:ffff:1::2          | 2001:1:ffff:1::1          |
+| Delft Router 2    | 2001:1:ffff:2::/64    | 2001:1:ffff:2::2          | 2001:1:ffff:2::1          |
+| Aruba             | 2001:1:ffff:3::/64    | 2001:1:ffff:3::2          | 2001:1:ffff:3::1          |
+| Melbourne         | 2001:1:ffff:4::/64    | 2001:1:ffff:4::2          | 2001:1:ffff:4::1          |
+| Delft ↔ Aruba     | 2001:1:ffff:10::/127  | 2001:1:ffff:10::1 (Delft) | 2001:1:ffff:10::2 (Aruba) |
+| Delft ↔ Melbourne | 2001:1:ffff:10::2/127 | 2001:1:ffff:10::3         | 2001:1:ffff:10::4         |
+
+### IPv6-adressering 
+| Locatie          | VLAN                                 | Subnet            | Default Gateway |
+| ---------------- | ------------------------------------ | ----------------- | --------------- |
+| Delft R1 <> MLS1 | x                                    | 2001:1:1:1::/64   | 2001:1:1:1::1   |
+| Delft R2 <> MLS2 | x                                    | 2001:1:1:2::/64   | 2001:1:1:2::1   |
+| Delft            | VLAN 10 – Management & Administratie | 2001:1:1:10::/64  | 2001:1:1:10::1  |
+| Delft            | VLAN 20 – Marketing & Sales          | 2001:1:1:20::/64  | 2001:1:1:20::1  |
+| Delft            | VLAN 30 – IT                         | 2001:1:1:30::/64  | 2001:1:1:30::1  |
+| Delft            | VLAN 40 – Support                    | 2001:1:1:40::/64  | 2001:1:1:40::1  |
+| Delft            | VLAN 50 – Development                | 2001:1:1:50::/64  | 2001:1:1:50::1  |
+| Delft            | VLAN 60 – Meteo Expertise            | 2001:1:1:60::/64  | 2001:1:1:60::1  |
+| Delft            | VLAN 70 – WiFi                       | 2001:1:1:70::/64  | 2001:1:1:70::1  |
+| Delft            | VLAN 80 – Calcnet                    | 2001:1:1:80::/64  | 2001:1:1:80::1  |
+| Delft            | VLAN 90 – Intranet                   | 2001:1:1:90::/64  | 2001:1:1:90::1  |
+| Delft            | VLAN 100 – DMZ                       | 2001:1:1:100::/64 | 2001:1:1:100::1 |
+| Aruba            | VLAN 110 – Marketing & Sales         | 2001:1:2:110::/64 | 2001:1:2:110::1 |
+| Melbourne        | VLAN 210 – Marketing & Sales         | 2001:1:3:210::/64 | 2001:1:3:210::1 |
+
+### IP VRRP 
+| VLAN | Virtual IP                     | MLS1 IP                        | MLS2 IP                        |
+| ---: | ------------------------------ | ------------------------------ | ------------------------------ |
+|   10 | 192.168.10.1 - 2001:1:1:10::1  | 192.168.10.2 - 2001:1:1:10::2  | 192.168.10.3 - 2001:1:1:10::3  |
+|   40 | 192.168.40.1 - 2001:1:1:40::1  | 192.168.40.2 - 2001:1:1:40::2  | 192.168.40.3 - 2001:1:1:40::3  |
+|   80 | 192.168.80.1 - 2001:1:1:80::1  | 192.168.80.2 - 2001:1:1:80::2  | 192.168.80.3 - 2001:1:1:80::3  |

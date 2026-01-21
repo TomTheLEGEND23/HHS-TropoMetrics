@@ -1,27 +1,28 @@
-version: '3.8'
-
+---
 services:
   backend:
-    image: ghcr.io/tomthelegend23/hhs-tropometrics-backend:main
+    image: ghcr.io/tomthelegend23/hhs-tropometrics-backend:${TAG:-dev}
     container_name: tropometrics-backend
     ports:
       - "8000:8000"
     restart: unless-stopped
     environment:
-      - EMAIL_SERVER=${EMAIL_SERVER:-smtp.gmail.com:587}
-      - EMAIL_USERNAME=${EMAIL_USERNAME:-your-email@gmail.com}
-      - EMAIL_PASSWORD=${EMAIL_PASSWORD:-your-app-password}
+      - EMAIL_SERVER=${EMAIL_SERVER}
+      - EMAIL_USERNAME=${EMAIL_USERNAME}
+      - EMAIL_PASSWORD=${EMAIL_PASSWORD}
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8000/health"]
-      interval: 30s
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/health')\""]
+      interval: 20s
       timeout: 5s
-      retries: 3
-      start_period: 10s
+      retries: 5
+      start_period: 15s
     networks:
       - tropometrics
 
   frontend:
-    image: ghcr.io/tomthelegend23/hhs-tropometrics-frontend:main
+    image: ghcr.io/tomthelegend23/hhs-tropometrics-frontend:${TAG:-dev}
     container_name: tropometrics-frontend
     ports:
       - "8080:80"  # Access via http://localhost:8080
@@ -29,15 +30,17 @@ services:
     depends_on:
       backend:
         condition: service_healthy
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:80/"]
+      test: ["CMD-SHELL", "curl -f http://localhost:80/ || exit 1"]
       interval: 30s
       timeout: 5s
       retries: 3
       start_period: 10s
     networks:
       - tropometrics
-
+ 
 networks:
   tropometrics:
     driver: bridge

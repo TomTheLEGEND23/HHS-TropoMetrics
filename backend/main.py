@@ -19,12 +19,28 @@ import logging
 import httpx
 from datetime import datetime
 import random
+from slowapi import Limiter
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = FastAPI(title="TropoMetrics Email API", version="1.0.0")
+
+# Rate limiter configuration
+limiter = Limiter(key_func=get_remote_address)
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, lambda request, exc: JSONResponse(
+    status_code=429,
+    content={
+        "error": True,
+        "status": 429,
+        "message": "Rate limit exceeded. Please try again later.",
+        "detail": str(exc.detail)
+    }
+))
 
 # CORS configuration - allow requests from frontend
 app.add_middleware(
@@ -94,6 +110,7 @@ async def health():
 
 
 @app.get("/api")
+@limiter.limit("30/minute")
 async def weather_data_api(request: Request, api_key: Optional[str] = None):
     """
     Weather Data API Endpoint
@@ -404,7 +421,8 @@ async def weather_data_api(request: Request, api_key: Optional[str] = None):
 
 
 @app.post("/api/send-email")
-async def send_email(email: EmailRequest):
+@limiter.limit("5/minute")
+async def send_email(request: Request, email: EmailRequest):
     """
     Send an email via SMTP
     

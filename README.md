@@ -18,6 +18,11 @@
 - [Project Structure](#project-structure)
 - [Troubleshooting](#troubleshooting)
 
+## To D0
+- add sqltile db for user management and preferences
+- ratelimiting for api
+- 
+
 ## About the Project
 
 **TropoMetrics** is a containerized weather monitoring platform specifically designed for agricultural applications. It provides real-time weather data, 5-day forecasts, soil moisture analysis, and irrigation recommendations to help farmers make data-driven decisions.

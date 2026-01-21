@@ -1,0 +1,340 @@
+enable
+delete vlan.dat
+
+
+configure terminal
+hostname Delft-MLS2
+no ip domain-lookup
+ip name-server  10.0.0.1
+ntp server time.cloudflare.com
+banner motd #Verboden toegang voor onbevoegde!#
+line console 0
+ exec-timeout 60 0
+ logging synchronous
+ exit
+enable secret class
+username user priv 15 password cisco
+aaa new-model
+aaa authentication login MGT local
+line vty 0 4
+ transport input ssh
+ login authentication MGT
+ exec-timeout 60
+ logging synchronous
+ exit
+ip domain-name hhs.nl
+!crypto key zeroize rsa
+crypto key generate rsa general-keys modulus 2048
+
+!Miscellaneous System Config
+ip routing 
+ipv6 unicast-routing
+
+
+!Vlan Config
+vlan 100
+ name DMZ
+exit
+
+vlan 80
+ name WIFI
+exit
+
+vlan 40
+ name SUPPORT
+exit
+
+vlan 10
+ name ADMINISTRATIE
+exit
+
+vlan 800
+ name NATIVE
+exit
+
+vlan 999
+ name BLACKHOLE
+exit
+
+! IPv6 Static routes to remote networks
+ipv6 route 2001:1:ffff:1::/64 2001:1:1:2::1
+ipv6 route 2001:1:ffff:3::/64 2001:1:1:2::1
+ipv6 route 2001:1:2:110::/64 2001:1:1:2::1
+ipv6 route ::/0 2001:1:1:2::1
+
+!Port Config
+int Gi1/0/1
+ description To Delft-R2 G0/0/1
+ no switchport
+ ip address 192.168.2.6  255.255.255.252
+ ipv6 address 2001:1:1:2::2/64 
+ ipv6 enable
+ ipv6 ospf 1 area 0
+ no shutdown
+exit
+
+int Gi1/0/2
+ no switchport
+ description To Delft-R1 G0/0/1
+ ip address 192.168.1.6  255.255.255.252
+ ipv6 address 2001:1:1:3::2/64 
+ ipv6 enable
+ ipv6 ospf 1 area 0
+ no shutdown
+exit
+
+int Gi1/0/3
+ description To Delft-MLS1 Gi1/0/3 (PortChannel 1)
+exit
+
+int Gi1/0/4
+ description To Delft-MLS1 Gi1/0/4 (PortChannel 1)
+exit
+
+int range Gi1/0/5-6
+ description To Delft-SW2 Ge0/1-2
+ switchport mode trunk
+ switchport trunk native vlan 800
+ switchport trunk allowed vlan add 10,40,80,100
+ switchport trunk allowed vlan remove 800
+ ip dhcp snooping trust
+exit
+
+int range Gi1/0/7-8
+ description To Delft-SW3 Ge0/1-2
+exit
+
+int range Gi1/0/9-24
+ description Black Hole Vlan
+ switchport mode access
+ switchport access vlan 999
+ shutdown
+exit
+
+!Spanning Tree Config
+spanning-tree mode mst
+
+spanning-tree mst configuration
+ name DELFT
+ revision 1
+ instance 1 vlan 10,40,80
+ instance 2 vlan 100
+exit
+
+spanning-tree mst 1 priority 8192
+spanning-tree mst 2 priority 4096
+
+
+!VRRP Config
+fhrp version vrrp v3
+
+int vlan 10
+ ip address 192.168.10.3 255.255.255.0
+ vrrp 10 address-family ipv4
+  address 192.168.10.1
+  priority 100
+  preempt
+ exit
+ ipv6 address 2001:1:1:10::3/64
+ vrrp 11 address-family ipv6 
+  address fe80::1 primary
+  priority 100 
+  preempt
+  no shutdown
+ exit
+ ipv6 ospf 1 area 20
+exit
+
+int vlan 40
+ ip address 192.168.40.3 255.255.255.0
+ vrrp 40 address-family ipv4
+  address 192.168.40.1
+  priority 100
+  preempt
+ exit
+ ipv6 address 2001:1:1:40::3/64
+ vrrp 44 address-family ipv6 
+  address fe80::1 primary
+  priority 100 
+  preempt
+  no shutdown
+ exit
+ ipv6 ospf 1 area 20
+exit
+
+int vlan 80
+ ip address 192.168.80.3 255.255.255.0
+ vrrp 80 address-family ipv4
+  address 192.168.80.1
+  priority 100
+  preempt
+ exit
+ ipv6 address 2001:1:1:80::3/64
+ vrrp 88 address-family ipv6 
+  address fe80::1 primary
+  priority 100 
+  preempt
+  no shutdown
+ exit
+ ipv6 ospf 1 area 20
+exit
+
+int vlan 100
+ ip address 198.19.1.19 255.255.255.0
+ vrrp 100 address-family ipv4
+  address 198.19.1.17
+  priority 110
+  preempt
+ exit
+ ipv6 address 2001:1:1:100::3/64
+ vrrp 104 address-family ipv6
+  address fe80::1 primary
+  priority 110
+  preempt
+  no shutdown
+ exit
+ ipv6 ospf 1 area 20
+exit
+
+
+
+!EtherChannels Config
+int range g1/0/3 - 4
+  no switchport
+  channel-group 1 mode active
+    no shutdown
+exit
+
+int Po1
+  ip address 192.168.3.2 255.255.255.252
+  ipv6 address 2001:1:1:5::2/64
+  ipv6 enable
+  ipv6 ospf 1 area 20
+    no shutdown
+exit
+
+int range g1/0/7 - 8
+ switchport mode trunk
+ switchport trunk native vlan 800
+ switchport trunk allowed vlan add 100
+ switchport trunk allowed vlan remove 800
+ ip dhcp snooping trust
+ channel-group 2 mode active
+ no shutdown
+exit
+
+int Po2
+  switchport mode trunk
+  switchport trunk native vlan 800
+  switchport trunk allowed vlan add 100
+  switchport trunk allowed vlan remove 800
+  ip dhcp snooping trust
+    no shutdown
+exit
+
+!OSPF Config
+router ospf 1
+ router-id 3.3.3.3
+ passive-interface default
+ passive-interface default
+ no passive-interface Gi1/0/1
+ no passive-interface Gi1/0/2
+ no passive-interface Gi1/0/3
+ no passive-interface Gi1/0/4
+ no passive-interface Gi1/0/5
+ no passive-interface Gi1/0/6
+ no passive-interface Gi1/0/7
+ no passive-interface Gi1/0/8
+ no passive-interface Po1
+ no passive-interface Po2
+ no passive-interface Po3
+ no passive-interface vlan 10
+ no passive-interface vlan 40
+ no passive-interface vlan 80
+ no passive-interface vlan 100
+ network 192.168.1.4 0.0.0.3 area 0
+ network 192.168.2.0 0.0.0.3 area 0
+ network 192.168.3.0 0.0.0.3 area 0
+ network 192.168.10.0 0.0.0.255 area 20
+ network 192.168.40.0 0.0.0.255 area 20
+ network 192.168.80.0 0.0.0.255 area 20
+ network 198.19.1.0 0.0.0.255 area 20
+exit
+!OSPFv3 (IPv6) Config
+ipv6 router ospf 1
+ router-id 3.3.3.3
+ passive-interface default
+ passive-interface default
+ no passive-interface Gi1/0/1
+ no passive-interface Gi1/0/2
+ no passive-interface Gi1/0/3
+ no passive-interface Gi1/0/4
+ no passive-interface Gi1/0/5
+ no passive-interface Gi1/0/6
+ no passive-interface Gi1/0/7
+ no passive-interface Gi1/0/8
+ no passive-interface Po1
+ no passive-interface Po2
+ no passive-interface Po3
+ no passive-interface vlan 10
+ no passive-interface vlan 40
+ no passive-interface vlan 80
+ no passive-interface vlan 100
+exit
+!DHCP Config
+service dhcp
+ip dhcp ping timeout 1000
+ip dhcp ping packets 3
+
+! MLS2 serves UPPER halves of pools - Excludes VRRP gateway and lower half
+ip dhcp excluded-address 192.168.10.1 192.168.10.3
+ip dhcp excluded-address 192.168.10.4 192.168.10.127
+ip dhcp excluded-address 192.168.40.1 192.168.40.3
+ip dhcp excluded-address 192.168.40.4 192.168.40.127
+ip dhcp excluded-address 192.168.80.1 192.168.80.3
+ip dhcp excluded-address 192.168.80.4 192.168.80.127
+
+
+! VLAN 10 - Management (192.168.10.0/26 = 62 usable)
+! MLS2: Upper half (192.168.10.33-62)
+ip dhcp pool VLAN10_MLS2
+ network 192.168.10.0 255.255.255.0
+ default-router 192.168.10.1
+ dns-server 10.0.0.1 1.1.1.1
+ domain-name hhs.nl
+ lease 7
+
+! VLAN 40 - Support (192.168.40.0/27 = 30 usable)
+! MLS2: Upper half (192.168.40.17-30)
+ip dhcp pool VLAN40_MLS2
+ network 192.168.40.0 255.255.255.0
+ default-router 192.168.40.1
+ dns-server 10.0.0.1 1.1.1.1
+ domain-name hhs.nl
+ lease 7
+
+! VLAN 80 - Calcnet (192.168.80.0/24 = 254 usable)
+! MLS2: Upper half (192.168.80.129-254)
+ip dhcp pool VLAN80_MLS2
+ network 192.168.80.0 255.255.255.0
+ default-router 192.168.80.1
+ dns-server 10.0.0.1 1.1.1.1
+ domain-name hhs.nl
+ lease 7
+
+! DHCP snooping to protect the network
+ip dhcp snooping
+ip dhcp snooping vlan 10,40,80,100
+
+! Trust the uplink/trunk interfaces towards distribution/access
+int range g1/0/5-6
+ ip dhcp snooping trust
+exit
+int range g1/0/7-8
+ ip dhcp snooping trust
+exit
+
+
+end
+clock set 21:14:39 17 Dec 2025
+!copy running-config startup-config

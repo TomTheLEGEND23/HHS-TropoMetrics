@@ -1,0 +1,97 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: network-services
+  labels:
+    app: sftp-server
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sftp-server
+  namespace: network-services
+  labels:
+    app: sftp-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sftp-server
+  template:
+    metadata:
+      labels:
+        app: sftp-server
+      annotations:
+        kubectl.kubernetes.io/restartedAt: "2026-01-21T12:16:33Z"
+    spec:
+      # Standard pod networking with NodePort service
+      containers:
+      - name: sftp-server
+        image: ghcr.io/tomthelegend23/hhs-tropometrics-sftp:latest
+        imagePullPolicy: Always
+        args:
+          - cisco:cisco:1001:100:configs
+        ports:
+        - name: sftp
+          containerPort: 22
+          protocol: TCP
+        volumeMounts:
+        - name: ssh-host-ed25519-key
+          mountPath: /etc/ssh/ssh_host_ed25519_key
+          subPath: ssh_host_ed25519_key
+          readOnly: true
+        - name: ssh-host-rsa-key
+          mountPath: /etc/ssh/ssh_host_rsa_key
+          subPath: ssh_host_rsa_key
+          readOnly: true
+        resources:
+          requests:
+            memory: "32Mi"
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "200m"
+        livenessProbe:
+          tcpSocket:
+            port: 22
+          initialDelaySeconds: 10
+          periodSeconds: 30
+        readinessProbe:
+          tcpSocket:
+            port: 22
+          initialDelaySeconds: 5
+          periodSeconds: 10
+      volumes:
+      - name: ssh-host-ed25519-key
+        secret:
+          secretName: sftp-host-key
+          items:
+          - key: ssh_host_ed25519_key
+            path: ssh_host_ed25519_key
+            mode: 0600
+      - name: ssh-host-rsa-key
+        secret:
+          secretName: sftp-host-key
+          items:
+          - key: ssh_host_rsa_key
+            path: ssh_host_rsa_key
+            mode: 0600
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sftp-server
+  namespace: network-services
+  labels:
+    app: sftp-server
+spec:
+  # NodePort service for external access
+  type: NodePort
+  selector:
+    app: sftp-server
+  ports:
+  - name: sftp
+    port: 22
+    targetPort: 22
+    nodePort: 30022
+    protocol: TCP

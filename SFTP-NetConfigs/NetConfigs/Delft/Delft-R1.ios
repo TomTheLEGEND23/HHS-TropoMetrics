@@ -1,0 +1,183 @@
+enable
+!delete vlan.dat
+configure terminal
+hostname Delft-R1
+no ip domain-lookup
+ntp server time.cloudflare.com
+banner motd #Verboden toegang voor onbevoegde!#
+line console 0
+ exec-timeout 60 0
+ logging synchronous
+ exit
+enable secret class
+username user priv 15 password cisco
+aaa new-model
+aaa authentication login MGT local
+line vty 0 4
+ transport input ssh
+ login authentication MGT
+ exec-timeout 60
+ logging synchronous
+ exit
+ip domain-name hhs.nl
+!crypto key zeroize rsa
+crypto key generate rsa general-keys modulus 2048
+
+!Miscellaneous System Config
+ipv6 unicast-routing
+
+!Vlan Config
+
+!Port Config
+int Se0/1/0
+    description To ISP Se0/1/0
+    ip address 198.19.0.2  255.255.255.252
+    ipv6 address 2001:1:ffff:1::2/64
+    ipv6 enable
+    ip nat outside
+    no shutdown
+    crypto map CMAP
+exit
+
+int G0/0/0
+    description To Delft-MLS1 Gi1/0/1
+    ip address 192.168.1.1  255.255.255.252
+    ipv6 address 2001:1:1:1::1/64
+    ipv6 enable
+    ipv6 ospf 1 area 0
+    ip nat inside
+    no shutdown
+exit
+
+int G0/0/1
+    description To Delft-MLS2 Gi1/0/2
+    ip address 192.168.1.5  255.255.255.252
+    ipv6 address 2001:1:1:3::1/64 
+    ipv6 enable  
+    ipv6 ospf 1 area 0
+    ip nat inside
+    no shutdown
+exit
+    
+! Static route to Aruba WAN via ISP
+ip route 192.0.0.0 255.255.255.252 198.19.0.1
+! Default route to ISP for internet
+ip route 0.0.0.0 0.0.0.0 198.19.0.1
+
+! IPv6 Static routes to Delft-R2 WAN
+ipv6 route 2001:1:ffff:2::/64 2001:1:ffff:1::1
+! IPv6 Static routes to Aruba
+ipv6 route 2001:1:ffff:3::/64 2001:1:ffff:1::1
+! IPv6 Static route to Aruba VLAN 110
+ipv6 route 2001:1:2:110::/64 2001:1:10:10::1
+! IPv6 Static route to ISP loopback
+ipv6 route 2001:db8:25::25/128 2001:1:ffff:1::1
+! IPv6 Default route to ISP for internet
+ipv6 route ::/0 2001:1:ffff:1::1
+
+!static route to loopback ISP
+ip route 25.25.25.25 255.255.255.255 198.19.0.1
+
+! Crypto for GRE over IPsec
+crypto isakmp policy 10
+ encr aes 256
+ hash sha256
+ authentication pre-share
+ group 14
+exit
+
+crypto isakmp key TROPOMETRICS address 192.0.0.2
+
+crypto ipsec transform-set TSET esp-aes 256 esp-sha256-hmac
+
+ip access-list extended GRE-ARUBA
+ permit gre host 198.19.0.2 host 192.0.0.2
+exit
+
+crypto map CMAP 10 ipsec-isakmp
+ set peer 192.0.0.2
+ set transform-set TSET
+ match address GRE-ARUBA
+exit
+
+! GRE tunnel to Aruba-R1
+int Tunnel10
+ description GRE to Aruba-R1
+ ip address 10.10.10.2 255.255.255.252
+ tunnel source Se0/1/0
+ tunnel destination 192.0.0.2
+ tunnel mode gre ip
+ ip ospf 1 area 0
+ ipv6 address 2001:1:10:10::2/64
+ ipv6 enable
+ ipv6 ospf 1 area 0
+exit
+
+! BGP peering over GRE tunnel
+router bgp 65002
+ no auto-summary
+ neighbor 10.10.10.1 remote-as 65001
+ network 10.10.10.0 mask 255.255.255.252
+exit
+
+!OSPF Config
+router ospf 1
+ router-id 1.1.1.1
+ passive-interface default
+ no passive-interface Tunnel10
+ no passive-interface G0/0/0
+ no passive-interface G0/0/1
+ network 10.0.0.1 0.0.0.0 area 0
+ network 192.168.1.0 0.0.0.3 area 0
+ network 192.168.1.4 0.0.0.3 area 0
+ network 192.168.3.0 0.0.0.3 area 20
+ network 10.10.10.0 0.0.0.3 area 0
+ network 192.168.10.0 0.0.0.255 area 20
+ network 192.168.40.0 0.0.0.255 area 20
+ network 192.168.80.0 0.0.0.255 area 20
+ network 198.19.1.0 0.0.0.255 area 20
+ redistribute static subnets
+exit
+
+! OSPFv3 (IPv6) configuration
+ipv6 router ospf 1
+ router-id 1.1.1.2
+ passive-interface default
+ no passive-interface G0/0/0
+ no passive-interface G0/0/1
+ no passive-interface Tunnel10
+ redistribute static
+ exit
+
+!interface for DNS querys
+interface loopback0
+ ip address 10.0.0.1 255.255.255.255
+ description DNS Server Interface
+ no shut
+exit
+
+! DNS Config
+ip dns server
+ip name-server 1.1.1.1
+ip name-server 8.8.8.8
+ip host webserver.web 198.19.1.20
+
+!NAT Config
+! Route map to prevent NATing between internal networks
+route-map NONAT permit 10
+ match ip address 2
+exit
+
+ip nat pool OVERLOAD_POOL 198.19.0.2 198.19.0.2 netmask 255.255.255.255
+access-list 1 permit 192.168.10.0 0.0.0.255
+access-list 1 permit 192.168.40.0 0.0.0.255
+access-list 1 permit 192.168.80.0 0.0.0.255
+access-list 1 permit 198.19.1.0 0.0.0.255
+access-list 1 permit 192.168.1.0 0.0.0.3
+access-list 1 permit 192.168.1.4 0.0.0.3
+ip nat inside source route-map NONAT permit 10
+ip nat inside source list 1 pool OVERLOAD_POOL overload
+
+end
+clock set 21:14:39 17 Dec 2025
+!copy running-config startup-config
