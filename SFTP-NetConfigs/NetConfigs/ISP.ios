@@ -82,9 +82,6 @@ exit
 ip nat inside source list 1 interface G0/0/1 overload
 
 
-!static route
-ip route 25.25.25.25 255.255.255.255 198.19.0.2
-ip route 25.25.25.25 255.255.255.255 198.20.0.2
 
 
 
