@@ -9,7 +9,7 @@ Automated testing suite for TropoMetrics web application. Tests both API endpoin
 read -p "Select branch (main/dev): " BRANCH && cd /tmp && rm -rf tropometrics-tests && mkdir -p tropometrics-tests && cd tropometrics-tests && curl -L "https://github.com/TomTheLEGEND23/HHS-TropoMetrics/archive/refs/heads/${BRANCH}.tar.gz" | tar xz --strip=1 && cd HHS-TropoMetrics-${BRANCH}/tests && pip3 install -q -r requirements.txt && python3 run-tests.py
 ```
 
-### Windows PowerShell One-Liner
+### Windows PowerShell One-Liner.
 ```powershell
 $BRANCH = Read-Host "Select branch (main/dev)"; cd $env:TEMP; if (Test-Path tropometrics-tests) { Remove-Item -Recurse -Force tropometrics-tests }; New-Item -ItemType Directory -Path tropometrics-tests | Out-Null; cd tropometrics-tests; Invoke-WebRequest -Uri "https://github.com/TomTheLEGEND23/HHS-TropoMetrics/archive/refs/heads/$BRANCH.zip" -OutFile "repo.zip"; Expand-Archive -Path "repo.zip" -DestinationPath .; cd "HHS-TropoMetrics-$BRANCH/tests"; pip install -q -r requirements.txt; python run-tests.py
 ```
