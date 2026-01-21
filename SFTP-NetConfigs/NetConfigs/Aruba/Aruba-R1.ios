@@ -31,24 +31,6 @@ ipv6 unicast-routing
 
 !Vlan Config
 
-!Port Config
-int G0/0/0
-    description To ISP G0/0/0
-    ip address 192.0.0.2   255.255.255.252
-    ipv6 address 2001:1:ffff:3::2/64
-    ipv6 enable
-    no shutdown
-    crypto map CMAP
-    ip nat outside
-    exit
-
-
-int G0/0/1
-    description To Aruba-SW1 Gi0/0
-    ip nat inside
-    no shutdown
-    exit
-
 ! Static routes for Delft WANs via ISP
 ip route 198.19.0.0 255.255.255.252 192.0.0.1
 ip route 198.20.0.0 255.255.255.252 192.0.0.1
@@ -83,6 +65,24 @@ crypto map CMAP 20 ipsec-isakmp
  set transform-set TSET
  match address GRE-R2
  exit
+ 
+!Port Config
+int G0/0/0
+    description To ISP G0/0/0
+    ip address 192.0.0.2   255.255.255.252
+    ipv6 address 2001:1:ffff:3::2/64
+    ipv6 enable
+    no shutdown
+    crypto map CMAP
+    ip nat outside
+    exit
+
+
+int G0/0/1
+    description To Aruba-SW1 Gi0/0
+    ip nat inside
+    no shutdown
+    exit
 
 ! GRE tunnels to Delft routers
 int Tunnel10
@@ -162,7 +162,6 @@ ipv6 router ospf 1
  passive-interface default
  no passive-interface Tunnel10
  no passive-interface Tunnel20
- no passive-interface G0/0/1
  no passive-interface G0/0/1.110
  exit
 
