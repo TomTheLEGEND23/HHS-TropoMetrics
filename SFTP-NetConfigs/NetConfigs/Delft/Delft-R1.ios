@@ -99,11 +99,6 @@ int Tunnel10
  ipv6 ospf 1 area 0
 exit
 
-! OSPF over tunnel
-router ospf 1
- network 10.10.10.0 0.0.0.3 area 0
-exit
-
 ! BGP peering over GRE tunnel
 router bgp 65002
  no auto-summary
@@ -121,6 +116,7 @@ router ospf 1
  network 10.0.0.1 0.0.0.0 area 0
  network 192.168.1.0 0.0.0.3 area 0
  network 192.168.1.4 0.0.0.3 area 0
+ network 192.168.3.0 0.0.0.3 area 20
  network 10.10.10.0 0.0.0.3 area 0
  network 192.168.10.0 0.0.0.255 area 20
  network 192.168.40.0 0.0.0.255 area 20
