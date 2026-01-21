@@ -302,25 +302,23 @@ exit
 
 !ACL Config
 ! ACL om verkeer van en naar de DMZ te blokkeren
-ip access-list extended DMZ-INKOMEND
- ! laat opgezette TCP verbindingen door
- permit tcp any any established
+ip access-list extended DMZ-INKOMEND 
+ ! block alles van kantoor naar DMZbehalve vlan 10
+ deny ip 192.168.10.0 0.0.0.255 198.19.1.16 0.0.0.31
  
- ! block alles van kantoor naar DMZ
- deny ip 192.168.0.0 0.0.255.255 192.19.1.16 0.0.0.31
- 
- ! block alles van DMZ naar kantoor
- deny ip 192.19.1.16 0.0.0.31 192.168.0.0 0.0.255.255
- 
+ ! block alles van DMZ naar kantoor 
+ deny ip 198.19.1.16 0.0.0.31 198.168.10.0 0.0.0.255
+
  ! laat DMZ door naar het internet
- permit ip 192.19.1.16 0.0.0.31 any
+ permit ip 198.19.1.16 0.0.0.31 any
+ permit ip 192.168.0.0 0.0.255.255 198.19.1.16 0.0.0.31
 exit
 
 ipv6 access-list DMZ-INKOMEND_V6
-  permit tcp any any established
-  deny ipv6 2001:1:1:0::/48 2001:1:1:100::/64
-  deny ipv6 2001:1:1:100::/64 2001:1:1:0::/48
+  deny ipv6 2001:1:1:10::/64 2001:1:1:100::/64
+  deny ipv6 2001:1:1:100::/64 2001:1:1:10::/64
   permit ipv6 2001:1:1:100::/64 any
+  permit ipv6 2001:1:1:0::/48 2001:1:1:100::/64
 exit
 
 interface vlan 100
