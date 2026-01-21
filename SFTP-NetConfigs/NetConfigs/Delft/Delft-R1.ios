@@ -134,6 +134,7 @@ router ospf 1
  network 192.168.40.0 0.0.0.255 area 20
  network 192.168.80.0 0.0.0.255 area 20
  network 198.19.1.0 0.0.0.255 area 20
+ redistribute static subnets
 exit
 
 ! OSPFv3 (IPv6) configuration
