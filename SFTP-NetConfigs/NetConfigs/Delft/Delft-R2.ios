@@ -115,6 +115,7 @@ exit
 ! OSPF over tunnel
 router ospf 1
  network 10.10.10.4 0.0.0.3 area 0
+ redistribute static subnets
 exit
 
 ! BGP peering over GRE tunnel
