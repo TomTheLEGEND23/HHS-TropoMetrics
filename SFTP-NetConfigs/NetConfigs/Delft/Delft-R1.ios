@@ -64,6 +64,20 @@ ip route 192.0.0.0 255.255.255.252 198.19.0.1
 ! Default route to ISP for internet
 ip route 0.0.0.0 0.0.0.0 198.19.0.1
 
+! IPv6 Static routes to Delft-R2 WAN
+ipv6 route 2001:1:ffff:2::/64 2001:1:ffff:1::1
+! IPv6 Static routes to Aruba
+ipv6 route 2001:1:ffff:3::/64 2001:1:ffff:1::1
+! IPv6 Static route to Aruba VLAN 110
+ipv6 route 2001:1:2:110::/64 2001:1:10:10::1
+! IPv6 Static route to ISP loopback
+ipv6 route 2001:db8:25::25/128 2001:1:ffff:1::1
+! IPv6 Default route to ISP for internet
+ipv6 route ::/0 2001:1:ffff:1::1
+
+!static route to loopback ISP
+ip route 25.25.25.25 255.255.255.255 198.19.0.1
+
 ! Crypto for GRE over IPsec
 crypto isakmp policy 10
  encr aes 256
@@ -99,11 +113,6 @@ int Tunnel10
  ipv6 ospf 1 area 0
 exit
 
-! OSPF over tunnel
-router ospf 1
- network 10.10.10.0 0.0.0.3 area 0
-exit
-
 ! BGP peering over GRE tunnel
 router bgp 65002
  no auto-summary
@@ -121,11 +130,13 @@ router ospf 1
  network 10.0.0.1 0.0.0.0 area 0
  network 192.168.1.0 0.0.0.3 area 0
  network 192.168.1.4 0.0.0.3 area 0
+ network 192.168.3.0 0.0.0.3 area 20
  network 10.10.10.0 0.0.0.3 area 0
  network 192.168.10.0 0.0.0.255 area 20
  network 192.168.40.0 0.0.0.255 area 20
  network 192.168.80.0 0.0.0.255 area 20
  network 198.19.1.0 0.0.0.255 area 20
+ redistribute static subnets
 exit
 
 ! OSPFv3 (IPv6) configuration
@@ -135,6 +146,7 @@ ipv6 router ospf 1
  no passive-interface G0/0/0
  no passive-interface G0/0/1
  no passive-interface Tunnel10
+ redistribute static
  exit
 
 !interface for DNS querys
@@ -148,15 +160,26 @@ exit
 ip dns server
 ip name-server 1.1.1.1
 ip name-server 8.8.8.8
+<<<<<<< HEAD
 ip host webserver.web  198.19.1.10
+=======
+ip host webserver.web 198.19.1.20
+>>>>>>> cb15f67eda8a75cdfbe275a3e2129d4c306832da
 
 !NAT Config
+! Route map to prevent NATing between internal networks
+route-map NONAT permit 10
+ match ip address 2
+exit
+
 ip nat pool OVERLOAD_POOL 198.19.0.2 198.19.0.2 netmask 255.255.255.255
 access-list 1 permit 192.168.10.0 0.0.0.255
 access-list 1 permit 192.168.40.0 0.0.0.255
 access-list 1 permit 192.168.80.0 0.0.0.255
+access-list 1 permit 198.19.1.0 0.0.0.255
 access-list 1 permit 192.168.1.0 0.0.0.3
 access-list 1 permit 192.168.1.4 0.0.0.3
+ip nat inside source route-map NONAT permit 10
 ip nat inside source list 1 pool OVERLOAD_POOL overload
 
 end

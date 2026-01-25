@@ -82,6 +82,10 @@ exit
 ip nat inside source list 1 interface G0/0/1 overload
 
 
+
+
+
+
 end
 clock set 21:14:23 17 Dec 2025
 !copy running-config startup-config
