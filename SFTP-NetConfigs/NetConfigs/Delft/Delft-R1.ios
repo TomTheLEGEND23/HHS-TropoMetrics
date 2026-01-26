@@ -160,7 +160,11 @@ exit
 ip dns server
 ip name-server 1.1.1.1
 ip name-server 8.8.8.8
+<<<<<<< HEAD
+ip host webserver.web  198.19.1.10
+=======
 ip host webserver.web 198.19.1.20
+>>>>>>> cb15f67eda8a75cdfbe275a3e2129d4c306832da
 
 !NAT Config
 ! Route map to prevent NATing between internal networks

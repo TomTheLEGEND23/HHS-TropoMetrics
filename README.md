@@ -2,7 +2,7 @@
 
 **Haagse Hogeschool Project**: Professional weather data service platform for the agricultural sector, built on scalable Kubernetes infrastructure with automated CI/CD.
 
-[![Build and Deploy](https://github.com/TomTheLEGEND23/HHS-TropoMetrics/actions/workflows/build-deploy.yml/badge.svg)](https://github.com/TomTheLEGEND23/HHS-TropoMetrics/actions/workflows/build-deploy.yml)
+[![Build and Deploy](https://github.com/TomTheLEGEND23/PNID-TropoMetrics/actions/workflows/build-deploy.yml/badge.svg)](https://github.com/TomTheLEGEND23/PNID-TropoMetrics/actions/workflows/build-deploy.yml)
 
 ## 📋 Table of Contents
 - [About the Project](#about-the-project)
@@ -325,7 +325,7 @@ kubectl create secret generic tropometrics-email-secrets \
 3. Name: `tropometrics-production` or `tropometrics-dev`
 4. **Build method**: Repository
 5. Configure Git settings:
-   - **Repository URL**: `https://github.com/TomTheLEGEND23/HHS-TropoMetrics`
+   - **Repository URL**: `https://github.com/TomTheLEGEND23/PNID-TropoMetrics`
    - **Repository reference**: `refs/heads/main` (production) or `refs/heads/dev`
    - **Compose path**: For production: `k8s/main-env.yaml`, For dev: `k8s/dev-env.yaml`
    - **Authentication**: None (public repo) or add GitHub token for private
@@ -345,7 +345,7 @@ curl -X POST http://10.0.0.101:9000/api/stacks \
   -H "Content-Type: application/json" \
   -d '{
     "name": "tropometrics-production",
-    "repositoryURL": "https://github.com/TomTheLEGEND23/HHS-TropoMetrics",
+    "repositoryURL": "https://github.com/TomTheLEGEND23/PNID-TropoMetrics",
     "repositoryReferenceName": "refs/heads/main",
     "composeFile": "k8s/main-env.yaml",
     "type": 1,
@@ -391,8 +391,8 @@ Once configured in Portainer with GitOps enabled:
 
 1. **Developer**: Push code to `main` or `dev` branch
 2. **GitHub Actions**: Automatically builds Docker images
-   - Frontend: `ghcr.io/tomthelegend23/hhs-tropometrics:main|dev`
-   - Backend: `ghcr.io/tomthelegend23/hhs-tropometrics-backend:main|dev`
+   - Frontend: `ghcr.io/tomthelegend23/PNID-TropoMetrics:main|dev`
+   - Backend: `ghcr.io/tomthelegend23/PNID-TropoMetrics-backend:main|dev`
 3. **GHCR**: Stores container images
 4. **Portainer**: Detects git repository changes (polls every 5min)
 5. **K3s**: Pulls new images and performs rolling update
@@ -408,8 +408,8 @@ For local testing and development without Kubernetes.
 
 #### Step 1: Clone Repository
 ```bash
-git clone https://github.com/TomTheLEGEND23/HHS-TropoMetrics.git
-cd HHS-TropoMetrics
+git clone https://github.com/TomTheLEGEND23/PNID-TropoMetrics.git
+cd PNID-TropoMetrics
 ```
 
 #### Step 2: Configure Environment
@@ -664,7 +664,7 @@ kubectl apply -f k8s/main-env.yaml
 
 ### Getting Help
 
-**Check GitHub Issues**: https://github.com/TomTheLEGEND23/HHS-TropoMetrics/issues
+**Check GitHub Issues**: https://github.com/TomTheLEGEND23/PNID-TropoMetrics/issues
 
 **Review Logs**: Always start with `kubectl logs` and `kubectl describe`
 

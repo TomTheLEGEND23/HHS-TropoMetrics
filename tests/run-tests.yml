@@ -77,7 +77,7 @@
             rm -rf tropometrics-tests && \
             mkdir -p tropometrics-tests && \
             cd tropometrics-tests && \
-            curl -L "https://github.com/TomTheLEGEND23/HHS-TropoMetrics/archive/refs/heads/{{ branch }}.tar.gz" | tar xz --strip=2 "HHS-TropoMetrics-{{ branch }}/tests" && \
+            curl -L "https://github.com/TomTheLEGEND23/PNID-TropoMetrics/archive/refs/heads/{{ branch }}.tar.gz" | tar xz --strip=2 "PNID-TropoMetrics-{{ branch }}/tests" && \
             cd tests && \
             pip3 install -q -r requirements.txt && \
             python3 run-tests.py --env {{ test_env }} --api-key {{ api_key }} --test {{ test_type }}
@@ -127,9 +127,9 @@
             if (Test-Path tropometrics-tests) { Remove-Item -Recurse -Force tropometrics-tests }
             New-Item -ItemType Directory -Path tropometrics-tests | Out-Null
             cd tropometrics-tests
-            Invoke-WebRequest -Uri "https://github.com/TomTheLEGEND23/HHS-TropoMetrics/archive/refs/heads/{{ branch }}.zip" -OutFile "repo.zip"
+            Invoke-WebRequest -Uri "https://github.com/TomTheLEGEND23/PNID-TropoMetrics/archive/refs/heads/{{ branch }}.zip" -OutFile "repo.zip"
             Expand-Archive -Path "repo.zip" -DestinationPath .
-            cd "HHS-TropoMetrics-{{ branch }}/tests"
+            cd "PNID-TropoMetrics-{{ branch }}/tests"
             pip install -q -r requirements.txt
             python run-tests.py --env {{ test_env }} --api-key {{ api_key }} --test {{ test_type }}
           register: test_results_windows

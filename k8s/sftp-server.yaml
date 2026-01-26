@@ -27,7 +27,7 @@ spec:
       # Standard pod networking with NodePort service
       containers:
       - name: sftp-server
-        image: ghcr.io/tomthelegend23/hhs-tropometrics-sftp:latest
+        image: ghcr.io/tomthelegend23/PNID-TropoMetrics-sftp:latest
         imagePullPolicy: Always
         args:
           - cisco:cisco:1001:100:configs

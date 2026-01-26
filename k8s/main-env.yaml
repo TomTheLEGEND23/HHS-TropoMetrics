@@ -42,7 +42,7 @@ spec:
       terminationGracePeriodSeconds: 30
       containers:
       - name: tropometrics
-        image: ghcr.io/tomthelegend23/hhs-tropometrics-frontend:main
+        image: ghcr.io/tomthelegend23/PNID-TropoMetrics-frontend:main
         imagePullPolicy: Always
         ports:
         - containerPort: 80
@@ -173,7 +173,7 @@ spec:
       terminationGracePeriodSeconds: 30
       containers:
       - name: backend
-        image: ghcr.io/tomthelegend23/hhs-tropometrics-backend:main
+        image: ghcr.io/tomthelegend23/PNID-TropoMetrics-backend:main
         imagePullPolicy: Always
         ports:
         - containerPort: 8000
