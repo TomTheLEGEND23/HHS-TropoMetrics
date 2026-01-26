@@ -3,7 +3,7 @@
 TropoMetrics API Backend
 - Email service (SMTP)
 - Weather data API with authentication
-Credentials stored as Kubernetes secrets, never exposed to client
+Credentials stored as Kubernetes secrets, never exposed to client.
 """
 
 from fastapi import FastAPI, HTTPException, Header, Request

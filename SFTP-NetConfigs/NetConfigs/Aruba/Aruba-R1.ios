@@ -31,7 +31,7 @@ ipv6 unicast-routing
 
 !Vlan Config
 
-! Static routes for Delft WANs via ISP
+! Static routes for Delft WANs via ISP.
 ip route 198.19.0.0 255.255.255.252 192.0.0.1
 ip route 198.20.0.0 255.255.255.252 192.0.0.1
 
