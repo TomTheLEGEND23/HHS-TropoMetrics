@@ -36,7 +36,7 @@ Proxmox server running K3s (lightweight Kubernetes) cluster.
 - **Platform**: GitHub Actions
 - **Trigger**: Push to main/dev branches
 - **Build**: Docker multi-stage build
-- **Registry**: ghcr.io/tomthelegend23/hhs-tropometrics
+- **Registry**: ghcr.io/tomthelegend23/PNID-TropoMetrics
 - **Deployment**: GitOps via Portainer (auto-pull on repo change)
 
 ### Resource Allocation

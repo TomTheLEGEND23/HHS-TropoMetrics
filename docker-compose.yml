@@ -1,7 +1,7 @@
 ---
 services:
   backend:
-    image: ghcr.io/tomthelegend23/hhs-tropometrics-backend:${TAG:-dev}
+    image: ghcr.io/tomthelegend23/PNID-TropoMetrics-backend:${TAG:-dev}
     container_name: tropometrics-backend
     ports:
       - "8000:8000"
@@ -22,7 +22,7 @@ services:
       - tropometrics
 
   frontend:
-    image: ghcr.io/tomthelegend23/hhs-tropometrics-frontend:${TAG:-dev}
+    image: ghcr.io/tomthelegend23/PNID-TropoMetrics-frontend:${TAG:-dev}
     container_name: tropometrics-frontend
     ports:
       - "8080:80"  # Access via http://localhost:8080

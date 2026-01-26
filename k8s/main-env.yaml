@@ -34,7 +34,7 @@ spec:
         environment: production
       annotations:
         # This annotation forces redeployment when updated
-        kubectl.kubernetes.io/restartedAt: "2025-11-14T09:35:54Z"
+        kubectl.kubernetes.io/restartedAt: "2026-01-21T15:28:31Z"
     spec:
       # Restart policy ensures pods are automatically restarted on failure
       restartPolicy: Always
@@ -42,7 +42,7 @@ spec:
       terminationGracePeriodSeconds: 30
       containers:
       - name: tropometrics
-        image: ghcr.io/tomthelegend23/hhs-tropometrics-frontend:main
+        image: ghcr.io/tomthelegend23/PNID-TropoMetrics-frontend:main
         imagePullPolicy: Always
         ports:
         - containerPort: 80
@@ -165,7 +165,7 @@ spec:
         app: tropometrics-main-backend
         environment: production
       annotations:
-        kubectl.kubernetes.io/restartedAt: "2025-11-14T09:35:54Z"
+        kubectl.kubernetes.io/restartedAt: "2026-01-21T15:28:31Z"
     spec:
       # Restart policy ensures pods are automatically restarted on failure
       restartPolicy: Always
@@ -173,7 +173,7 @@ spec:
       terminationGracePeriodSeconds: 30
       containers:
       - name: backend
-        image: ghcr.io/tomthelegend23/hhs-tropometrics-backend:main
+        image: ghcr.io/tomthelegend23/PNID-TropoMetrics-backend:main
         imagePullPolicy: Always
         ports:
         - containerPort: 8000
